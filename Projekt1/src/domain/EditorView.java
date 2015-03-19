@@ -10,10 +10,16 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import domain.ViewController.DrawState;
+
 
 public class EditorView extends JPanel {
 	
+	public ViewController viewController;
+	
 	public EditorView() {
+		
+		viewController = new ViewController();
 		
 		setLayout(new BorderLayout());
 		constructPanelComponents();
@@ -26,15 +32,29 @@ public class EditorView extends JPanel {
 		JButton vertexButton = new JButton("Vertex");
 		JButton edgeButton = new JButton("Edge");
 		
-		selectionButton.addActionListener(new
-		         ActionListener()
-		         {
-		            public void actionPerformed(ActionEvent event)
-		            {
-		               openFile();
-		            }
-		         });
+		selectionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+               viewController.selectClicked();
+            }
+         });
 		
+		deleteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+               viewController.deleteClicked();
+            }
+         });
+		
+		vertexButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+               viewController.drawVertexClicked();
+            }
+         });
+		
+		edgeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+               viewController.drawEdgeClicked();
+            }
+         });
 		
 		JRadioButton undirectedButton = new JRadioButton("undirected");
 		JRadioButton directedButton = new JRadioButton("directed");
