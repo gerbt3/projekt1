@@ -1,5 +1,7 @@
 package domain;
 
+import domain.ViewController.DrawState;
+
 
 public class ViewController {
 
@@ -65,5 +67,10 @@ public class ViewController {
 	public void drawEdgeClicked() {
 		
 		this.currentState = DrawState.EDGE;
+	}
+
+	public DrawState getCurrentState() {
+		// TODO Auto-generated method stub
+		return this.currentState;
 	}
 }
