@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import domain.GraphTool;
+
 
 
 
@@ -385,6 +387,9 @@ public class GraphExamples<V,E> {
 		Edge e_j = g.insertEdge(vF,vE,"FE");
 		System.out.println(g);
 		ge.setGateways();
+		
+		new GraphTool(g);
+		
 //		System.out.print("Path: ");
 //		Vertex<String> [] path = ge.shortestPath(vA,vG);
 //		if (path == null) System.out.println("no path");

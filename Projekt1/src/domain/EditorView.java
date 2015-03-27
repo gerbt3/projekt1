@@ -10,17 +10,17 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import domain.ViewController.DrawState;
+import domain.EditorHandler.State;
+
+
 
 
 public class EditorView extends JPanel {
 	
-	public ViewController viewController;
 	
-	public EditorView() {
-		
-		viewController = new ViewController();
-		
+	private EditorHandler handler;
+	public EditorView(EditorHandler handler) {
+		this.handler=handler;
 		setLayout(new BorderLayout());
 		constructPanelComponents();
 	}
@@ -34,25 +34,25 @@ public class EditorView extends JPanel {
 		
 		selectionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               viewController.selectClicked();
+               handler.setState(State.SELECT);
             }
          });
 		
 		deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               viewController.deleteClicked();
+               
             }
          });
 		
 		vertexButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               viewController.drawVertexClicked();
+               handler.setState(State.VERTEX);
             }
          });
 		
 		edgeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               viewController.drawEdgeClicked();
+               handler.setState(State.EDGE);
             }
          });
 		

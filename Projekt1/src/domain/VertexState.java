@@ -1,25 +1,36 @@
 package domain;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
+
+import examples.Decorable;
+import examples.Vertex;
 
 public class VertexState extends EditorState{
 
-	@Override
-	public void mouseDown(MouseEvent e) {
-		// TODO Auto-generated method stub
+	private GraphTool graphtool;
+	private Vertex selectedVertex;
+	
+	public VertexState(GraphTool gt){
 		
+		this.graphtool=gt;
+	}
+	
+	@Override
+	public void mouseDown(Decorable d, Point p) {
+		
+		selectedVertex=graphtool.insertVertex(p);
 	}
 
 	@Override
-	public void mouseDrag(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseDrag(Decorable d, Point p) {
 		
+		graphtool.moveVertex(selectedVertex, p);
 	}
 
 	@Override
-	public void mouseUp(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseUp(Decorable d, Point p) {
+		graphtool.moveVertex(selectedVertex, p);
 	}
 
 }

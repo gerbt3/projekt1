@@ -3,54 +3,75 @@ package domain;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import examples.Decorable;
+
 public class EditorHandler {
-	
+
 	public enum State{
 		VERTEX,
 		EDGE,
-		SELECT
+		SELECT,
+		INACTIVE
 	}
-	
+
 	private EditorState currentState;
-	
-	public EditorHandler(){
-		currentState=new SelectState();
+	private VertexState vertexState;
+	private EdgeState edgeState;
+	private SelectState selectState;
+
+	public EditorHandler(SelectState selectState, VertexState vertexState,EdgeState edgeState){
+		currentState=selectState;
+		this.selectState=selectState;
+		this.vertexState=vertexState;
+		this.edgeState=edgeState;
 	}
-	
+
 	public void setState(State state){
 		switch(state){
 		case VERTEX:
-				currentState=new VertexState();
+			currentState=vertexState;
 			break;
 		case EDGE:
-				currentState=new EdgeState();
+			currentState=edgeState;
 			break;
 		case SELECT:
-				currentState=new SelectState();
+			currentState=selectState;
+			break;
+		case INACTIVE:
+			if(currentState instanceof SelectState)
+				currentState.mouseDown(null, null);
+			currentState=null;
 			break;
 		}	
 	}
-	
-	public void mouseDown(MouseEvent e){
-		currentState.mouseDown(e);
+
+	public void mouseDown(Decorable d, Point p){
+		if(currentState!=null)
+			currentState.mouseDown(d, p);
 	}
-	public  void mouseDrag(MouseEvent e){
-		currentState.mouseDrag(e);
+	public  void mouseDrag(Decorable d, Point p){
+		if(currentState!=null)
+			currentState.mouseDrag(d, p);
 	}
-	public  void mouseUp(MouseEvent e){
-		currentState.mouseUp(e);
+	public  void mouseUp(Decorable d, Point p){
+		if(currentState!=null)
+			currentState.mouseUp(d, p);
 	}
 	public void deleteVertex(Point p){
-		currentState.deleteVertex(p);
+		if(currentState!=null)
+			currentState.deleteVertex(p);
 	}
 	public void deleteEdge(Point p1, Point p2){
-		currentState.deleteEdge(p1, p2);
+		if(currentState!=null)
+			currentState.deleteEdge(p1, p2);
 	}
 	public void undo(){
-		currentState.undo();
+		if(currentState!=null)
+			currentState.undo();
 	}
 	public void redo(){
-		currentState.redo();
+		if(currentState!=null)
+			currentState.redo();
 	}
 
 }

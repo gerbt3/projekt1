@@ -3,11 +3,13 @@ package domain;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import examples.Decorable;
+
 public abstract class EditorState {
 
-	public abstract void mouseDown(MouseEvent e);
-	public abstract void mouseDrag(MouseEvent e);
-	public abstract void mouseUp(MouseEvent e);
+	public abstract void mouseDown(Decorable d, Point p);
+	public abstract void mouseDrag(Decorable d, Point p);
+	public abstract void mouseUp(Decorable d, Point p);
 	public void deleteVertex(Point p){
 		// nothing to implement
 	}
