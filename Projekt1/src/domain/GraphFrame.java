@@ -58,7 +58,7 @@ public class GraphFrame extends JFrame {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				
+				// shows which panel is selected
 				int i=tabpane.getSelectedIndex();
 				if(i==0){
 					handler.setState(State.SELECT);
