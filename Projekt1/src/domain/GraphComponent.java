@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -15,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import javax.swing.JComponent;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 import domain.GraphTool.Attribut;
 import examples.Decorable;
@@ -72,13 +74,35 @@ public class GraphComponent extends JComponent{
 			e=this.findKey(edges, line);
 			g2.setColor((Color)e.get(Attribut.color));
 			g2.draw(line);
+			
+			//drawArrowHead(g2, new Point((int) line.x1, (int) line.y1), new Point((int) line.x2, (int) line.y2));
+		     
 		}
 		if(unfinishedLine!=null){
 			g2.draw(unfinishedLine);
 		}
 
+		
 
 	}
+	
+	//From http://www.coderanch.com/t/340443/GUI/java/Draw-arrow-head-line
+	private void drawArrowHead(Graphics2D g2, Point tip, Point tail) {
+		 double phi = Math.toRadians(22);
+		 int barb = 12;
+		 double dy = tip.y - tail.y;
+		 double dx = tip.x - tail.x;
+		 double theta = Math.atan2(dy, dx);
+		 
+		 double x, y, rho = theta + phi;
+		 for(int j = 0; j < 2; j++) {
+			 x = tip.x - barb * Math.cos(rho);
+			 y = tip.y - barb * Math.sin(rho);
+			 g2.draw(new Line2D.Double(tip.x, tip.y, x, y));
+			 rho = theta - phi;
+		 }
+	 }
+	
 	public void setGraph(Graph g){
 		graph=g;
 		vertices.clear();
