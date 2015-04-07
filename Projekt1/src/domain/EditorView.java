@@ -40,7 +40,7 @@ public class EditorView extends JPanel {
 		
 		deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               
+               handler.deleteDecorable();
             }
          });
 		

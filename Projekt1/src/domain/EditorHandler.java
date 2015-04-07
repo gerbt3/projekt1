@@ -57,14 +57,11 @@ public class EditorHandler {
 		if(currentState!=null)
 			currentState.mouseUp(d, p);
 	}
-	public void deleteVertex(Point p){
+	public void deleteDecorable(){
 		if(currentState!=null)
-			currentState.deleteVertex(p);
+			currentState.deleteDecorable();
 	}
-	public void deleteEdge(Point p1, Point p2){
-		if(currentState!=null)
-			currentState.deleteEdge(p1, p2);
-	}
+	
 	public void undo(){
 		if(currentState!=null)
 			currentState.undo();

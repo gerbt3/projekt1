@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import examples.Decorable;
+import examples.Edge;
 import examples.Vertex;
 
 public class SelectState extends EditorState {
@@ -44,12 +45,15 @@ public class SelectState extends EditorState {
 	}
 
 	@Override
-	public void deleteVertex(Point p){
-
-	}
-
-	@Override
-	public void deleteEdge(Point p1, Point p2){
-
+	public void deleteDecorable(){
+		if(selected!=null){
+			if(selected instanceof Vertex){
+				graphtool.deleteVertex((Vertex)selected);
+			}
+			else{
+				graphtool.deleteEdge((Edge)selected);
+			}
+			selected=null;
+		}
 	}
 }

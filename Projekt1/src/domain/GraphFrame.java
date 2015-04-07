@@ -60,7 +60,6 @@ public class GraphFrame extends JFrame {
 			public void stateChanged(ChangeEvent e) {
 				
 				int i=tabpane.getSelectedIndex();
-				System.out.println(i);
 				if(i==0){
 					handler.setState(State.SELECT);
 				}

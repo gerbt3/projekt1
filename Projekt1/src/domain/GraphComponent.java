@@ -99,8 +99,9 @@ public class GraphComponent extends JComponent{
 
 		repaint();
 	}
-	
+
 	private Decorable findDecorable(MouseEvent e){
+		double distance=5.0;
 		Point p=e.getPoint();
 		Decorable d=null;
 		Ellipse2D.Double ellipse;
@@ -113,32 +114,34 @@ public class GraphComponent extends JComponent{
 				break;
 			}
 		}
-		for( Iterator<Line2D.Double> ite = edges.values().iterator(); ite.hasNext(); ){
-			line=ite.next();
-			if(line.contains(p)){
-				d=this.findKey(edges, line);
-				break;
+		if(d==null){
+			for( Iterator<Line2D.Double> ite = edges.values().iterator(); ite.hasNext(); ){
+				line=ite.next();
+				if(line.ptLineDist(p)<distance){
+					d=this.findKey(edges, line);
+					break;
+				}
 			}
 		}
 		return d;
 
 	}
-	
+
 	public <V, K> K findKey(HashMap<K,V> map, V value ){
 		for (Entry<K, V> entry : map.entrySet()) {
-            if (entry.getValue().equals(value)) {
-                return entry.getKey();
-            }
-        }
+			if (entry.getValue().equals(value)) {
+				return entry.getKey();
+			}
+		}
 		return null;
 	}
 
 	public void insertEdge(Point p1, Point p2) {
-		
+
 		unfinishedLine=new Line2D.Double(p1,p2);
 		repaint();
 	}
-	
+
 	public void deleteEdge(){
 		unfinishedLine=null;
 		repaint();

@@ -191,5 +191,15 @@ public class GraphTool<V,E> {
 		d.set(Attribut.color, c);
 		graphview.paintGraph(currentGraph);
 	}
+
+	public void deleteVertex(Vertex selected) {
+		currentGraph.removeVertex(selected);
+		graphview.paintGraph(currentGraph);
+	}
+
+	public void deleteEdge(Edge selected) {
+		currentGraph.removeEdge(selected);
+		graphview.paintGraph(currentGraph);
+	}
 	
 }
