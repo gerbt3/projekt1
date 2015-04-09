@@ -49,4 +49,5 @@ public class GraphView extends JPanel {
 		
 		comp.deleteEdge();
 	}
+	
 }

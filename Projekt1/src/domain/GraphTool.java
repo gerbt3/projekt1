@@ -1,8 +1,10 @@
 package domain;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JFrame;
@@ -20,12 +22,14 @@ public class GraphTool<V,E> {
 	public enum Attribut{
 		pos_x,
 		pos_y,
-		x_from,
-		y_from,
-		x_to,
-		y_to,
-		color
+		color,
+		name,
+		weight,
+		distance,
+		visited
 	}
+	private ArrayList<Graph> graphHistory=new ArrayList<>();
+	private int historyIndex=-1;
 	private Graph currentGraph;
 	private GraphView graphview;
 	public static Color STANDARD = Color.BLACK;
@@ -44,33 +48,8 @@ public class GraphTool<V,E> {
 		frame.setVisible(true);
 	}
 
-	private void setEdgeAttributes(Vertex from, Vertex to, Edge e){
+	public void saveGraph(){
 		
-		double radius=GraphComponent.width/2.0;
-		double x1=(double)from.get(Attribut.pos_x)+radius;
-		double x2=(double)to.get(Attribut.pos_x)+radius;
-		double y1=(double)from.get(Attribut.pos_y)+radius;
-		double y2=(double)to.get(Attribut.pos_y)+radius;
-		double ax=1,ay=1,bx=1,by=1;
-		if(x1<x2){
-			bx=-1;
-		}
-		else{
-			ax=-1;
-		}
-		
-		if(y1<y2){
-			by=-1;
-			
-		}
-		else{
-			ay=-1;
-		}
-		double alpha=Math.atan(Math.abs((y2-y1)/(x2-x1)));
-	 	e.set(Attribut.x_from, x1+(Math.cos(alpha)*radius)*ax);
-		e.set(Attribut.x_to, x2+(Math.cos(alpha)*radius)*bx);
-		e.set(Attribut.y_from, y1+(Math.sin(alpha)*radius)*ay);
-		e.set(Attribut.y_to, y2+(Math.sin(alpha)*radius)*by);
 	}
 
 	private void calculatePositions(Graph<V, E> g) {
@@ -97,8 +76,6 @@ public class GraphTool<V,E> {
 		while(itE.hasNext()){
 			e=itE.next();
 			e.set(Attribut.color, STANDARD);
-			ver=g.endVertices(e);
-			this.setEdgeAttributes(ver[0], ver[1], e);
 		}
 	}
 
@@ -114,31 +91,30 @@ public class GraphTool<V,E> {
 	}
 
 	public void moveVertex(Vertex v, Point p){
-
+		double delta=5;
+		Dimension d=graphview.getSize();
 		double radius = GraphComponent.width/2.0;
-		v.set(Attribut.pos_x, p.getX()-radius);
-		v.set(Attribut.pos_y, p.getY()-radius);
+		double x=p.getX();
+		double y=p.getY();
+		
+		if(x>(d.getWidth()-radius)){
+			v.set(Attribut.pos_x, d.getWidth()-2*radius);
+		}
+		else if(x<(0+radius)){
+			v.set(Attribut.pos_x, 0.0);
+		}
+		else
+			v.set(Attribut.pos_x, x-radius);
+		
+		if(y>(d.getHeight()-radius)){
+			v.set(Attribut.pos_y, d.getHeight()-2*radius);
+		}
+		else if(y<(0+radius)){
+			v.set(Attribut.pos_y, 0.0);
+		}
+		else
+			v.set(Attribut.pos_y, y-radius);
 		// Graph speichern
-		Edge e;
-		if(currentGraph.isDirected()){
-			for(Iterator<Edge> ite=currentGraph.incidentInEdges(v);ite.hasNext();){
-				e=ite.next();
-				this.setEdgeAttributes(currentGraph.origin(e), currentGraph.destination(e), e);
-			}
-			for(Iterator<Edge> ite=currentGraph.incidentOutEdges(v);ite.hasNext();){
-				e=ite.next();
-				this.setEdgeAttributes(currentGraph.origin(e), currentGraph.destination(e), e);
-			}
-		}
-		else{
-			Vertex[] ver;
-			Iterator<Edge> it = currentGraph.incidentEdges(v);
-			while(it.hasNext()){
-				e=it.next();
-				ver=currentGraph.endVertices(e);
-				this.setEdgeAttributes(ver[0], ver[1], e);
-			}
-		}
 		graphview.paintGraph(currentGraph);
 	}
 
@@ -178,7 +154,6 @@ public class GraphTool<V,E> {
 		}
 		Edge e=currentGraph.insertEdge(from, to, "");
 		e.set(Attribut.color, STANDARD);
-		this.setEdgeAttributes(from, to, e);
 		graphview.deleteEdge();
 		graphview.paintGraph(currentGraph);
 
