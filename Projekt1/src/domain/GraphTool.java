@@ -2,8 +2,6 @@ package domain;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -20,6 +18,7 @@ import java.io.ObjectOutputStream;
 import examples.Decorable;
 import examples.Edge;
 import examples.Graph;
+import examples.GraphExamples;
 import examples.IncidenceListGraph;
 import examples.Vertex;
 
@@ -41,7 +40,7 @@ public class GraphTool<V,E> {
 	private GraphView graphview;
 	public static Color STANDARD = Color.BLACK;
 	public static Color SELECTED = Color.BLUE;
-	public GraphTool(Graph g){
+	public GraphTool(Graph g, GraphExamples ge){
 
 		currentGraph=g;
 		this.calculatePositions(currentGraph);
@@ -98,7 +97,6 @@ public class GraphTool<V,E> {
 	}
 
 	public void moveVertex(Vertex v, Point p){
-		double delta=5;
 		Dimension d=graphview.getSize();
 		double radius = GraphComponent.width/2.0;
 		double x=p.getX();
@@ -217,5 +215,15 @@ public class GraphTool<V,E> {
 		} finally {
 			ois.close();
 		}
+	}
+
+	public Vertex getStartVertex() {
+		// TODO angewählter Vertex holen
+		return null;
+	}
+
+	public Vertex getStopVertex() {
+		// TODO angewählter Vertex holen
+		return null;
 	}
 }

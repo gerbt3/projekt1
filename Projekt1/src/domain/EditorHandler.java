@@ -27,6 +27,9 @@ public class EditorHandler {
 	}
 
 	public void setState(State state){
+		if(currentState instanceof SelectState && !(state==State.SELECT)){
+			currentState.mouseDown(null, null);
+		}
 		switch(state){
 		case VERTEX:
 			currentState=vertexState;
@@ -38,8 +41,6 @@ public class EditorHandler {
 			currentState=selectState;
 			break;
 		case INACTIVE:
-			if(currentState instanceof SelectState)
-				currentState.mouseDown(null, null);
 			currentState=null;
 			break;
 		}	

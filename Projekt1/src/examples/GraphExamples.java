@@ -388,7 +388,7 @@ public class GraphExamples<V,E> {
 		System.out.println(g);
 		ge.setGateways();
 		
-		new GraphTool(g);
+		new GraphTool(g, ge);
 		
 //		System.out.print("Path: ");
 //		Vertex<String> [] path = ge.shortestPath(vA,vG);
