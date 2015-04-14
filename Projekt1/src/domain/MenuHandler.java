@@ -17,4 +17,9 @@ public class MenuHandler {
 	public void openGraph(String name) {
 		
 	}
+	
+	public void createGraph(boolean directed){
+		graphTool.createGraph(directed);
+	}
+	
 }

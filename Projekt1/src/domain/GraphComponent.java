@@ -84,13 +84,15 @@ public class GraphComponent<V,E> extends JComponent{
 			e=this.findKey(edges, line);
 			g2.setColor((Color)e.get(Attribut.color));
 			g2.draw(line);
-		
-			//drawArrowHead(g2, new Point((int) line.x1, (int) line.y1), new Point((int) line.x2, (int) line.y2));
+			if(graph.isDirected())
+				drawArrowHead(g2, new Point((int) line.x2, (int) line.y2),new Point((int) line.x1, (int) line.y1));
 
 		}
-		//g2.drawString(iterator, x, y);
+		
 		if(unfinishedLine!=null){
 			g2.draw(unfinishedLine);
+			if(graph.isDirected())
+				drawArrowHead(g2, new Point((int) unfinishedLine.x2, (int) unfinishedLine.y2),new Point((int) unfinishedLine.x1, (int) unfinishedLine.y1));
 		}
 
 

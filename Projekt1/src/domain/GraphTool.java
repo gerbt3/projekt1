@@ -39,12 +39,14 @@ public class GraphTool<V,E> {
 	private GraphView<V,E> graphview;
 	public static Color STANDARD = Color.BLACK;
 	public static Color SELECTED = Color.BLUE;
-	
+	private GraphFrame<V, E> frame;
 	
 	
 	public GraphTool(GraphExamples<V,E> ge){
 		
 		this(new IncidenceListGraph<V,E>(), ge);
+		if(!frame.chooseGraphOption())
+			this.createGraph(false);
 	}
 	
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
@@ -54,7 +56,7 @@ public class GraphTool<V,E> {
 		new VertexState<V,E>(this);
 		EditorHandler<V, E> handler = new EditorHandler<V, E>(new SelectState<V,E>(this), new VertexState<V,E>(this), new EdgeState<V, E>(this));
 		graphview=new GraphView<V,E>(g, handler);
-		GraphFrame<V, E> frame= new GraphFrame<V, E>(handler, new MenuHandler(this), graphview );
+		frame= new GraphFrame<V, E>(handler, new MenuHandler(this), graphview );
 		frame.setSize(1000, 700);
 		frame.setTitle("GraphTool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,6 +65,8 @@ public class GraphTool<V,E> {
 
 	public void createGraph(boolean directed){
 		currentGraph=new IncidenceListGraph<V, E>(directed);
+		nameIndex=1;
+		graphview.paintGraph(currentGraph);
 	}
 
 	private void calculatePositions(Graph<V, E> g) {

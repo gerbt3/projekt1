@@ -36,7 +36,7 @@ public class GraphFrame<V, E> extends JFrame {
 		this.add(gv, BorderLayout.CENTER);
 	}
 
-	public void chooseGraphOption(){
+	public boolean chooseGraphOption(){
 		Object[] options = {"Undirected graph", "Directed graph"};
 		int choice = JOptionPane.showOptionDialog(null,
 				"Choose a graph option:",
@@ -46,11 +46,17 @@ public class GraphFrame<V, E> extends JFrame {
 				null,
 				options,
 				options[1]);
-
-		if (choice == 0) {
-			//Undirected graph
-		} else {
-			//Directed graph
+		if(choice==JOptionPane.CLOSED_OPTION){
+			return false;
+		}
+		else{
+			if (choice == 0) {
+				menuHandler.createGraph(false);
+				return true;
+			} else {
+				menuHandler.createGraph(true);
+				return true;
+			}
 		}
 	}
 
@@ -68,7 +74,7 @@ public class GraphFrame<V, E> extends JFrame {
 				chooseGraphOption();
 			}
 		});
-		
+
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
@@ -104,11 +110,11 @@ public class GraphFrame<V, E> extends JFrame {
 
 		add(menuPanel, BorderLayout.NORTH);
 	}
-	
+
 	private void constructAttributMenuComponents() {
-		
+
 		JPanel attributeMenuPanel = new JPanel();
-		
+
 		add(attributeMenuPanel, BorderLayout.SOUTH);
 	}
 
