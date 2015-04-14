@@ -1,8 +1,6 @@
 package domain;
 
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-
 import examples.Decorable;
 
 public abstract class EditorState {

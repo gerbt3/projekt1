@@ -2,7 +2,6 @@ package domain;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JFrame;
@@ -34,28 +33,36 @@ public class GraphTool<V,E> {
 		distance,
 		visited
 	}
-	private ArrayList<Graph> graphHistory=new ArrayList<>();
-	private int historyIndex=-1;
-	private Graph currentGraph;
-	private GraphView graphview;
+	
+	private int nameIndex=1;
+	private Graph<V, E> currentGraph;
+	private GraphView<V,E> graphview;
 	public static Color STANDARD = Color.BLACK;
 	public static Color SELECTED = Color.BLUE;
-	public GraphTool(Graph g, GraphExamples ge){
+	
+	
+	
+	public GraphTool(GraphExamples<V,E> ge){
+		
+		this(new IncidenceListGraph<V,E>(), ge);
+	}
+	
+	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
 
 		currentGraph=g;
 		this.calculatePositions(currentGraph);
-		new VertexState(this);
-		EditorHandler handler = new EditorHandler(new SelectState(this), new VertexState(this), new EdgeState(this));
-		graphview=new GraphView(g, handler);
-		GraphFrame frame= new GraphFrame(handler, graphview );
+		new VertexState<V,E>(this);
+		EditorHandler<V, E> handler = new EditorHandler<V, E>(new SelectState<V,E>(this), new VertexState<V,E>(this), new EdgeState<V, E>(this));
+		graphview=new GraphView<V,E>(g, handler);
+		GraphFrame<V, E> frame= new GraphFrame<V, E>(handler, graphview );
 		frame.setSize(1000, 700);
 		frame.setTitle("GraphTool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
 
-	public void saveGraph(){
-		
+	public void createGraph(boolean directed){
+		currentGraph=new IncidenceListGraph<V, E>(directed);
 	}
 
 	private void calculatePositions(Graph<V, E> g) {
@@ -64,7 +71,7 @@ public class GraphTool<V,E> {
 		double radius=number*10;
 		Iterator<Vertex<V>> it =g.vertices();
 		int i=0;
-		Vertex v;
+		Vertex<V> v;
 		
 		
 		while(it.hasNext()){
@@ -77,26 +84,27 @@ public class GraphTool<V,E> {
 			i++;
 		}
 		Iterator<Edge<E>> itE=g.edges();
-		Vertex[] ver;
-		Edge e;
+		Edge<E> e;
 		while(itE.hasNext()){
 			e=itE.next();
 			e.set(Attribut.color, STANDARD);
 		}
 	}
 
-	public Vertex insertVertex(Point p){
-		Vertex v= currentGraph.insertVertex("");
+	public Vertex<V> insertVertex(Point p){
+		Vertex<V> v=currentGraph.insertVertex((V) "");
 		double radius = GraphComponent.width/2.0;
 		v.set(Attribut.pos_x, p.getX()-radius);
 		v.set(Attribut.pos_y, p.getY()-radius);
 		v.set(Attribut.color, STANDARD);
+		v.set(Attribut.name, Integer.toString(nameIndex));
+		nameIndex++;
 		// graph speichern
 		graphview.paintGraph(currentGraph);
 		return v;
 	}
 
-	public void moveVertex(Vertex v, Point p){
+	public void moveVertex(Vertex<V> v, Point p){
 		Dimension d=graphview.getSize();
 		double radius = GraphComponent.width/2.0;
 		double x=p.getX();
@@ -123,20 +131,20 @@ public class GraphTool<V,E> {
 		graphview.paintGraph(currentGraph);
 	}
 
-	public void insertEdge(Vertex startVertex, Point p2) {
+	public void insertEdge(Vertex<V> startVertex, Point p2) {
 		double radius=GraphComponent.width/2.0;
 		Point p1=new Point();
 		p1.setLocation((double)startVertex.get(Attribut.pos_x)+radius,(double)startVertex.get(Attribut.pos_y)+radius);
 		graphview.insertEdge(p1, p2);
 	}
 
-	public void insertEdge(Vertex from, Vertex to) {
+	public void insertEdge(Vertex<V> from, Vertex<V> to) {
 		
-		Edge e_from;
+		Edge<E> e_from;
 		if(currentGraph.isDirected()){
-			for(Iterator<Edge>it1=currentGraph.incidentInEdges(from);it1.hasNext();){
+			for(Iterator<Edge<E>>it1=currentGraph.incidentInEdges(from);it1.hasNext();){
 				e_from=it1.next();
-				for(Iterator<Edge>it2=currentGraph.incidentOutEdges(to);it2.hasNext();){
+				for(Iterator<Edge<E>>it2=currentGraph.incidentOutEdges(to);it2.hasNext();){
 					if(e_from.equals(it2.next())){
 						graphview.deleteEdge();
 						graphview.paintGraph(currentGraph);
@@ -146,9 +154,9 @@ public class GraphTool<V,E> {
 			}
 		}
 		else{
-			for(Iterator<Edge>it1=currentGraph.incidentEdges(from);it1.hasNext();){
+			for(Iterator<Edge<E>>it1=currentGraph.incidentEdges(from);it1.hasNext();){
 				e_from=it1.next();
-				for(Iterator<Edge>it2=currentGraph.incidentEdges(to);it2.hasNext();){
+				for(Iterator<Edge<E>>it2=currentGraph.incidentEdges(to);it2.hasNext();){
 					if(e_from.equals(it2.next())){
 						graphview.deleteEdge();
 						graphview.paintGraph(currentGraph);
@@ -157,7 +165,7 @@ public class GraphTool<V,E> {
 				}
 			}
 		}
-		Edge e=currentGraph.insertEdge(from, to, "");
+		Edge<E> e=currentGraph.insertEdge(from, to, (E) "");
 		e.set(Attribut.color, STANDARD);
 		graphview.deleteEdge();
 		graphview.paintGraph(currentGraph);
@@ -172,19 +180,19 @@ public class GraphTool<V,E> {
 		graphview.paintGraph(currentGraph);
 	}
 
-	public void deleteVertex(Vertex selected) {
+	public void deleteVertex(Vertex<V> selected) {
 		currentGraph.removeVertex(selected);
 		graphview.paintGraph(currentGraph);
 	}
 
-	public void deleteEdge(Edge selected) {
+	public void deleteEdge(Edge<E> selected) {
 		currentGraph.removeEdge(selected);
 		graphview.paintGraph(currentGraph);
 	}
 	
 	public void newGraph(boolean directed) {
 		//TODO somewhere: do you want to save the old graph?
-		currentGraph = new IncidenceListGraph(directed);
+		currentGraph = new IncidenceListGraph<V,E>(directed);
 	}
 	
 	public void saveGraph(String name) throws IOException {
@@ -207,7 +215,7 @@ public class GraphTool<V,E> {
 		ObjectInputStream ois = null;
 		try {
 			ois = new ObjectInputStream(new FileInputStream(filename));
-			currentGraph = (Graph) ois.readObject();
+			currentGraph = (Graph<V,E>) ois.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -217,13 +225,14 @@ public class GraphTool<V,E> {
 		}
 	}
 
-	public Vertex getStartVertex() {
+	public Vertex<V> getStartVertex() {
 		// TODO angewählter Vertex holen
 		return null;
 	}
 
-	public Vertex getStopVertex() {
+	public Vertex<V> getStopVertex() {
 		// TODO angewählter Vertex holen
 		return null;
 	}
+	
 }

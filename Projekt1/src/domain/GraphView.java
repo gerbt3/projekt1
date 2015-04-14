@@ -3,29 +3,26 @@ package domain;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.geom.Point2D;
-
 import javax.swing.JPanel;
 
 import examples.Decorable;
 import examples.Graph;
-import examples.Vertex;
 
 
-public class GraphView extends JPanel {
+public class GraphView<V,E> extends JPanel {
 
-	private GraphComponent comp;
-	private EditorHandler handler;
+	private GraphComponent<V,E> comp;
+	private EditorHandler<V,E> handler;
 	
-	public GraphView(Graph g, EditorHandler handler){
+	public GraphView(Graph<V,E> g, EditorHandler<V,E> handler){
 		this.handler=handler;
-		comp = new GraphComponent(g, this);
+		comp = new GraphComponent<V, E>(g, this);
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
 		this.add(comp, BorderLayout.CENTER);
 	}
 	
-	public void paintGraph(Graph currentGraph) {
+	public void paintGraph(Graph<V,E> currentGraph) {
 
 		comp.setGraph(currentGraph);
 	}

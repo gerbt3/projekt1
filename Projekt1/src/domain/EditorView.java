@@ -15,11 +15,10 @@ import domain.EditorHandler.State;
 
 
 
-public class EditorView extends JPanel {
+public class EditorView<V, E> extends JPanel {
 	
-	
-	private EditorHandler handler;
-	public EditorView(EditorHandler handler) {
+	private EditorHandler<V,E> handler;
+	public EditorView(EditorHandler<V,E> handler) {
 		this.handler=handler;
 		setLayout(new BorderLayout());
 		constructPanelComponents();

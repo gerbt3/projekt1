@@ -1,18 +1,16 @@
 package domain;
 
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-
 import examples.Decorable;
 import examples.Edge;
 import examples.Vertex;
 
-public class SelectState extends EditorState {
+public class SelectState<V,E> extends EditorState {
 
-	private GraphTool graphtool;
+	private GraphTool<V, E> graphtool;
 	private Decorable selected;
-
-	public SelectState(GraphTool g){
+	private Point selectedPoint;
+	public SelectState(GraphTool<V,E> g){
 		this.graphtool=g;
 	}
 
@@ -27,6 +25,7 @@ public class SelectState extends EditorState {
 		if(d!=null){
 			selected=d;
 			graphtool.setColor(d, GraphTool.SELECTED);
+			selectedPoint=p;
 		}
 
 	}
@@ -35,7 +34,8 @@ public class SelectState extends EditorState {
 	public void mouseDrag(Decorable d, Point p) {
 
 		if(selected instanceof Vertex){
-			graphtool.moveVertex((Vertex)selected, p);
+			if(!(Math.abs(p.getX()-selectedPoint.getX())<=0.5&&Math.abs(p.getY()-selectedPoint.getY())<=0.5))
+				graphtool.moveVertex((Vertex<V>)selected, p);
 		}
 	}
 
@@ -48,10 +48,10 @@ public class SelectState extends EditorState {
 	public void deleteDecorable(){
 		if(selected!=null){
 			if(selected instanceof Vertex){
-				graphtool.deleteVertex((Vertex)selected);
+				graphtool.deleteVertex((Vertex<V>)selected);
 			}
 			else{
-				graphtool.deleteEdge((Edge)selected);
+				graphtool.deleteEdge((Edge<E>)selected);
 			}
 			selected=null;
 		}

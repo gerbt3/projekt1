@@ -1,17 +1,16 @@
 package domain;
 
 import java.awt.Point;
-import java.awt.event.MouseEvent;
 
 import examples.Decorable;
 import examples.Vertex;
 
-public class VertexState extends EditorState{
+public class VertexState<V,E> extends EditorState{
 
-	private GraphTool graphtool;
-	private Vertex selectedVertex;
+	private GraphTool<V,E> graphtool;
+	private Vertex<V> selectedVertex;
 	
-	public VertexState(GraphTool gt){
+	public VertexState(GraphTool<V,E> gt){
 		
 		this.graphtool=gt;
 	}

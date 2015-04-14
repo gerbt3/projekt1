@@ -1,11 +1,10 @@
 package domain;
 
 import java.awt.Point;
-import java.awt.event.MouseEvent;
 
 import examples.Decorable;
 
-public class EditorHandler {
+public class EditorHandler<V,E> {
 
 	public enum State{
 		VERTEX,
@@ -15,11 +14,11 @@ public class EditorHandler {
 	}
 
 	private EditorState currentState;
-	private VertexState vertexState;
-	private EdgeState edgeState;
-	private SelectState selectState;
+	private VertexState<V,E> vertexState;
+	private EdgeState<V,E> edgeState;
+	private SelectState<V,E> selectState;
 
-	public EditorHandler(SelectState selectState, VertexState vertexState,EdgeState edgeState){
+	public EditorHandler(SelectState<V,E> selectState, VertexState<V,E> vertexState,EdgeState<V,E> edgeState){
 		currentState=selectState;
 		this.selectState=selectState;
 		this.vertexState=vertexState;

@@ -21,18 +21,18 @@ import examples.Edge;
 import examples.Graph;
 import examples.Vertex;
 
-public class GraphComponent extends JComponent{
+public class GraphComponent<V,E> extends JComponent{
 
-	private Graph graph;
+	private Graph<V,E> graph;
 	public static double width=30.0;
-	private HashMap<Vertex, Ellipse2D.Double> vertices = new HashMap<>();
-	private HashMap<Edge, Line2D.Double> edges=new HashMap<>();
-	private GraphView graphview;
+	private HashMap<Vertex<V>, Ellipse2D.Double> vertices = new HashMap<>();
+	private HashMap<Edge<E>, Line2D.Double> edges=new HashMap<>();
+	private GraphView<V,E> graphview;
 	private Line2D.Double unfinishedLine=null;
 
-	public GraphComponent(Graph g, GraphView gv){
+	public GraphComponent(Graph<V,E> g, GraphView<V,E> graphView2){
 		this.setGraph(g);
-		this.graphview=gv;
+		this.graphview=graphView2;
 		this.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){
@@ -55,7 +55,7 @@ public class GraphComponent extends JComponent{
 		this.addMouseMotionListener(new MouseMotionAdapter(){
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				
+
 				if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
 					Decorable d=findDecorable(e);
 					graphview.mouseDrag(d, e.getPoint());
@@ -66,8 +66,8 @@ public class GraphComponent extends JComponent{
 
 	public void paintComponent(Graphics g){
 		Graphics2D g2=(Graphics2D)g;
-		Vertex v;
-		Edge e;
+		Vertex<V> v;
+		Edge<E> e;
 		Ellipse2D.Double ellipse;
 		Line2D.Double line;
 		for( Iterator<Ellipse2D.Double> itv = vertices.values().iterator(); itv.hasNext(); ){
@@ -75,16 +75,20 @@ public class GraphComponent extends JComponent{
 			v=this.findKey(vertices, ellipse);
 			g2.setColor((Color)v.get(Attribut.color));
 			g2.draw(ellipse);
+			if(v.has(Attribut.name)){
+				g2.drawString((String)v.get(Attribut.name), (int)(7+(double)v.get(Attribut.pos_x)), (int)(width/2+(double)v.get(Attribut.pos_y)));
+			}
 		}
 		for( Iterator<Line2D.Double> ite = edges.values().iterator(); ite.hasNext(); ){
 			line=ite.next();
 			e=this.findKey(edges, line);
 			g2.setColor((Color)e.get(Attribut.color));
 			g2.draw(line);
-
+		
 			//drawArrowHead(g2, new Point((int) line.x1, (int) line.y1), new Point((int) line.x2, (int) line.y2));
 
 		}
+		//g2.drawString(iterator, x, y);
 		if(unfinishedLine!=null){
 			g2.draw(unfinishedLine);
 		}
@@ -110,9 +114,9 @@ public class GraphComponent extends JComponent{
 		}
 	}
 
-	
-private void setLine(Vertex from, Vertex to, Edge e){
-		
+
+	private void setLine(Vertex<V> from, Vertex<V> to, Edge<E> e){
+
 		double radius=GraphComponent.width/2.0;
 		double x1=(double)from.get(Attribut.pos_x)+radius;
 		double x2=(double)to.get(Attribut.pos_x)+radius;
@@ -125,10 +129,10 @@ private void setLine(Vertex from, Vertex to, Edge e){
 		else{
 			ax=-1;
 		}
-		
+
 		if(y1<y2){
 			by=-1;
-			
+
 		}
 		else{
 			ay=-1;
@@ -136,22 +140,22 @@ private void setLine(Vertex from, Vertex to, Edge e){
 		double alpha=Math.atan(Math.abs((y2-y1)/(x2-x1)));
 		edges.put(e, new Line2D.Double(x1+(Math.cos(alpha)*radius)*ax,y1+(Math.sin(alpha)*radius)*ay,x2+(Math.cos(alpha)*radius)*bx,y2+(Math.sin(alpha)*radius)*by));
 	}
-	
-	public void setGraph(Graph g){
+
+	public void setGraph(Graph<V,E> g){
 		graph=g;
 		vertices.clear();
 		edges.clear();
-		Iterator itv=graph.vertices();
-		Iterator ite=graph.edges();
-		Vertex v;
-		Edge e;
-		Vertex[] ver;
+		Iterator<Vertex<V>> itv=graph.vertices();
+		Iterator<Edge<E>> ite=graph.edges();
+		Vertex<V> v;
+		Edge<E> e;
+		Vertex<V>[] ver;
 		while(itv.hasNext()){
-			v=(Vertex) itv.next();
+			v=(Vertex<V>) itv.next();
 			vertices.put(v,new Ellipse2D.Double((double)v.get(Attribut.pos_x),(double)v.get(Attribut.pos_y),width,width));
 		}
 		while(ite.hasNext()){
-			e=(Edge)ite.next();
+			e=(Edge<E>)ite.next();
 			ver=g.endVertices(e);
 			this.setLine(ver[0], ver[1], e);
 		}
@@ -176,7 +180,7 @@ private void setLine(Vertex from, Vertex to, Edge e){
 		if(d==null){
 			for( Iterator<Line2D.Double> ite = edges.values().iterator(); ite.hasNext(); ){
 				line=ite.next();
-				if(line.ptLineDist(p)<distance){
+				if(line.ptSegDist(p)<distance){
 					d=this.findKey(edges, line);
 					break;
 				}
@@ -186,8 +190,8 @@ private void setLine(Vertex from, Vertex to, Edge e){
 
 	}
 
-	public <V, K> K findKey(HashMap<K,V> map, V value ){
-		for (Entry<K, V> entry : map.entrySet()) {
+	public <V1, K> K findKey(HashMap<K,V1> map, V1 value ){
+		for (Entry<K, V1> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
 				return entry.getKey();
 			}

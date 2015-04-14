@@ -4,22 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 
 
 
 public class AlgoView extends JPanel {
 
-	
-	
-	public AlgoView() {
-		
-		
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public AlgoView() {	
 		
 		setLayout(new BorderLayout());
 		constructPanelComponents();

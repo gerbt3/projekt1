@@ -8,12 +8,12 @@ import java.util.Iterator;
 import examples.GraphExamples;
 import examples.Vertex;
 
-public class AnnotationParser {
+public class AnnotationParser<V, E> {
 
-	private GraphExamples graphexamples;
-	private GraphTool graphtool;
+	private GraphExamples<V,E> graphexamples;
+	private GraphTool<V,E> graphtool;
 	private HashMap<String, Method> annotatedMethods;
-	public AnnotationParser(GraphExamples ge, GraphTool gt){
+	public AnnotationParser(GraphExamples<V,E> ge, GraphTool<V,E> gt){
 		this.graphexamples=ge;
 		this.graphtool=gt;
 	}
@@ -30,7 +30,7 @@ public class AnnotationParser {
 	}
 
 	public void executeMethod(String methodname){
-		Vertex v1=null, v2=null;
+		Vertex<V> v1=null, v2=null;
 		Method method=annotatedMethods.get(methodname);
 		if(method!=null){
 			if(method.getAnnotation(Algorithm.class).vertex()){
