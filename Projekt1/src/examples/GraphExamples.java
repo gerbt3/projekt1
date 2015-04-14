@@ -385,10 +385,10 @@ public class GraphExamples<V,E> {
 		e_h.set(WEIGHT,3.0);
 		Edge e_i = g.insertEdge(vG,vF,"GF");
 		Edge e_j = g.insertEdge(vF,vE,"FE");
-		System.out.println(g);
+		//System.out.println(g);
 		ge.setGateways();
 		
-		new GraphTool( ge);
+		new GraphTool(ge);
 		
 //		System.out.print("Path: ");
 //		Vertex<String> [] path = ge.shortestPath(vA,vG);
