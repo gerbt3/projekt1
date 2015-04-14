@@ -3,6 +3,8 @@ package domain;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,14 +21,17 @@ public class GraphFrame<V, E> extends JFrame {
 	public static final int FRAME_WIDTH = 600;
 	public static final int FRAME_HEIGHT = 400;
 	private EditorHandler<V, E> handler;
+	private MenuHandler menuHandler;
 
-	public GraphFrame(EditorHandler<V,E> handler, GraphView<V,E> gv) {
+	public GraphFrame(EditorHandler<V,E> handler, MenuHandler menuHandler, GraphView<V,E> gv) {
 
 		this.handler=handler;
+		this.menuHandler = menuHandler;
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		constructMenuComponents();
+		constructAttributMenuComponents();
 		constructTabComponents();
 		this.add(gv, BorderLayout.CENTER);
 	}
@@ -63,12 +68,48 @@ public class GraphFrame<V, E> extends JFrame {
 				chooseGraphOption();
 			}
 		});
+		
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+
+				String s = (String) JOptionPane.showInputDialog(null, "Enter a file name");
+				try {
+					menuHandler.saveGraph(s);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
+		openButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+
+				File folder = new File("GraphFiles/");
+				File[] listOfFiles = folder.listFiles();
+
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile()) {
+						System.out.println("File " + listOfFiles[i].getName());
+					} else if (listOfFiles[i].isDirectory()) {
+						System.out.println("Directory " + listOfFiles[i].getName());
+					}
+				}
+			}
+		});
 
 		menuPanel.add(newButton);
 		menuPanel.add(saveButton);
 		menuPanel.add(openButton);
 
 		add(menuPanel, BorderLayout.NORTH);
+	}
+	
+	private void constructAttributMenuComponents() {
+		
+		JPanel attributeMenuPanel = new JPanel();
+		
+		add(attributeMenuPanel, BorderLayout.SOUTH);
 	}
 
 	private void constructTabComponents() {

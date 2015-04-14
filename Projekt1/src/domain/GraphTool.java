@@ -54,7 +54,7 @@ public class GraphTool<V,E> {
 		new VertexState<V,E>(this);
 		EditorHandler<V, E> handler = new EditorHandler<V, E>(new SelectState<V,E>(this), new VertexState<V,E>(this), new EdgeState<V, E>(this));
 		graphview=new GraphView<V,E>(g, handler);
-		GraphFrame<V, E> frame= new GraphFrame<V, E>(handler, graphview );
+		GraphFrame<V, E> frame= new GraphFrame<V, E>(handler, new MenuHandler(this), graphview );
 		frame.setSize(1000, 700);
 		frame.setTitle("GraphTool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -197,7 +197,7 @@ public class GraphTool<V,E> {
 	
 	public void saveGraph(String name) throws IOException {
 		//TODO test this
-		String filename = name + ".ser";
+		String filename = "GraphFiles/" + name + ".ser";
 		ObjectOutputStream oos = null;
 		try {			
 			oos = new ObjectOutputStream(new FileOutputStream(new File(filename)));	

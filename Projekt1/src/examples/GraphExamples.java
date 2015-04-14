@@ -409,39 +409,39 @@ public class GraphExamples<V,E> {
 //		}
 
 		// definition to serialize an object.
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("o.ser")));
-		    oos.writeObject(g);
-		    oos.close();
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		ObjectInputStream ois;
-		try {
-			ois = new ObjectInputStream(                                 
-			        new FileInputStream(  new File("o.ser")) );
-			try {
-				g = (IncidenceListGraph<String,String>) ois.readObject();
-			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}	
-
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//		try {
+//			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("o.ser")));
+//		    oos.writeObject(g);
+//		    oos.close();
+//		} catch (FileNotFoundException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
+//		ObjectInputStream ois;
+//		try {
+//			ois = new ObjectInputStream(                                 
+//			        new FileInputStream(  new File("o.ser")) );
+//			try {
+//				g = (IncidenceListGraph<String,String>) ois.readObject();
+//			} catch (ClassNotFoundException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}	
+//
+//		} catch (FileNotFoundException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 //		int [][] gw = ge.getGatewayMatrix(ad);
 //		int n = gw.length;
 //		for (int i=0;i<n;i++) System.out.println(ge.vertexArray[i]+", "+i);
