@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -77,30 +79,72 @@ public class GraphFrame<V, E> extends JFrame {
 
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-
-				String s = (String) JOptionPane.showInputDialog(null, "Enter a file name");
-				try {
-					menuHandler.saveGraph(s);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
+				String[] options = getFileNames();
+			
+				String name = null;
+				boolean goodName = false;
+				int overwrite = 0;
+				
+				do {
+					name = (String) JOptionPane.showInputDialog(null, "Enter a file name", 
+							"Save a graph", JOptionPane.PLAIN_MESSAGE);
+					
+					//Leaves the loop if the saving is canceled or the window is closed
+					if (name == null) break;
+					
+					//Leaves the loop if the name is not empty or does not already exist
+					if (name != null && !name.isEmpty()) {
+						
+						//Checks if the name already exists
+						for (int i = 0; i < options.length; i++) {
+							if (options[i].equals(name)) {
+								overwrite = JOptionPane.showConfirmDialog(null,"The name already exists. Overwrite?", 
+										"File already exists", JOptionPane.YES_NO_OPTION);
+							}
+						}
+						if (overwrite == JOptionPane.YES_OPTION) goodName = true;
+					}
+					
+				} while (!goodName);
+				
+				if (name != null) {
+					
+					try {
+						menuHandler.saveGraph(name);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+				
 			}
 		});
 
 		openButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
-				File folder = new File("GraphFiles/");
-				File[] listOfFiles = folder.listFiles();
+				String[] options = getFileNames();
 
-				for (int i = 0; i < listOfFiles.length; i++) {
-					if (listOfFiles[i].isFile()) {
-						System.out.println("File " + listOfFiles[i].getName());
-					} else if (listOfFiles[i].isDirectory()) {
-						System.out.println("Directory " + listOfFiles[i].getName());
+				String name = (String) JOptionPane.showInputDialog(
+	                    null,
+	                    "Choose a graph",
+	                    "Open a graph",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    options,
+	                    options[0]);
+				
+				if (name != null) {
+					
+					try {
+						menuHandler.openGraph(name);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
+					
 			}
 		});
 
@@ -109,6 +153,28 @@ public class GraphFrame<V, E> extends JFrame {
 		menuPanel.add(openButton);
 
 		add(menuPanel, BorderLayout.NORTH);
+	}
+	
+	/*
+	 * Gets all files from GraphFiles
+	 * and puts the filenames without endings in an array
+	 */
+	private String[] getFileNames() {
+		
+		File folder = new File("GraphFiles/");
+		File[] listOfFiles = folder.listFiles();
+		
+		String[] options = new String[listOfFiles.length];
+		
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				String filename = listOfFiles[i].getName();
+				filename = filename.substring(0, filename.length()-4);
+				options[i] = filename;
+			}
+		}
+		
+		return options;
 	}
 
 	private void constructAttributMenuComponents() {

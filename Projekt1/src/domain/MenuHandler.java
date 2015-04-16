@@ -14,8 +14,8 @@ public class MenuHandler {
 		graphTool.saveGraph(name);
 	}
 	
-	public void openGraph(String name) {
-		
+	public void openGraph(String name) throws IOException {
+		graphTool.openGraph(name);
 	}
 	
 	public void createGraph(boolean directed){
