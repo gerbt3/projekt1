@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -183,8 +184,36 @@ public class GraphFrame<V, E> extends JFrame {
 	private void constructAttributMenuComponents() {
 
 		JPanel attributeMenuPanel = new JPanel();
+		JCheckBox name=new JCheckBox("name");
+		JCheckBox weight=new JCheckBox("weight");
+		JCheckBox visited=new JCheckBox("visited");
+		name.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				menuHandler.itemChanged(Attribut.name, name.isSelected());
+				
+			}
+		});
+		weight.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				menuHandler.itemChanged(Attribut.weight, weight.isSelected());
+				
+			}
+		});
+		visited.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				menuHandler.itemChanged(Attribut.visited, visited.isSelected());
+				
+			}
+		});
+		
+		attributeMenuPanel.add(name);
+		attributeMenuPanel.add(weight);
+		attributeMenuPanel.add(visited);
 
-		add(attributeMenuPanel, BorderLayout.SOUTH);
+		add(attributeMenuPanel, BorderLayout.EAST);
 	}
 
 	private void constructTabComponents() {
