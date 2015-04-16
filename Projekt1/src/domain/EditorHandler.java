@@ -71,4 +71,8 @@ public class EditorHandler<V,E> {
 			currentState.redo();
 	}
 
+	public void changeAttribut(String text) {
+		
+	}
+
 }

@@ -17,4 +17,8 @@ public abstract class EditorState {
 	public void redo(){
 		// TODO
 	}
+	
+	public void changeAttribut(String text){
+		// nothing to implement
+	}
 }

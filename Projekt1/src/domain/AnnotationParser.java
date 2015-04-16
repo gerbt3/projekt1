@@ -2,8 +2,8 @@ package domain;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import examples.GraphExamples;
 import examples.Vertex;
@@ -12,26 +12,25 @@ public class AnnotationParser<V, E> {
 
 	private GraphExamples<V,E> graphexamples;
 	private GraphTool<V,E> graphtool;
-	private HashMap<String, Method> annotatedMethods;
+	private ArrayList<Method> annotatedMethods;
 	public AnnotationParser(GraphExamples<V,E> ge, GraphTool<V,E> gt){
 		this.graphexamples=ge;
 		this.graphtool=gt;
 	}
 
-	public Iterator<Method> getAnnotatedMethods(){
-		annotatedMethods=new HashMap<>();
+	public Vector<Method> getAnnotatedMethods(){
+		annotatedMethods=new ArrayList<>();
 		Method[] methods = GraphExamples.class.getMethods();
 		for(int i=0; i<methods.length; i++){
 			if(methods[i].isAnnotationPresent(Algorithm.class)){
-				annotatedMethods.put(methods[i].getName(), methods[i]);
+				annotatedMethods.add(methods[i]);
 			}
 		}
-		return annotatedMethods.values().iterator();
+		return new Vector<Method>(annotatedMethods);
 	}
 
-	public void executeMethod(String methodname){
+	public void executeMethod(Method method){
 		Vertex<V> v1=null, v2=null;
-		Method method=annotatedMethods.get(methodname);
 		if(method!=null){
 			if(method.getAnnotation(Algorithm.class).vertex()){
 				v1=graphtool.getStartVertex();

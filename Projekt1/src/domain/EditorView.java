@@ -9,6 +9,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 import domain.EditorHandler.State;
 
@@ -30,7 +31,16 @@ public class EditorView<V, E> extends JPanel {
 		JButton deleteButton = new JButton("Delete");
 		JButton vertexButton = new JButton("Vertex");
 		JButton edgeButton = new JButton("Edge");
+		JTextField attributText = new JTextField(15);
+		JButton editAttributButton=new JButton("Edit");
 		
+		editAttributButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				handler.changeAttribut(edgeButton.getText());
+			}
+		});
 		selectionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                handler.setState(State.SELECT);
@@ -55,22 +65,17 @@ public class EditorView<V, E> extends JPanel {
             }
          });
 		
-		JRadioButton undirectedButton = new JRadioButton("undirected");
-		JRadioButton directedButton = new JRadioButton("directed");
 		
-		ButtonGroup group = new ButtonGroup();
-		group.add(undirectedButton);
-		group.add(directedButton);
 		
 		JPanel toolPanel = new JPanel(new FlowLayout());
 		
+		toolPanel.add(attributText);
+		toolPanel.add(editAttributButton);
 		toolPanel.add(selectionButton);
 		toolPanel.add(deleteButton);
 		toolPanel.add(vertexButton);
 		toolPanel.add(edgeButton);
 		
-		toolPanel.add(undirectedButton);
-		toolPanel.add(directedButton);
 		
 		add(toolPanel, BorderLayout.NORTH);
 	}

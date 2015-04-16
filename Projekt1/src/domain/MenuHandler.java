@@ -2,6 +2,8 @@ package domain;
 
 import java.io.IOException;
 
+import domain.GraphTool.Attribut;
+
 public class MenuHandler {
 
 	GraphTool graphTool;
@@ -14,12 +16,17 @@ public class MenuHandler {
 		graphTool.saveGraph(name);
 	}
 	
-	public void openGraph(String name) {
-		
+	public void openGraph(String name) throws IOException {
+		graphTool.openGraph(name);
 	}
 	
 	public void createGraph(boolean directed){
 		graphTool.createGraph(directed);
+	}
+
+	public void itemChanged(Attribut attr, boolean selected) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

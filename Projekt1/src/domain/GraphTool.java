@@ -200,7 +200,6 @@ public class GraphTool<V,E> {
 	}
 	
 	public void saveGraph(String name) throws IOException {
-		//TODO test this
 		String filename = "GraphFiles/" + name + ".ser";
 		ObjectOutputStream oos = null;
 		try {			
@@ -214,12 +213,12 @@ public class GraphTool<V,E> {
 	}
 	
 	public void openGraph(String name) throws IOException {
-		//TODO test this
-		String filename = name + ".ser";
+		String filename = "GraphFiles/" + name + ".ser";
 		ObjectInputStream ois = null;
 		try {
 			ois = new ObjectInputStream(new FileInputStream(filename));
 			currentGraph = (Graph<V,E>) ois.readObject();
+			graphview.paintGraph(currentGraph);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -228,7 +227,7 @@ public class GraphTool<V,E> {
 			ois.close();
 		}
 	}
-
+	
 	public Vertex<V> getStartVertex() {
 		// TODO angewählter Vertex holen
 		return null;
@@ -237,6 +236,16 @@ public class GraphTool<V,E> {
 	public Vertex<V> getStopVertex() {
 		// TODO angewählter Vertex holen
 		return null;
+	}
+
+	public void changeName(Vertex v, String text) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void changeWeight(Edge v, String text) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
