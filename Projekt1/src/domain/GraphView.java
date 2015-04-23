@@ -13,6 +13,7 @@ public class GraphView<V,E> extends JPanel {
 
 	private GraphComponent<V,E> comp;
 	private EditorHandler<V,E> handler;
+	private Handler<V,E> aHandler; 
 	
 	public GraphView(Graph<V,E> g, EditorHandler<V,E> handler){
 		this.handler=handler;

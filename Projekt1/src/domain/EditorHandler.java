@@ -4,7 +4,7 @@ import java.awt.Point;
 
 import examples.Decorable;
 
-public class EditorHandler<V,E> {
+public class EditorHandler<V,E> implements Handler<V, E> {
 
 	public enum State{
 		VERTEX,

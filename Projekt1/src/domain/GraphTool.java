@@ -7,12 +7,7 @@ import java.util.Iterator;
 import javax.swing.JFrame;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import examples.Decorable;
 import examples.Edge;
@@ -40,6 +35,7 @@ public class GraphTool<V,E> {
 	public static Color STANDARD = Color.BLACK;
 	public static Color SELECTED = Color.BLUE;
 	private GraphFrame<V, E> frame;
+	private GraphSerializer<V, E> graphSerializer;
 	
 	
 	public GraphTool(GraphExamples<V,E> ge){
@@ -61,6 +57,7 @@ public class GraphTool<V,E> {
 		frame.setTitle("GraphTool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		graphSerializer = new GraphSerializer<V, E>(); //types???
 	}
 
 	public void createGraph(boolean directed){
@@ -146,9 +143,9 @@ public class GraphTool<V,E> {
 		
 		Edge<E> e_from;
 		if(currentGraph.isDirected()){
-			for(Iterator<Edge<E>>it1=currentGraph.incidentInEdges(from);it1.hasNext();){
+			for(Iterator<Edge<E>>it1=currentGraph.incidentInEdges(to);it1.hasNext();){
 				e_from=it1.next();
-				for(Iterator<Edge<E>>it2=currentGraph.incidentOutEdges(to);it2.hasNext();){
+				for(Iterator<Edge<E>>it2=currentGraph.incidentOutEdges(from);it2.hasNext();){
 					if(e_from.equals(it2.next())){
 						graphview.deleteEdge();
 						graphview.paintGraph(currentGraph);
@@ -200,32 +197,13 @@ public class GraphTool<V,E> {
 	}
 	
 	public void saveGraph(String name) throws IOException {
-		String filename = "GraphFiles/" + name + ".ser";
-		ObjectOutputStream oos = null;
-		try {			
-			oos = new ObjectOutputStream(new FileOutputStream(new File(filename)));	
-		    oos.writeObject(currentGraph); 
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} finally {
-			oos.close();
-		}
+		graphSerializer.saveGraph(name, currentGraph);
 	}
 	
 	public void openGraph(String name) throws IOException {
-		String filename = "GraphFiles/" + name + ".ser";
-		ObjectInputStream ois = null;
-		try {
-			ois = new ObjectInputStream(new FileInputStream(filename));
-			currentGraph = (Graph<V,E>) ois.readObject();
-			graphview.paintGraph(currentGraph);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			ois.close();
-		}
+		Graph graph = graphSerializer.openGraph(name);
+		currentGraph = graph;
+		graphview.paintGraph(currentGraph);
 	}
 	
 	public Vertex<V> getStartVertex() {
