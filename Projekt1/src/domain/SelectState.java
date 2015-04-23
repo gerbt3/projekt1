@@ -2,6 +2,7 @@ package domain;
 
 import java.awt.Point;
 
+import domain.GraphTool.Attribut;
 import examples.Decorable;
 import examples.Edge;
 import examples.Vertex;
@@ -61,10 +62,10 @@ public class SelectState<V,E> extends EditorState {
 	@Override
 	public void changeAttribut(String text){
 		if(selected instanceof Vertex){
-			graphtool.changeName((Vertex)selected, text);
+			graphtool.changeAttribut(selected,Attribut.name, text);
 		}
 		if(selected instanceof Edge){
-			graphtool.changeWeight((Edge)selected, text);
+			graphtool.changeAttribut(selected,Attribut.weight, text);
 		}
 	}
 }

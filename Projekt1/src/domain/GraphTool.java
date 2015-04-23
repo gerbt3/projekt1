@@ -25,8 +25,7 @@ public class GraphTool<V,E> {
 		color,
 		name,
 		weight,
-		distance,
-		visited
+		string
 	}
 	
 	private int nameIndex=1;
@@ -216,14 +215,9 @@ public class GraphTool<V,E> {
 		return null;
 	}
 
-	public void changeName(Vertex v, String text) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void changeWeight(Edge v, String text) {
-		// TODO Auto-generated method stub
-		
+	public void changeAttribut(Decorable d, Attribut attr, String text){
+		d.set(attr, text);
+		graphview.paintGraph(currentGraph);
 	}
 	
 }

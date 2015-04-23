@@ -38,7 +38,7 @@ public class EditorView<V, E> extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				handler.changeAttribut(edgeButton.getText());
+				handler.changeAttribut(attributText.getText());
 			}
 		});
 		selectionButton.addActionListener(new ActionListener() {

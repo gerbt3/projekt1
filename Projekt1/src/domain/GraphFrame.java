@@ -201,7 +201,7 @@ public class GraphFrame<V, E> extends JFrame {
 		JPanel attributeMenuPanel = new JPanel();
 		JCheckBox name=new JCheckBox("name");
 		JCheckBox weight=new JCheckBox("weight");
-		JCheckBox visited=new JCheckBox("visited");
+		JCheckBox string=new JCheckBox("string");
 		name.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -216,17 +216,17 @@ public class GraphFrame<V, E> extends JFrame {
 
 			}
 		});
-		visited.addItemListener(new ItemListener() {
+		string.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				menuHandler.itemChanged(Attribut.visited, visited.isSelected());
+				menuHandler.itemChanged(Attribut.string, string.isSelected());
 
 			}
 		});
 
 		attributeMenuPanel.add(name);
 		attributeMenuPanel.add(weight);
-		attributeMenuPanel.add(visited);
+		attributeMenuPanel.add(string);
 
 		add(attributeMenuPanel, BorderLayout.EAST);
 	}

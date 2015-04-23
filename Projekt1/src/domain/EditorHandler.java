@@ -72,7 +72,8 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	}
 
 	public void changeAttribut(String text) {
-		
+		if(currentState!=null)
+			currentState.changeAttribut(text);
 	}
 
 }
