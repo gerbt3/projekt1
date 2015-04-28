@@ -6,8 +6,6 @@ import java.util.Iterator;
 
 import javax.swing.JFrame;
 
-import domain.GraphTool.Attribut;
-
 import java.awt.Color;
 import java.io.IOException;
 
@@ -20,15 +18,6 @@ import examples.Vertex;
 
 
 public class GraphTool<V,E> {
-
-	public enum Attribut{
-		pos_x,
-		pos_y,
-		color,
-		name,
-		weight,
-		string
-	}
 	
 	private int nameIndex=1;
 	private Graph<V, E> currentGraph;
