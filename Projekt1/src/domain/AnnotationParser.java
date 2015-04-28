@@ -29,6 +29,14 @@ public class AnnotationParser<V, E> {
 		return new Vector<Method>(annotatedMethods);
 	}
 
+	public boolean isStartvertexNeeded(Method method){
+		return method.getAnnotation(Algorithm.class).vertex();
+	}
+	
+	public boolean isStopvertexNeeded(Method method){
+		return method.getAnnotation(Algorithm.class).vertex2();
+	}
+	
 	public void executeMethod(Method method){
 		Vertex<V> v1=null, v2=null;
 		if(method!=null){
