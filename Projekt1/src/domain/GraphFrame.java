@@ -32,13 +32,18 @@ public class GraphFrame<V, E> extends JFrame {
 
 	public static final int FRAME_WIDTH = 600;
 	public static final int FRAME_HEIGHT = 400;
+	private GraphView graphview;
 	private EditorHandler<V, E> handler;
+	private AlgoHandler<V,E> algoHandler;
 	private MenuHandler menuHandler;
 	private String currentGraphName;
 
-	public GraphFrame(EditorHandler<V,E> handler, MenuHandler menuHandler, GraphView<V,E> gv) {
+	public GraphFrame(EditorHandler<V,E> handler, AlgoHandler algoHandler, 
+			MenuHandler menuHandler, GraphView<V,E> gv) {
 
+		this.graphview = gv;
 		this.handler=handler;
+		this.algoHandler = algoHandler;
 		this.menuHandler = menuHandler;
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -237,7 +242,7 @@ public class GraphFrame<V, E> extends JFrame {
 	private void constructTabComponents() {
 
 		JPanel graphPanel = new EditorView<V, E>(handler);
-		JPanel algoPanel = new AlgoView();
+		JPanel algoPanel = new AlgoView(algoHandler);
 
 		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
@@ -250,10 +255,13 @@ public class GraphFrame<V, E> extends JFrame {
 				// shows which panel is selected
 				int i=tabpane.getSelectedIndex();
 				if(i==0){
+					algoHandler.clearSelected();
+					graphview.setHandler(handler);
 					handler.setState(State.SELECT);
 				}
 				else
 				{
+					graphview.setHandler(algoHandler);
 					handler.setState(State.INACTIVE);
 				}
 			}

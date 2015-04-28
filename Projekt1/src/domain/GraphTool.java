@@ -37,6 +37,8 @@ public class GraphTool<V,E> {
 	public static Color SELECTED = Color.BLUE;
 	private GraphFrame<V, E> frame;
 	private GraphSerializer<V, E> graphSerializer;
+	private AlgoHandler algoHandler;
+	private AnnotationParser parser;
 	
 	
 	public GraphTool(GraphExamples<V,E> ge){
@@ -48,12 +50,14 @@ public class GraphTool<V,E> {
 	
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
 
+		AnnotationParser parser = new AnnotationParser<V,E>(ge, this);
 		currentGraph=g;
 		this.calculatePositions(currentGraph);
 		new VertexState<V,E>(this);
 		EditorHandler<V, E> handler = new EditorHandler<V, E>(new SelectState<V,E>(this), new VertexState<V,E>(this), new EdgeState<V, E>(this));
+		algoHandler = new AlgoHandler(this, parser);
 		graphview=new GraphView<V,E>(g, handler);
-		frame= new GraphFrame<V, E>(handler, new MenuHandler(this), graphview );
+		frame= new GraphFrame<V, E>(handler, algoHandler, new MenuHandler(this), graphview );
 		frame.setSize(1000, 700);
 		frame.setTitle("GraphTool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -169,6 +173,7 @@ public class GraphTool<V,E> {
 		}
 		Edge<E> e=currentGraph.insertEdge(from, to, (E) "");
 		e.set(Attribut.color, STANDARD);
+		e.set(Attribut.weight, "1");
 		graphview.deleteEdge();
 		graphview.paintGraph(currentGraph);
 
