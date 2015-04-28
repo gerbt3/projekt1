@@ -29,6 +29,7 @@ public class GraphComponent<V,E> extends JComponent{
 	private HashMap<Edge<E>, Line2D.Double> edges=new HashMap<>();
 	private GraphView<V,E> graphview;
 	private Line2D.Double unfinishedLine=null;
+	private boolean name=false, weight=false, string=false;
 
 	public GraphComponent(Graph<V,E> g, GraphView<V,E> graphView2){
 		this.setGraph(g);
@@ -75,15 +76,19 @@ public class GraphComponent<V,E> extends JComponent{
 			v=this.findKey(vertices, ellipse);
 			g2.setColor((Color)v.get(Attribut.color));
 			g2.draw(ellipse);
-			if(v.has(Attribut.name)){
+			if(v.has(Attribut.name)&&name){
 				g2.drawString((String)v.get(Attribut.name), (int)(7+(double)v.get(Attribut.pos_x)), (int)(width/2+(double)v.get(Attribut.pos_y)));
 			}
+
 		}
 		for( Iterator<Line2D.Double> ite = edges.values().iterator(); ite.hasNext(); ){
 			line=ite.next();
 			e=this.findKey(edges, line);
 			g2.setColor((Color)e.get(Attribut.color));
 			g2.draw(line);
+			if(e.has(Attribut.weight)&&weight){
+				g2.drawString((String)e.get(Attribut.weight), (int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+			}
 			if(graph.isDirected())
 				drawArrowHead(g2, new Point((int) line.x2, (int) line.y2),new Point((int) line.x1, (int) line.y1));
 
@@ -210,5 +215,18 @@ public class GraphComponent<V,E> extends JComponent{
 	public void deleteEdge(){
 		unfinishedLine=null;
 		repaint();
+	}
+
+	public void setFlag(Attribut attr, boolean selected) {
+		switch(attr){
+		case name:
+			this.name=selected;
+			break;
+		case weight:
+			this.weight=selected;
+			break;
+		case string: this.string=selected;
+		}
+		
 	}
 }

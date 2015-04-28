@@ -6,6 +6,8 @@ import java.util.Iterator;
 
 import javax.swing.JFrame;
 
+import domain.GraphTool.Attribut;
+
 import java.awt.Color;
 import java.io.IOException;
 
@@ -217,6 +219,12 @@ public class GraphTool<V,E> {
 
 	public void changeAttribut(Decorable d, Attribut attr, String text){
 		d.set(attr, text);
+		graphview.paintGraph(currentGraph);
+	}
+
+	public void itemChanged(Attribut attr, boolean selected) {
+		
+		graphview.setFlag(attr, selected);
 		graphview.paintGraph(currentGraph);
 	}
 	
