@@ -6,8 +6,6 @@ import java.util.Iterator;
 
 import javax.swing.JFrame;
 
-import domain.GraphTool.Attribut;
-
 import java.awt.Color;
 import java.io.IOException;
 
@@ -20,15 +18,6 @@ import examples.Vertex;
 
 
 public class GraphTool<V,E> {
-
-	public enum Attribut{
-		pos_x,
-		pos_y,
-		color,
-		name,
-		weight,
-		string
-	}
 	
 	private int nameIndex=1;
 	private Graph<V, E> currentGraph;
@@ -39,6 +28,8 @@ public class GraphTool<V,E> {
 	private GraphSerializer<V, E> graphSerializer;
 	private AlgoHandler algoHandler;
 	private AnnotationParser parser;
+	private Vertex startVertex;
+	private Vertex endVertex;
 	
 	public GraphTool(GraphExamples<V,E> ge){
 		
@@ -54,7 +45,7 @@ public class GraphTool<V,E> {
 		this.calculatePositions(currentGraph);
 		new VertexState<V,E>(this);
 		EditorHandler<V, E> handler = new EditorHandler<V, E>(new SelectState<V,E>(this), new VertexState<V,E>(this), new EdgeState<V, E>(this));
-		algoHandler = new AlgoHandler(this, parser);
+		algoHandler = new AlgoHandler(this, parser, graphSerializer);
 		graphview=new GraphView<V,E>(g, handler);
 		frame= new GraphFrame<V, E>(handler, algoHandler, new MenuHandler(this), graphview );
 		frame.setSize(1000, 700);
@@ -65,6 +56,10 @@ public class GraphTool<V,E> {
 		
 	}
 
+	//------------------------------------------------------------------------------------//
+	// Methods for drawing a graph
+	//------------------------------------------------------------------------------------//
+	
 	public void createGraph(boolean directed){
 		currentGraph=new IncidenceListGraph<V, E>(directed);
 		nameIndex=1;
@@ -196,6 +191,10 @@ public class GraphTool<V,E> {
 		graphview.paintGraph(currentGraph);
 	}
 	
+	//------------------------------------------------------------------------------------//
+	// Methods for creating a new graph, saving and loading a graph
+	//------------------------------------------------------------------------------------//
+	
 	public void newGraph(boolean directed) {
 		//TODO somewhere: do you want to save the old graph?
 		currentGraph = new IncidenceListGraph<V,E>(directed);
@@ -211,11 +210,23 @@ public class GraphTool<V,E> {
 		graphview.paintGraph(currentGraph);
 	}
 	
+	//------------------------------------------------------------------------------------//
+	// Helper-methods for executing an algorithm
+	//------------------------------------------------------------------------------------//
+	
+	/*
+	 * Returns the start vertex for an algorithm,
+	 * that needs one
+	 */
 	public Vertex<V> getStartVertex() {
 		// TODO angewählter Vertex holen
 		return null;
 	}
 
+	/*
+	 * Returns the end vertex for an algorithm,
+	 * that needs one
+	 */
 	public Vertex<V> getStopVertex() {
 		// TODO angewählter Vertex holen
 		return null;

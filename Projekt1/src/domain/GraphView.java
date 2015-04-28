@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Point;
 
 import javax.swing.JPanel;
-
-import domain.GraphTool.Attribut;
 import examples.Decorable;
 import examples.Graph;
 

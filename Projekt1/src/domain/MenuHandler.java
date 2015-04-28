@@ -2,7 +2,6 @@ package domain;
 
 import java.io.IOException;
 
-import domain.GraphTool.Attribut;
 
 /*
  * Handles everything between the frame and the tool class

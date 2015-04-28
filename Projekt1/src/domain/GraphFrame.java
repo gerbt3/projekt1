@@ -20,9 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import domain.EditorHandler.State;
-import domain.GraphTool.Attribut;
 
 /*
  * Constructs the frame with the different menus

@@ -1,5 +1,6 @@
 package domain;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,7 +75,7 @@ public class GraphSerializer<V,E> {
 	 * Makes a copy of a graph while drawing a graph
 	 * respectively in editor mode
 	 */
-	public void saveEditorGraph(Graph<V, E> g){
+	public void saveEditorGraph(Graph<V, E> g) throws IOException{
 		this.serializeGraph(g, editorGraph);
 	}
 	
@@ -82,23 +83,54 @@ public class GraphSerializer<V,E> {
 	 * Makes a copy of a graph while animating an algorithm
 	 * respectively in algorithm mode
 	 */
-	public void saveAlgoGraph(Graph<V, E> g){
+	public void saveAlgoGraph(Graph<V, E> g) throws IOException{
 		this.serializeGraph(g, algoGraph);
 	}
 	
 	/*
 	 * Makes a temporary copy of a graph by serializing
 	 */
-	private void serializeGraph(Graph<V, E> g, ArrayList<byte[]> list){
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();		
+	private void serializeGraph(Graph<V, E> g, ArrayList<byte[]> list) throws IOException{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = null;
 		try {			
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			oos = new ObjectOutputStream(bos);
 			oos.writeObject(g);
-			oos.close();
 			list.add( bos.toByteArray());
 		} catch (IOException e1) {
 			e1.printStackTrace();
+		} finally {
+			oos.close();
 		}
+	}
+	
+	/*
+	 * Returns an Arraylist of Graphs deserialized from serialized list of graphs
+	 */
+	// Has to be tested if it works!!!!
+	public ArrayList<Graph> getAlgoGraphs() throws IOException, ClassNotFoundException {
+		
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(algoGraph.get(0)));
+		ArrayList<Graph> algoGraphs = new ArrayList<>();
+		
+		
+		for (int i = 0; i < algoGraph.size(); i++) {
+		
+			ois.read(algoGraph.get(i));
+			
+			try {			
+				
+				algoGraphs.add((Graph) ois.readObject());
+				System.out.println("Graph " + i + " name " + algoGraphs.get(i));
+			  	
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} finally {
+				ois.close();
+			}
+		}
+		
+		return algoGraphs;
 	}
 
 	//------------------------------------------------------------------------------------//

@@ -12,10 +12,7 @@ import java.awt.geom.Line2D;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
 import javax.swing.JComponent;
-
-import domain.GraphTool.Attribut;
 import examples.Decorable;
 import examples.Edge;
 import examples.Graph;

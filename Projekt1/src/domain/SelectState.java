@@ -1,8 +1,6 @@
 package domain;
 
 import java.awt.Point;
-
-import domain.GraphTool.Attribut;
 import examples.Decorable;
 import examples.Edge;
 import examples.Vertex;

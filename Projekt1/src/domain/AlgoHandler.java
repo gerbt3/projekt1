@@ -9,12 +9,14 @@ import examples.Decorable;
 public class AlgoHandler<V,E> implements Handler<V,E> {
 	
 	private SelectState selectState;
+	private GraphSerializer<V, E> graphSerializer;
 	private AnnotationParser parser;
 	private Method currentAlgoMethod;
 	
-	public AlgoHandler(GraphTool tool, AnnotationParser parser) {
+	public AlgoHandler(GraphTool tool, AnnotationParser parser, GraphSerializer graphSerializer) {
 		selectState = new SelectState<V,E>(tool);
 		this.parser = parser;
+		this.graphSerializer = graphSerializer;
 	}
 	
 	@Override
@@ -41,7 +43,10 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	public void clearSelected() {
 		selectState.mouseDown(null, null);
 	}
-
+	
+	//------------------------------------------------------------------------------------//
+	// Methods for controlling an algorithm
+	//------------------------------------------------------------------------------------//
 	
 	public void startAlgo(Method currentAlgoMethod) {
 		this.currentAlgoMethod = currentAlgoMethod;
