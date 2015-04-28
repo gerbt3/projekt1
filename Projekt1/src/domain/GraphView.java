@@ -3,7 +3,6 @@ package domain;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
-
 import javax.swing.JPanel;
 import examples.Decorable;
 import examples.Graph;

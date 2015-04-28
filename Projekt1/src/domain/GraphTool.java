@@ -168,6 +168,7 @@ public class GraphTool<V,E> {
 		}
 		Edge<E> e=currentGraph.insertEdge(from, to, (E) "");
 		e.set(Attribut.color, STANDARD);
+		e.set(Attribut.weight, "1");
 		graphview.deleteEdge();
 		graphview.paintGraph(currentGraph);
 
