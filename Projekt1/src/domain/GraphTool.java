@@ -40,7 +40,6 @@ public class GraphTool<V,E> {
 	private AlgoHandler algoHandler;
 	private AnnotationParser parser;
 	
-	
 	public GraphTool(GraphExamples<V,E> ge){
 		
 		this(new IncidenceListGraph<V,E>(), ge);
@@ -63,6 +62,7 @@ public class GraphTool<V,E> {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		graphSerializer = new GraphSerializer<V, E>(); //types???
+		
 	}
 
 	public void createGraph(boolean directed){
