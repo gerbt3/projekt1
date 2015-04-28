@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import domain.Algorithm;
 import domain.GraphTool;
 
 
@@ -96,7 +97,7 @@ public class GraphExamples<V,E> {
 		return ad;
 	}
 	
-
+	@Algorithm
 	public void kruskal(){
 		// gives the Object MSF to each
 		// edge belonging to an minimal spanning forest
@@ -143,7 +144,7 @@ public class GraphExamples<V,E> {
 		}
 	}
 	
-	
+	@Algorithm(vertex=true)
 	public void dijkstra(Vertex<V> s){
 		// sets the attribute 's' of each vertex 'u' from wich 
 		// we can reach 's' to 'g' where 'g' is the gateway

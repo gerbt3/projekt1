@@ -28,7 +28,7 @@ public class MenuHandler {
 	}
 
 	public void itemChanged(Attribut attr, boolean selected) {
-		// TODO Auto-generated method stub
+		graphTool.itemChanged(attr, selected);
 		
 	}
 	

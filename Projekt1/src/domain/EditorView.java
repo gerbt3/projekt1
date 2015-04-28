@@ -5,10 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import domain.EditorHandler.State;
@@ -35,12 +33,12 @@ public class EditorView<V, E> extends JPanel {
 		JButton editAttributButton=new JButton("Edit");
 		
 		editAttributButton.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				handler.changeAttribut(attributText.getText());
 			}
 		});
+		
 		selectionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                handler.setState(State.SELECT);
