@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-
 import examples.Graph;
 
 /*
@@ -34,7 +33,7 @@ public class GraphSerializer<V,E> {
 	/*
 	 * Saves a graph permanently as a file by serializing
 	 */
-	public void saveGraph(String name, Graph graph) throws IOException {
+	public void saveGraph(String name, Graph<V,E> graph) throws IOException {
 		String filename = "GraphFiles/" + name + ".ser";
 		ObjectOutputStream oos = null;
 		try {			
@@ -50,9 +49,9 @@ public class GraphSerializer<V,E> {
 	/*
 	 * Opens a saved graph from a file by deserializing
 	 */
-	public Graph openGraph(String name) throws IOException {
+	public Graph<V,E> openGraph(String name) throws IOException {
 		String filename = "GraphFiles/" + name + ".ser";
-		Graph graph = null;
+		Graph<V,E> graph = null;
 		ObjectInputStream ois = null;
 		try {
 			ois = new ObjectInputStream(new FileInputStream(filename));
@@ -108,10 +107,10 @@ public class GraphSerializer<V,E> {
 	 * Returns an Arraylist of Graphs deserialized from serialized list of graphs
 	 */
 	// Has to be tested if it works!!!!
-	public ArrayList<Graph> getAlgoGraphs() throws IOException, ClassNotFoundException {
+	public ArrayList<Graph<V,E>> getAlgoGraphs() throws IOException, ClassNotFoundException {
 		
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(algoGraph.get(0)));
-		ArrayList<Graph> algoGraphs = new ArrayList<>();
+		ArrayList<Graph<V,E>> algoGraphs = new ArrayList<>();
 		
 		
 		for (int i = 0; i < algoGraph.size(); i++) {
@@ -120,7 +119,7 @@ public class GraphSerializer<V,E> {
 			
 			try {			
 				
-				algoGraphs.add((Graph) ois.readObject());
+				algoGraphs.add((Graph<V,E>) ois.readObject());
 				System.out.println("Graph " + i + " name " + algoGraphs.get(i));
 			  	
 			} catch (IOException e1) {

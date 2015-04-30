@@ -6,11 +6,11 @@ import examples.Vertex;
 
 public class EdgeState<V, E> extends EditorState {
 
-	private GraphTool<V,E> graphtool;
+	private GraphTool<V,E> graphTool;
 	private Vertex<V> startVertex;
 
 	public EdgeState(GraphTool<V,E> g){
-		this.graphtool=g;
+		this.graphTool=g;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class EdgeState<V, E> extends EditorState {
 	@Override
 	public void mouseDrag(Decorable d, Point p) {
 		if(startVertex!=null)
-			graphtool.insertEdge(startVertex, p);
+			graphTool.insertEdge(startVertex, p);
 	}
 
 	@Override
@@ -36,12 +36,12 @@ public class EdgeState<V, E> extends EditorState {
 		if(d!=null&&d!=startVertex&&startVertex!=null){
 			if(d instanceof Vertex){
 				if(!d.equals(startVertex)){
-					graphtool.insertEdge(startVertex, (Vertex<V>)d);
+					graphTool.insertEdge(startVertex, (Vertex<V>)d);
 				}
 
 			}
 		}
 		else
-			graphtool.deleteEdge();
+			graphTool.deleteEdge();
 	}
 }

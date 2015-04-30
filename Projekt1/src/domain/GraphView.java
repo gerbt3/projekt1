@@ -13,15 +13,14 @@ public class GraphView<V,E> extends JPanel {
 	private GraphComponent<V,E> comp;
 	private Handler<V,E> handler; 
 	
-	public GraphView(Graph<V,E> g, Handler<V,E> handler){
-		this.handler=handler;
-		comp = new GraphComponent<V, E>(g, this);
+	public GraphView(){
+		comp = new GraphComponent<V, E>(this);
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
 		this.add(comp, BorderLayout.CENTER);
 	}
 	
-	public void setHandler(Handler handler) {
+	public void setHandler(Handler<V,E> handler) {
 		this.handler = handler;
 	}
 	

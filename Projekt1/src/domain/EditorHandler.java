@@ -1,7 +1,6 @@
 package domain;
 
 import java.awt.Point;
-
 import examples.Decorable;
 
 public class EditorHandler<V,E> implements Handler<V, E> {
@@ -23,6 +22,13 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 		this.selectState=selectState;
 		this.vertexState=vertexState;
 		this.edgeState=edgeState;
+	}
+
+	public EditorHandler(GraphTool<V, E> gt) {
+		this.selectState=new SelectState<V,E>(gt);
+		this.vertexState=new VertexState<V,E>(gt);
+		this.edgeState=new EdgeState<V,E>(gt);
+		this.currentState=this.selectState;
 	}
 
 	public void setState(State state){

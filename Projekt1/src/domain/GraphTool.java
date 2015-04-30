@@ -3,12 +3,10 @@ package domain;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.Iterator;
-
-import javax.swing.JFrame;
-
+import java.util.Vector;
 import java.awt.Color;
 import java.io.IOException;
-
+import java.lang.reflect.Method;
 import examples.Decorable;
 import examples.Edge;
 import examples.Graph;
@@ -21,38 +19,33 @@ public class GraphTool<V,E> {
 	
 	private int nameIndex=1;
 	private Graph<V, E> currentGraph;
-	private GraphView<V,E> graphview;
 	public static Color STANDARD = Color.BLACK;
 	public static Color SELECTED = Color.BLUE;
-	private GraphFrame<V, E> frame;
 	private GraphSerializer<V, E> graphSerializer;
-	private AlgoHandler algoHandler;
-	private AnnotationParser parser;
-	private Vertex startVertex;
-	private Vertex endVertex;
+	private AlgoHandler<V,E> algoHandler;
+	private AnnotationParser<V,E> parser;
+	private Vertex<V> startVertex;
+	private Vertex<V> endVertex;
+	private ViewHandler<V,E> viewHandler;
 	
 	public GraphTool(GraphExamples<V,E> ge){
 		
 		this(new IncidenceListGraph<V,E>(), ge);
-		if(!frame.chooseGraphOption())
+		if(!viewHandler.chooseGraphOption())
 			this.createGraph(false);
 	}
 	
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
 
-		AnnotationParser parser = new AnnotationParser<V,E>(ge, this);
+		viewHandler=new ViewHandler<V,E>(this);
 		currentGraph=g;
 		this.calculatePositions(currentGraph);
-		new VertexState<V,E>(this);
-		EditorHandler<V, E> handler = new EditorHandler<V, E>(new SelectState<V,E>(this), new VertexState<V,E>(this), new EdgeState<V, E>(this));
-		algoHandler = new AlgoHandler(this, parser, graphSerializer);
-		graphview=new GraphView<V,E>(g, handler);
-		frame= new GraphFrame<V, E>(handler, algoHandler, new MenuHandler(this), graphview );
-		frame.setSize(1000, 700);
-		frame.setTitle("GraphTool");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		graphSerializer = new GraphSerializer<V, E>(); //types???
+		viewHandler.setGraph(currentGraph);
+		parser = new AnnotationParser<V,E>(ge, this);
+		graphSerializer = new GraphSerializer<V, E>();
+		
+
+		
 		
 	}
 
@@ -63,7 +56,7 @@ public class GraphTool<V,E> {
 	public void createGraph(boolean directed){
 		currentGraph=new IncidenceListGraph<V, E>(directed);
 		nameIndex=1;
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 
 	private void calculatePositions(Graph<V, E> g) {
@@ -101,12 +94,12 @@ public class GraphTool<V,E> {
 		v.set(Attribut.name, Integer.toString(nameIndex));
 		nameIndex++;
 		// graph speichern
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 		return v;
 	}
 
 	public void moveVertex(Vertex<V> v, Point p){
-		Dimension d=graphview.getSize();
+		Dimension d=viewHandler.getSize();
 		double radius = GraphComponent.width/2.0;
 		double x=p.getX();
 		double y=p.getY();
@@ -129,14 +122,14 @@ public class GraphTool<V,E> {
 		else
 			v.set(Attribut.pos_y, y-radius);
 		// Graph speichern
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 
 	public void insertEdge(Vertex<V> startVertex, Point p2) {
 		double radius=GraphComponent.width/2.0;
 		Point p1=new Point();
 		p1.setLocation((double)startVertex.get(Attribut.pos_x)+radius,(double)startVertex.get(Attribut.pos_y)+radius);
-		graphview.insertEdge(p1, p2);
+		viewHandler.insertEdge(p1, p2);
 	}
 
 	public void insertEdge(Vertex<V> from, Vertex<V> to) {
@@ -147,8 +140,8 @@ public class GraphTool<V,E> {
 				e_from=it1.next();
 				for(Iterator<Edge<E>>it2=currentGraph.incidentOutEdges(from);it2.hasNext();){
 					if(e_from.equals(it2.next())){
-						graphview.deleteEdge();
-						graphview.paintGraph(currentGraph);
+						viewHandler.deleteEdge();
+						viewHandler.setGraph(currentGraph);
 						return;
 					}
 				}
@@ -159,8 +152,8 @@ public class GraphTool<V,E> {
 				e_from=it1.next();
 				for(Iterator<Edge<E>>it2=currentGraph.incidentEdges(to);it2.hasNext();){
 					if(e_from.equals(it2.next())){
-						graphview.deleteEdge();
-						graphview.paintGraph(currentGraph);
+						viewHandler.deleteEdge();
+						viewHandler.setGraph(currentGraph);
 						return;
 					}
 				}
@@ -169,27 +162,27 @@ public class GraphTool<V,E> {
 		Edge<E> e=currentGraph.insertEdge(from, to, (E) "");
 		e.set(Attribut.color, STANDARD);
 		e.set(Attribut.weight, "1");
-		graphview.deleteEdge();
-		graphview.paintGraph(currentGraph);
+		viewHandler.deleteEdge();
+		viewHandler.setGraph(currentGraph);
 
 	}
 
 	public void deleteEdge(){
-		graphview.deleteEdge();
+		viewHandler.deleteEdge();
 	}
 	public void setColor(Decorable d, Color c){
 		d.set(Attribut.color, c);
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 
 	public void deleteVertex(Vertex<V> selected) {
 		currentGraph.removeVertex(selected);
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 
 	public void deleteEdge(Edge<E> selected) {
 		currentGraph.removeEdge(selected);
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 	
 	//------------------------------------------------------------------------------------//
@@ -208,7 +201,7 @@ public class GraphTool<V,E> {
 	public void openGraph(String name) throws IOException {
 		Graph graph = graphSerializer.openGraph(name);
 		currentGraph = graph;
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 	
 	//------------------------------------------------------------------------------------//
@@ -235,13 +228,21 @@ public class GraphTool<V,E> {
 
 	public void changeAttribut(Decorable d, Attribut attr, String text){
 		d.set(attr, text);
-		graphview.paintGraph(currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 
 	public void itemChanged(Attribut attr, boolean selected) {
 		
-		graphview.setFlag(attr, selected);
-		graphview.paintGraph(currentGraph);
+		viewHandler.setFlag(attr, selected);
+		viewHandler.setGraph(currentGraph);
+	}
+
+	public Vector<Method> getAnnotatedMethods() {
+		return parser.getAnnotatedMethods();
+	}
+
+	public void executeMethod(Method method) {
+		parser.executeMethod(method);
 	}
 	
 }

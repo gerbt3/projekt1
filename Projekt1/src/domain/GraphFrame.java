@@ -29,31 +29,34 @@ public class GraphFrame<V, E> extends JFrame {
 
 	public static final int FRAME_WIDTH = 600;
 	public static final int FRAME_HEIGHT = 400;
-	private GraphView graphview;
-	private EditorHandler<V, E> handler;
+	private GraphView<V,E> graphView;
+	private EditorHandler<V,E> editorHandler;
 	private AlgoHandler<V,E> algoHandler;
-	private MenuHandler menuHandler;
+	private MenuHandler<V,E> menuHandler;
 	private String currentGraphName;
 
-	public GraphFrame(EditorHandler<V,E> handler, AlgoHandler algoHandler, 
-			MenuHandler menuHandler, GraphView<V,E> gv) {
-
-		this.graphview = gv;
-		this.handler=handler;
-		this.algoHandler = algoHandler;
-		this.menuHandler = menuHandler;
-		setSize(FRAME_WIDTH, FRAME_HEIGHT);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+	public GraphFrame(GraphTool<V,E> gt) {
+		this.graphView=new GraphView<V,E>();
+		this.editorHandler=new EditorHandler<V,E>(gt);
+		this.algoHandler=new AlgoHandler<V,E>(gt);
+		this.menuHandler=new MenuHandler<V,E>(gt);
+		graphView.setHandler(editorHandler);
 		constructMenuComponents();
 		constructAttributMenuComponents();
 		constructTabComponents();
-		this.add(gv, BorderLayout.CENTER);
+		this.add(this.graphView, BorderLayout.CENTER);
+		
+		setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("GraphTool");
+		setVisible(true);
 	}
 
 	//------------------------------------------------------------------------------------//
 	// Helper methods for constructing the frame
 	//------------------------------------------------------------------------------------//
+
+	
 
 	/*
 	 * Constructs the main menu with options for creating a new graph
@@ -238,7 +241,7 @@ public class GraphFrame<V, E> extends JFrame {
 	 */
 	private void constructTabComponents() {
 
-		JPanel graphPanel = new EditorView<V, E>(handler);
+		JPanel graphPanel = new EditorView<V, E>(editorHandler);
 		JPanel algoPanel = new AlgoView(algoHandler);
 
 		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -253,13 +256,13 @@ public class GraphFrame<V, E> extends JFrame {
 				int i=tabpane.getSelectedIndex();
 				if(i==0){
 					algoHandler.clearSelected();
-					graphview.setHandler(handler);
-					handler.setState(State.SELECT);
+					graphView.setHandler(editorHandler);
+					editorHandler.setState(State.SELECT);
 				}
 				else
 				{
-					graphview.setHandler(algoHandler);
-					handler.setState(State.INACTIVE);
+					graphView.setHandler(algoHandler);
+					editorHandler.setState(State.INACTIVE);
 				}
 			}
 
@@ -386,6 +389,10 @@ public class GraphFrame<V, E> extends JFrame {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public GraphView<V, E> getGraphView() {
+		return graphView;
 	}
 
 }

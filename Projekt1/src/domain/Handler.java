@@ -1,7 +1,6 @@
 package domain;
 
 import java.awt.Point;
-
 import examples.Decorable;
 
 public interface Handler<V,E> {

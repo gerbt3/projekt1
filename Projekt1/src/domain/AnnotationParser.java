@@ -4,18 +4,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Vector;
-
 import examples.GraphExamples;
 import examples.Vertex;
 
+
 public class AnnotationParser<V, E> {
 
-	private GraphExamples<V,E> graphexamples;
-	private GraphTool<V,E> graphtool;
+	private GraphExamples<V,E> graphExamples;
+	private GraphTool<V,E> graphTool;
 	private ArrayList<Method> annotatedMethods;
 	public AnnotationParser(GraphExamples<V,E> ge, GraphTool<V,E> gt){
-		this.graphexamples=ge;
-		this.graphtool=gt;
+		this.graphExamples=ge;
+		this.graphTool=gt;
 	}
 
 	public Vector<Method> getAnnotatedMethods(){
@@ -41,14 +41,14 @@ public class AnnotationParser<V, E> {
 		Vertex<V> v1=null, v2=null;
 		if(method!=null){
 			if(method.getAnnotation(Algorithm.class).vertex()){
-				v1=graphtool.getStartVertex();
+				v1=graphTool.getStartVertex();
 			}
 			if(method.getAnnotation(Algorithm.class).vertex2()){
-				v2=graphtool.getStopVertex();
+				v2=graphTool.getStopVertex();
 			}
 			if(!method.getAnnotation(Algorithm.class).vertex()){
 				try {
-					method.invoke(graphexamples);
+					method.invoke(graphExamples);
 				} catch (IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
 					e.printStackTrace();
@@ -58,7 +58,7 @@ public class AnnotationParser<V, E> {
 				if(v1==null) throw new NullPointerException("startvertex");
 				if(!method.getAnnotation(Algorithm.class).vertex2()){
 					try {
-						method.invoke(graphexamples, v1);
+						method.invoke(graphExamples, v1);
 					} catch (IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException e) {
 						e.printStackTrace();
@@ -67,7 +67,7 @@ public class AnnotationParser<V, E> {
 					if(v2==null)throw new NullPointerException("stopvertex");
 
 					try {
-						method.invoke(graphexamples,v1,v2 );
+						method.invoke(graphExamples,v1,v2 );
 					} catch (IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException e) {
 						e.printStackTrace();

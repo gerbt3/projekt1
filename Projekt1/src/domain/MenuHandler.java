@@ -6,11 +6,11 @@ import java.io.IOException;
 /*
  * Handles everything between the frame and the tool class
  */
-public class MenuHandler {
+public class MenuHandler<V,E> {
 
-	GraphTool graphTool;
+	private GraphTool<V,E> graphTool;
 	
-	public MenuHandler(GraphTool g) {
+	public MenuHandler(GraphTool<V,E> g) {
 		graphTool = g;
 	}
 	

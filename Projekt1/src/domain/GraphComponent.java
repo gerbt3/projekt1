@@ -18,6 +18,7 @@ import examples.Edge;
 import examples.Graph;
 import examples.Vertex;
 
+
 public class GraphComponent<V,E> extends JComponent{
 
 	private Graph<V,E> graph;
@@ -28,9 +29,8 @@ public class GraphComponent<V,E> extends JComponent{
 	private Line2D.Double unfinishedLine=null;
 	private boolean name=false, weight=false, string=false;
 
-	public GraphComponent(Graph<V,E> g, GraphView<V,E> graphView2){
-		this.setGraph(g);
-		this.graphview=graphView2;
+	public GraphComponent(GraphView<V,E> graphView){
+		this.graphview=graphView;
 		this.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e){

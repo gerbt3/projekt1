@@ -5,26 +5,27 @@ import examples.Decorable;
 import examples.Edge;
 import examples.Vertex;
 
+
 public class SelectState<V,E> extends EditorState {
 
-	private GraphTool<V, E> graphtool;
+	private GraphTool<V, E> graphTool;
 	private Decorable selected;
 	private Point selectedPoint;
 	public SelectState(GraphTool<V,E> g){
-		this.graphtool=g;
+		this.graphTool=g;
 	}
 
 	@Override
 	public void mouseDown(Decorable d, Point p) {
 
 		if(selected!=null){
-			graphtool.setColor(selected, GraphTool.STANDARD);
+			graphTool.setColor(selected, GraphTool.STANDARD);
 			selected=null;
 		}
 
 		if(d!=null){
 			selected=d;
-			graphtool.setColor(d, GraphTool.SELECTED);
+			graphTool.setColor(d, GraphTool.SELECTED);
 			selectedPoint=p;
 		}
 
@@ -35,7 +36,7 @@ public class SelectState<V,E> extends EditorState {
 
 		if(selected instanceof Vertex){
 			if(!(Math.abs(p.getX()-selectedPoint.getX())<=0.5&&Math.abs(p.getY()-selectedPoint.getY())<=0.5))
-				graphtool.moveVertex((Vertex<V>)selected, p);
+				graphTool.moveVertex((Vertex<V>)selected, p);
 		}
 	}
 
@@ -48,10 +49,10 @@ public class SelectState<V,E> extends EditorState {
 	public void deleteDecorable(){
 		if(selected!=null){
 			if(selected instanceof Vertex){
-				graphtool.deleteVertex((Vertex<V>)selected);
+				graphTool.deleteVertex((Vertex<V>)selected);
 			}
 			else{
-				graphtool.deleteEdge((Edge<E>)selected);
+				graphTool.deleteEdge((Edge<E>)selected);
 			}
 			selected=null;
 		}
@@ -60,10 +61,10 @@ public class SelectState<V,E> extends EditorState {
 	@Override
 	public void changeAttribut(String text){
 		if(selected instanceof Vertex){
-			graphtool.changeAttribut(selected,Attribut.name, text);
+			graphTool.changeAttribut(selected,Attribut.name, text);
 		}
 		if(selected instanceof Edge){
-			graphtool.changeAttribut(selected,Attribut.weight, text);
+			graphTool.changeAttribut(selected,Attribut.weight, text);
 		}
 	}
 }

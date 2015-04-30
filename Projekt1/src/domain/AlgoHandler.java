@@ -8,17 +8,15 @@ import examples.Decorable;
 
 public class AlgoHandler<V,E> implements Handler<V,E> {
 	
-	private SelectState selectState;
-	private GraphSerializer<V, E> graphSerializer;
-	private AnnotationParser parser;
+	private SelectState<V,E> selectState;
 	private Method currentAlgoMethod;
+	private GraphTool<V,E> graphTool;
 	
-	public AlgoHandler(GraphTool tool, AnnotationParser parser, GraphSerializer graphSerializer) {
-		selectState = new SelectState<V,E>(tool);
-		this.parser = parser;
-		this.graphSerializer = graphSerializer;
+	public AlgoHandler(GraphTool<V, E> gt) {
+		selectState = new SelectState<V,E>(gt);
+		this.graphTool=gt;
 	}
-	
+
 	@Override
 	public void mouseDown(Decorable d, Point p) {
 		selectState.mouseDown(d, p);
@@ -56,14 +54,14 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 * Gets all annotated methods from the AnnotationParser
 	 */
 	public Vector<Method> getAnnotatedMethods() {
-		return parser.getAnnotatedMethods();
+		return graphTool.getAnnotatedMethods();
 	}
 	
 	/*
 	 * Gives the AnnotationParser a method to execute
 	 */
 	public void executeMethod(Method method) {
-		parser.executeMethod(method);
+		graphTool.executeMethod(method);
 	}
 	
 }

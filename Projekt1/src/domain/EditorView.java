@@ -4,21 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import domain.EditorHandler.State;
-
-
 
 
 public class EditorView<V, E> extends JPanel {
 	
-	private EditorHandler<V,E> handler;
+	private EditorHandler<V,E> editorHandler;
+	
 	public EditorView(EditorHandler<V,E> handler) {
-		this.handler=handler;
+		this.editorHandler=handler;
 		setLayout(new BorderLayout());
 		constructPanelComponents();
 	}
@@ -35,31 +32,31 @@ public class EditorView<V, E> extends JPanel {
 		editAttributButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				handler.changeAttribut(attributText.getText());
+				editorHandler.changeAttribut(attributText.getText());
 			}
 		});
 		
 		selectionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               handler.setState(State.SELECT);
+               editorHandler.setState(State.SELECT);
             }
          });
 		
 		deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               handler.deleteDecorable();
+               editorHandler.deleteDecorable();
             }
          });
 		
 		vertexButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               handler.setState(State.VERTEX);
+               editorHandler.setState(State.VERTEX);
             }
          });
 		
 		edgeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               handler.setState(State.EDGE);
+               editorHandler.setState(State.EDGE);
             }
          });
 		
