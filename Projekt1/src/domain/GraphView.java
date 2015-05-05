@@ -2,8 +2,17 @@ package domain;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import examples.Decorable;
 import examples.Graph;
 
@@ -11,12 +20,15 @@ import examples.Graph;
 public class GraphView<V,E> extends JPanel {
 
 	private GraphComponent<V,E> comp;
-	private Handler<V,E> handler; 
+	private Handler<V,E> handler;
+	private MenuHandler<V,E> menuHandler;
 	
-	public GraphView(){
+	public GraphView(MenuHandler<V,E> h){
 		comp = new GraphComponent<V, E>(this);
+		this.menuHandler=h;
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
+		this.constructComponents();
 		this.add(comp, BorderLayout.CENTER);
 	}
 	
@@ -54,6 +66,51 @@ public class GraphView<V,E> extends JPanel {
 		
 	}
 	
+	/*
+	 * Constructs the menu for handling the attributes of vertices and edges
+	 * Calls the itemChanged method of the menuHandler class
+	 */
+	private void constructComponents() {
+
+		JSlider slider = new JSlider(1,20);
+		JPanel attributeMenuPanel = new JPanel(new GridLayout(3,1));
+		JCheckBox name=new JCheckBox("name");
+		JCheckBox weight=new JCheckBox("weight");
+		JCheckBox string=new JCheckBox("string");
+		slider.addChangeListener(new ChangeListener(){
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				comp.setZoomSize(slider.getValue());
+			}
+		});
+		name.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				menuHandler.itemChanged(Attribut.name, name.isSelected());
+
+			}
+		});
+		weight.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				menuHandler.itemChanged(Attribut.weight, weight.isSelected());
+
+			}
+		});
+		string.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				menuHandler.itemChanged(Attribut.string, string.isSelected());
+
+			}
+		});
+		attributeMenuPanel.add(name);
+		attributeMenuPanel.add(weight);
+		attributeMenuPanel.add(string);
+
+		add(attributeMenuPanel, BorderLayout.EAST);
+		add(slider, BorderLayout.SOUTH);
+	}
 	
 	
 	

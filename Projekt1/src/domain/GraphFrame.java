@@ -27,8 +27,8 @@ import domain.EditorHandler.State;
  */
 public class GraphFrame<V, E> extends JFrame {
 
-	public static final int FRAME_WIDTH = 600;
-	public static final int FRAME_HEIGHT = 400;
+	public static final int FRAME_WIDTH = 900;
+	public static final int FRAME_HEIGHT = 600;
 	private GraphView<V,E> graphView;
 	private EditorHandler<V,E> editorHandler;
 	private AlgoHandler<V,E> algoHandler;
@@ -36,13 +36,13 @@ public class GraphFrame<V, E> extends JFrame {
 	private String currentGraphName;
 
 	public GraphFrame(GraphTool<V,E> gt) {
-		this.graphView=new GraphView<V,E>();
+		
 		this.editorHandler=new EditorHandler<V,E>(gt);
 		this.algoHandler=new AlgoHandler<V,E>(gt);
 		this.menuHandler=new MenuHandler<V,E>(gt);
+		this.graphView=new GraphView<V,E>(menuHandler);
 		graphView.setHandler(editorHandler);
 		constructMenuComponents();
-		constructAttributMenuComponents();
 		constructTabComponents();
 		this.add(this.graphView, BorderLayout.CENTER);
 		
@@ -195,45 +195,6 @@ public class GraphFrame<V, E> extends JFrame {
 		menuPanel.add(deleteButton);
 
 		add(menuPanel, BorderLayout.NORTH);
-	}
-
-	/*
-	 * Constructs the menu for handling the attributes of vertices and edges
-	 * Calls the itemChanged method of the menuHandler class
-	 */
-	private void constructAttributMenuComponents() {
-
-		JPanel attributeMenuPanel = new JPanel();
-		JCheckBox name=new JCheckBox("name");
-		JCheckBox weight=new JCheckBox("weight");
-		JCheckBox string=new JCheckBox("string");
-		name.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				menuHandler.itemChanged(Attribut.name, name.isSelected());
-
-			}
-		});
-		weight.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				menuHandler.itemChanged(Attribut.weight, weight.isSelected());
-
-			}
-		});
-		string.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				menuHandler.itemChanged(Attribut.string, string.isSelected());
-
-			}
-		});
-
-		attributeMenuPanel.add(name);
-		attributeMenuPanel.add(weight);
-		attributeMenuPanel.add(string);
-
-		add(attributeMenuPanel, BorderLayout.EAST);
 	}
 
 	/*

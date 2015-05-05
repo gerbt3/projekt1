@@ -61,6 +61,7 @@ public class GraphTool<V,E> {
 
 	private void calculatePositions(Graph<V, E> g) {
 
+		//Dimension d=viewHandler.getSize();
 		double number=g.numberOfVertices();
 		double radius=number*10;
 		Iterator<Vertex<V>> it =g.vertices();
@@ -70,8 +71,8 @@ public class GraphTool<V,E> {
 		
 		while(it.hasNext()){
 			v=it.next();
-			double x=radius*Math.cos(i/number*2.0*Math.PI)+70.0;
-			double y=radius*Math.sin(i/number*2.0*Math.PI)+70.0;
+			double x=radius*Math.cos(i/number*2.0*Math.PI)+radius;
+			double y=radius*Math.sin(i/number*2.0*Math.PI)+radius;
 			v.set(Attribut.pos_x, x);
 			v.set(Attribut.pos_y, y);
 			v.set(Attribut.color, STANDARD);
@@ -104,7 +105,7 @@ public class GraphTool<V,E> {
 		double x=p.getX();
 		double y=p.getY();
 		
-		if(x>(d.getWidth()-radius)){
+		/*if(x>(d.getWidth()-radius)){
 			v.set(Attribut.pos_x, d.getWidth()-2*radius);
 		}
 		else if(x<(0+radius)){
@@ -120,7 +121,10 @@ public class GraphTool<V,E> {
 			v.set(Attribut.pos_y, 0.0);
 		}
 		else
-			v.set(Attribut.pos_y, y-radius);
+			v.set(Attribut.pos_y, y-radius);*/
+		v.set(Attribut.pos_x, x-radius);
+		v.set(Attribut.pos_y, y-radius);
+		
 		// Graph speichern
 		viewHandler.setGraph(currentGraph);
 	}
@@ -128,7 +132,7 @@ public class GraphTool<V,E> {
 	public void insertEdge(Vertex<V> startVertex, Point p2) {
 		double radius=GraphComponent.width/2.0;
 		Point p1=new Point();
-		p1.setLocation((double)startVertex.get(Attribut.pos_x)+radius,(double)startVertex.get(Attribut.pos_y)+radius);
+		p1.setLocation((double)startVertex.get(Attribut.pos_x),(double)startVertex.get(Attribut.pos_y));
 		viewHandler.insertEdge(p1, p2);
 	}
 

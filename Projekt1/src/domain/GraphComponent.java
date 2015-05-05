@@ -22,13 +22,13 @@ import examples.Vertex;
 public class GraphComponent<V,E> extends JComponent{
 
 	private Graph<V,E> graph;
-	public static double width=30.0;
+	public static double width=20.0;
 	private HashMap<Vertex<V>, Ellipse2D.Double> vertices = new HashMap<>();
 	private HashMap<Edge<E>, Line2D.Double> edges=new HashMap<>();
 	private GraphView<V,E> graphview;
 	private Line2D.Double unfinishedLine=null;
 	private boolean name=false, weight=false, string=false;
-
+	private double zoomSize=2.5;
 	public GraphComponent(GraphView<V,E> graphView){
 		this.graphview=graphView;
 		this.addMouseListener(new MouseAdapter(){
@@ -36,14 +36,15 @@ public class GraphComponent<V,E> extends JComponent{
 			public void mousePressed(MouseEvent e){
 				if(e.getButton()==MouseEvent.BUTTON1){
 					Decorable d=findDecorable(e);
-					graphview.mouseDown(d, e.getPoint());
+					graphview.mouseDown(d, findPoint(e));
 				}
 			}
+			
 			@Override
 			public void mouseReleased(MouseEvent e){
 				if(e.getButton()==MouseEvent.BUTTON1){
 					Decorable d=findDecorable(e);
-					graphview.mouseUp(d, e.getPoint());
+					graphview.mouseUp(d, findPoint(e));
 				}
 				if(e.getButton()==MouseEvent.BUTTON3){
 					// Popupmenu
@@ -56,12 +57,18 @@ public class GraphComponent<V,E> extends JComponent{
 
 				if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
 					Decorable d=findDecorable(e);
-					graphview.mouseDrag(d, e.getPoint());
+					graphview.mouseDrag(d, findPoint(e));
 				}
 			}
 		});
 	}
 
+	private Point findPoint(MouseEvent e) {
+		Point p=e.getPoint();
+		p.setLocation(p.getX()/zoomSize,p.getY()/zoomSize);
+		return p;
+	}
+	
 	public void paintComponent(Graphics g){
 		Graphics2D g2=(Graphics2D)g;
 		Vertex<V> v;
@@ -118,14 +125,13 @@ public class GraphComponent<V,E> extends JComponent{
 		}
 	}
 
-
 	private void setLine(Vertex<V> from, Vertex<V> to, Edge<E> e){
 
-		double radius=GraphComponent.width/2.0;
-		double x1=(double)from.get(Attribut.pos_x)+radius;
-		double x2=(double)to.get(Attribut.pos_x)+radius;
-		double y1=(double)from.get(Attribut.pos_y)+radius;
-		double y2=(double)to.get(Attribut.pos_y)+radius;
+		double radius=GraphComponent.width*zoomSize/2.0;
+		double x1=(double)from.get(Attribut.pos_x)*zoomSize+radius;
+		double x2=(double)to.get(Attribut.pos_x)*zoomSize+radius;
+		double y1=(double)from.get(Attribut.pos_y)*zoomSize+radius;
+		double y2=(double)to.get(Attribut.pos_y)*zoomSize+radius;
 		double ax=1,ay=1,bx=1,by=1;
 		if(x1<x2){
 			bx=-1;
@@ -156,7 +162,7 @@ public class GraphComponent<V,E> extends JComponent{
 		Vertex<V>[] ver;
 		while(itv.hasNext()){
 			v=(Vertex<V>) itv.next();
-			vertices.put(v,new Ellipse2D.Double((double)v.get(Attribut.pos_x),(double)v.get(Attribut.pos_y),width,width));
+			vertices.put(v, new Ellipse2D.Double((double)v.get(Attribut.pos_x)*zoomSize,(double)v.get(Attribut.pos_y)*zoomSize,width*zoomSize,width*zoomSize));
 		}
 		while(ite.hasNext()){
 			e=(Edge<E>)ite.next();
@@ -204,7 +210,8 @@ public class GraphComponent<V,E> extends JComponent{
 	}
 
 	public void insertEdge(Point p1, Point p2) {
-
+		p1.setLocation(p1.getX()*zoomSize+width*zoomSize/2.0,p1.getY()*zoomSize+width*zoomSize/2.0);
+		p2.setLocation(p2.getX()*zoomSize,p2.getY()*zoomSize);
 		unfinishedLine=new Line2D.Double(p1,p2);
 		repaint();
 	}
@@ -225,5 +232,10 @@ public class GraphComponent<V,E> extends JComponent{
 		case string: this.string=selected;
 		}
 		
+	}
+
+	public void setZoomSize(int value) {
+		this.zoomSize=value/4.0;
+		this.setGraph(graph);
 	}
 }
