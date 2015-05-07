@@ -1,6 +1,7 @@
 package domain;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -12,7 +13,9 @@ import java.awt.geom.Line2D;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
 import javax.swing.JComponent;
+
 import examples.Decorable;
 import examples.Edge;
 import examples.Graph;
@@ -29,6 +32,7 @@ public class GraphComponent<V,E> extends JComponent{
 	private Line2D.Double unfinishedLine=null;
 	private boolean name=false, weight=false, string=false;
 	private double zoomSize=2.5;
+	Dimension myDimension=new Dimension(800, 800);
 	public GraphComponent(GraphView<V,E> graphView){
 		this.graphview=graphView;
 		this.addMouseListener(new MouseAdapter(){
@@ -155,6 +159,7 @@ public class GraphComponent<V,E> extends JComponent{
 		graph=g;
 		vertices.clear();
 		edges.clear();
+		double x,y, maxx=0,maxy=0;
 		Iterator<Vertex<V>> itv=graph.vertices();
 		Iterator<Edge<E>> ite=graph.edges();
 		Vertex<V> v;
@@ -162,7 +167,15 @@ public class GraphComponent<V,E> extends JComponent{
 		Vertex<V>[] ver;
 		while(itv.hasNext()){
 			v=(Vertex<V>) itv.next();
-			vertices.put(v, new Ellipse2D.Double((double)v.get(Attribut.pos_x)*zoomSize,(double)v.get(Attribut.pos_y)*zoomSize,width*zoomSize,width*zoomSize));
+			
+			x=(double)v.get(Attribut.pos_x)*zoomSize;
+			y=(double)v.get(Attribut.pos_y)*zoomSize;
+			vertices.put(v, new Ellipse2D.Double(x,y,width*zoomSize,width*zoomSize));
+
+			if(x>maxx)
+				maxx=x;
+			if(y>maxy)
+				maxy=y;
 		}
 		while(ite.hasNext()){
 			e=(Edge<E>)ite.next();
@@ -170,7 +183,16 @@ public class GraphComponent<V,E> extends JComponent{
 			this.setLine(ver[0], ver[1], e);
 		}
 
+		myDimension=new Dimension((int)(maxx+width*zoomSize)+10, (int)(maxy+width*zoomSize)+10);
+		this.setSize(myDimension);
 		repaint();
+		
+	}
+	
+	@Override 
+	public Dimension getPreferredSize(){
+		return myDimension;
+		
 	}
 
 	private Decorable findDecorable(MouseEvent e){
@@ -237,5 +259,6 @@ public class GraphComponent<V,E> extends JComponent{
 	public void setZoomSize(int value) {
 		this.zoomSize=value/4.0;
 		this.setGraph(graph);
+		System.out.println(this.getSize());
 	}
 }

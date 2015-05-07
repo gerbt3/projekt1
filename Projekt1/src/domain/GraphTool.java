@@ -36,15 +36,13 @@ public class GraphTool<V,E> {
 	}
 	
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
-
-		viewHandler=new ViewHandler<V,E>(this);
+	
 		currentGraph=g;
 		this.calculatePositions(currentGraph);
-		viewHandler.setGraph(currentGraph);
 		parser = new AnnotationParser<V,E>(ge, this);
 		graphSerializer = new GraphSerializer<V, E>();
-		
-
+		viewHandler=new ViewHandler<V,E>(this);
+		viewHandler.setGraph(currentGraph);
 		
 		
 	}
