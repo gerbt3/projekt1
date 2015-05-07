@@ -1,5 +1,6 @@
 package domain;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -9,7 +10,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import examples.Edge;
 import examples.Graph;
+import examples.Vertex;
 
 /*
  * Serializes and deserializes graphs permanently and temporally
@@ -17,13 +22,11 @@ import examples.Graph;
  */
 public class GraphSerializer<V,E> {
 
-	private ArrayList<byte[]> editorGraph;
-	private ArrayList<byte[]> algoGraph;
+	private ArrayList<byte[]> byteAlgoGraphs;
 	private int editorIndex, algoIndex;
 	
 	public GraphSerializer(){
-		editorGraph=new ArrayList<byte[]>();
-		algoGraph= new ArrayList<byte[]>();
+		byteAlgoGraphs= new ArrayList<byte[]>();
 	}
 	
 	//------------------------------------------------------------------------------------//
@@ -34,12 +37,25 @@ public class GraphSerializer<V,E> {
 	 * Saves a graph permanently as a file by serializing
 	 */
 	public void saveGraph(String name, Graph<V,E> graph) throws IOException {
+		
+		//Clears all selected vertices or edges before saving the graph
+		Iterator<Vertex<V>> vIt = graph.vertices();
+		while (vIt.hasNext()) {
+			vIt.next().set(Attribut.color, Color.black);
+		}
+		
+		Iterator<Edge<E>> eIt = graph.edges();
+		while (eIt.hasNext()) {
+			eIt.next().set(Attribut.color, Color.black);
+		}
+		
 		String filename = "GraphFiles/" + name + ".ser";
 		ObjectOutputStream oos = null;
 		try {			
 			oos = new ObjectOutputStream(new FileOutputStream(new File(filename)));	
 		    oos.writeObject(graph); 
 		} catch (IOException e1) {
+			System.out.println("@GraphSerializer: GraphSerializer failed to serialize a graph");
 			e1.printStackTrace();
 		} finally {
 			oos.close();
@@ -57,8 +73,10 @@ public class GraphSerializer<V,E> {
 			ois = new ObjectInputStream(new FileInputStream(filename));
 			 graph = (Graph<V,E>) ois.readObject();
 		} catch (IOException e) {
+			System.out.println("@GraphSerializer: GraphSerializer failed to deserialize a graph");
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
+			System.out.println("@GraphSerializer: GraphSerializer failed to deserialize a graph");
 			e.printStackTrace();
 		} finally {
 			ois.close();
@@ -71,32 +89,17 @@ public class GraphSerializer<V,E> {
 	//------------------------------------------------------------------------------------//
 	
 	/*
-	 * Makes a copy of a graph while drawing a graph
-	 * respectively in editor mode
-	 */
-	public void saveEditorGraph(Graph<V, E> g) throws IOException{
-		this.serializeGraph(g, editorGraph);
-	}
-	
-	/*
-	 * Makes a copy of a graph while animating an algorithm
-	 * respectively in algorithm mode
-	 */
-	public void saveAlgoGraph(Graph<V, E> g) throws IOException{
-		this.serializeGraph(g, algoGraph);
-	}
-	
-	/*
 	 * Makes a temporary copy of a graph by serializing
 	 */
-	private void serializeGraph(Graph<V, E> g, ArrayList<byte[]> list) throws IOException{
+	public void serializeGraph(Graph<V, E> g) throws IOException{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = null;
 		try {			
 			oos = new ObjectOutputStream(bos);
 			oos.writeObject(g);
-			list.add( bos.toByteArray());
+			byteAlgoGraphs.add( bos.toByteArray());
 		} catch (IOException e1) {
+			System.out.println("@GraphSerializer: GraphSerializer failed to serialize a graph");
 			e1.printStackTrace();
 		} finally {
 			oos.close();
@@ -109,20 +112,18 @@ public class GraphSerializer<V,E> {
 	// Has to be tested if it works!!!!
 	public ArrayList<Graph<V,E>> getAlgoGraphs() throws IOException, ClassNotFoundException {
 		
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(algoGraph.get(0)));
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
 		ArrayList<Graph<V,E>> algoGraphs = new ArrayList<>();
 		
+		for (int i = 0; i < byteAlgoGraphs.size(); i++) {
 		
-		for (int i = 0; i < algoGraph.size(); i++) {
-		
-			ois.read(algoGraph.get(i));
+			ois.read(byteAlgoGraphs.get(i));
 			
 			try {			
-				
 				algoGraphs.add((Graph<V,E>) ois.readObject());
 				System.out.println("Graph " + i + " name " + algoGraphs.get(i));
-			  	
 			} catch (IOException e1) {
+				System.out.println("@GraphSerializer: GraphSerializer failed to deserialize a graph");
 				e1.printStackTrace();
 			} finally {
 				ois.close();
@@ -131,25 +132,4 @@ public class GraphSerializer<V,E> {
 		
 		return algoGraphs;
 	}
-
-	//------------------------------------------------------------------------------------//
-	// Methods for undoing and redoing actions and animating algorithms
-	//------------------------------------------------------------------------------------//
-	
-	public void undoEditor(){
-
-	}
-
-	public void redoEditor(){
-
-	}
-
-	public void stepBefore(){
-
-	}
-
-	public void nextStep(){
-
-	}
-
 }

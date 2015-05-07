@@ -2,6 +2,7 @@ package domain;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ItemEvent;
@@ -9,7 +10,9 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -25,11 +28,13 @@ public class GraphView<V,E> extends JPanel {
 	
 	public GraphView(MenuHandler<V,E> h){
 		comp = new GraphComponent<V, E>(this);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setViewportView(comp);
 		this.menuHandler=h;
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
 		this.constructComponents();
-		this.add(comp, BorderLayout.CENTER);
+		this.add(scrollPane, BorderLayout.CENTER);
 	}
 	
 	public void setHandler(Handler<V,E> handler) {

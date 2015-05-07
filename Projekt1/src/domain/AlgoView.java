@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -41,51 +42,52 @@ public class AlgoView<V,E> extends JPanel {
 		/*
 		 * Makes a list to choose from with all available algorithms
 		 */
-		/*Vector<Method> algoMethods = algoHandler.getAnnotatedMethods();
+		Vector<Method> algoMethods = algoHandler.getAnnotatedMethods();
 		String[] algoMethodNames = new String[algoMethods.size()];
 		for (int i = 0; i < algoMethods.size(); i++) {
 			algoMethodNames[i] = algoMethods.get(i).getName();
 		}
 		JComboBox algoList = new JComboBox(algoMethodNames);
 		currentAlgoMethod = algoMethods.get(algoList.getSelectedIndex());
-		*/
+		
 		selectionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	algoHandler.setSelectedState(true);
             }
          });
 		
 		startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	algoHandler.startAlgo(currentAlgoMethod);
+            	algoHandler.setSelectedState(false);
             }
          });
 		
 		backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	algoHandler.setSelectedState(false);
             }
          });
 		
 		forwardButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-               
+            	algoHandler.setSelectedState(false);
             }
          });
 		
 		stopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	algoHandler.setSelectedState(false);
             }
          });
 		
 		commitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	algoHandler.setSelectedState(false);
             }
          });
 		
-	/*	algoList.addActionListener(new ActionListener() {
+		algoList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	
             	String algoName = (String) algoList.getSelectedItem();
@@ -94,9 +96,9 @@ public class AlgoView<V,E> extends JPanel {
         			if (algoName.equals(algoMethods.get(i).getName())) index = i;
         		}
             	currentAlgoMethod = algoMethods.get(index);
-            
-         });
-		}*/
+            }
+		});
+		
 		JPanel toolPanel = new JPanel(new FlowLayout());
 		
 		toolPanel.add(selectionButton);
@@ -105,7 +107,7 @@ public class AlgoView<V,E> extends JPanel {
 		toolPanel.add(forwardButton);
 		toolPanel.add(stopButton);
 		toolPanel.add(commitButton);
-		//toolPanel.add(algoList);
+		toolPanel.add(algoList);
 		
 		add(toolPanel, BorderLayout.NORTH);
 	}

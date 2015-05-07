@@ -24,6 +24,7 @@ import domain.GraphTool;
 
 public class GraphExamples<V,E> {
 
+	static private GraphTool graphTool;
 
 	static final private Object NUMBER = new Serializable(){};
 	static final private Object VISITED = new Serializable(){};
@@ -44,6 +45,7 @@ public class GraphExamples<V,E> {
 
 	public GraphExamples(Graph<V,E> g){
 		this.g=g;
+		graphTool = new GraphTool(g, this);
 	}
 	
 	public void setNumbers(){
@@ -145,7 +147,7 @@ public class GraphExamples<V,E> {
 	}
 	
 	@Algorithm(vertex=true)
-	public void dijkstra(Vertex<V> s){
+	public void dijkstra(Graph<V,E> g, Vertex<V> s){
 		// sets the attribute 's' of each vertex 'u' from wich 
 		// we can reach 's' to 'g' where 'g' is the gateway
 		// of 'u' on the shortest path from 'u' to 's' 
@@ -155,6 +157,10 @@ public class GraphExamples<V,E> {
 		// an attribute DISTANCE and PQLOCATOR
 		while(it.hasNext()){
 			Vertex<V> v = it.next();
+			//-----------------------------------------------
+			//Saves the graph with the current changes
+			graphTool.serializeGraph(g);
+			//-----------------------------------------------
 			v.set(DISTANCE,Double.POSITIVE_INFINITY);
 			Locator<Double,Vertex<V>> loc = pq.insert(Double.POSITIVE_INFINITY,v);
 			v.set(PQLOCATOR,loc);
@@ -353,7 +359,7 @@ public class GraphExamples<V,E> {
 		// which means that the first node on the shortest path
 		// from 'v' to 'w' is 'g'
 		Iterator<Vertex<V>> it = g.vertices();
-		while (it.hasNext()) dijkstra(it.next());
+		while (it.hasNext()) dijkstra(g, it.next());
 	}
 	
 	/**
@@ -389,7 +395,7 @@ public class GraphExamples<V,E> {
 		//System.out.println(g);
 		ge.setGateways();
 		
-		new GraphTool(g, ge);
+		graphTool = new GraphTool(g, ge);
 		
 //		System.out.print("Path: ");
 //		Vertex<String> [] path = ge.shortestPath(vA,vG);

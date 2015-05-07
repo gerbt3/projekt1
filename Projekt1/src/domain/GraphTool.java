@@ -2,11 +2,13 @@ package domain;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 import java.awt.Color;
 import java.io.IOException;
 import java.lang.reflect.Method;
+
 import examples.Decorable;
 import examples.Edge;
 import examples.Graph;
@@ -22,31 +24,27 @@ public class GraphTool<V,E> {
 	public static Color STANDARD = Color.BLACK;
 	public static Color SELECTED = Color.BLUE;
 	private GraphSerializer<V, E> graphSerializer;
-	private AlgoHandler<V,E> algoHandler;
 	private AnnotationParser<V,E> parser;
-	private Vertex<V> startVertex;
-	private Vertex<V> endVertex;
 	private ViewHandler<V,E> viewHandler;
 	
 	public GraphTool(GraphExamples<V,E> ge){
-		
 		this(new IncidenceListGraph<V,E>(), ge);
 		if(!viewHandler.chooseGraphOption())
 			this.createGraph(false);
 	}
 	
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
-
-		viewHandler=new ViewHandler<V,E>(this);
+	
 		currentGraph=g;
 		this.calculatePositions(currentGraph);
-		viewHandler.setGraph(currentGraph);
 		parser = new AnnotationParser<V,E>(ge, this);
 		graphSerializer = new GraphSerializer<V, E>();
-		
-
-		
-		
+		viewHandler=new ViewHandler<V,E>(this);
+		viewHandler.setGraph(currentGraph);
+	}
+	
+	public Graph<V,E> getCurrentGraph() {
+		return currentGraph;
 	}
 
 	//------------------------------------------------------------------------------------//
@@ -194,7 +192,6 @@ public class GraphTool<V,E> {
 	//------------------------------------------------------------------------------------//
 	
 	public void newGraph(boolean directed) {
-		//TODO somewhere: do you want to save the old graph?
 		currentGraph = new IncidenceListGraph<V,E>(directed);
 	}
 	
@@ -245,8 +242,35 @@ public class GraphTool<V,E> {
 		return parser.getAnnotatedMethods();
 	}
 
-	public void executeMethod(Method method) {
-		parser.executeMethod(method);
+	/*
+	 * Executes an algorithm
+	 * an returns all by the algorithm generated graphs
+	 * Return value will be null, if the deserializing of the graphs fails
+	 * and has to be tested for it
+	 */
+	public ArrayList<Graph<V, E>> executeMethod(Method method, Vertex<V> startVertex, Vertex<V> endVertex) {
+		parser.executeMethod(method, startVertex, endVertex);
+		ArrayList<Graph<V,E>> algoGraphs = null;
+		try {
+			algoGraphs = graphSerializer.getAlgoGraphs();
+		} catch (ClassNotFoundException | IOException e) {
+			System.out.println("@GraphTool: GraphSerializer failed to deserialize a graph");
+			e.printStackTrace();
+		}
+		return algoGraphs;
+	}
+	
+	/*
+	 * Serializes the graph after each change an algorithm
+	 * in the GraphExamples class made
+	 */
+	public void serializeGraph(Graph<V,E> g) {
+		try {
+			graphSerializer.serializeGraph(g);
+		} catch (IOException e) {
+			System.out.println("@GraphTool: GraphSerializer failed to serialize a graph");
+			e.printStackTrace();
+		}
 	}
 	
 }

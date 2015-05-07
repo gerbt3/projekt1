@@ -2,24 +2,33 @@ package domain;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import examples.Decorable;
+import examples.Edge;
+import examples.Graph;
+import examples.Vertex;
 
 public class AlgoHandler<V,E> implements Handler<V,E> {
 	
-	private SelectState<V,E> selectState;
-	private Method currentAlgoMethod;
 	private GraphTool<V,E> graphTool;
+	private SelectState<V,E> selectState;
+	private boolean selectedState = false;
+	private Method currentAlgoMethod;
+	private ArrayList<Graph<V,E>> algoGraphs;
 	
 	public AlgoHandler(GraphTool<V, E> gt) {
 		selectState = new SelectState<V,E>(gt);
 		this.graphTool=gt;
+		algoGraphs = new ArrayList<>();
 	}
 
 	@Override
 	public void mouseDown(Decorable d, Point p) {
-		selectState.mouseDown(d, p);
+		//Only vertices can be selected
+		if (selectedState && d instanceof Vertex) selectState.mouseDown(d, p);
+		else selectState.mouseDown(null, null);
 	}
 
 	@Override
@@ -34,8 +43,12 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		
 	}
 	
+	public void setSelectedState(boolean selectedState) {
+		this.selectedState = selectedState;
+	}
+	
 	/*
-	 * Clears the current selection of a vertex,
+	 * Clears the current selection of a vertex or edge,
 	 * if user changes tab
 	 */
 	public void clearSelected() {
@@ -48,6 +61,9 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	
 	public void startAlgo(Method currentAlgoMethod) {
 		this.currentAlgoMethod = currentAlgoMethod;
+		//algoGraphs = graphTool.executeMethod(currentAlgoMethod);
+		for (Graph<V,E> g : algoGraphs) System.out.println(g);
+		
 	}
 	
 	/*
@@ -61,7 +77,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 * Gives the AnnotationParser a method to execute
 	 */
 	public void executeMethod(Method method) {
-		graphTool.executeMethod(method);
+		//graphTool.executeMethod(method);
 	}
 	
 }

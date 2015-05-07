@@ -11,6 +11,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import domain.EditorHandler.State;
 
 /*
@@ -45,7 +47,6 @@ public class GraphFrame<V, E> extends JFrame {
 		constructMenuComponents();
 		constructTabComponents();
 		this.add(this.graphView, BorderLayout.CENTER);
-		
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("GraphTool");
@@ -201,10 +202,10 @@ public class GraphFrame<V, E> extends JFrame {
 	 * Constructs the tabs for either drawing graphs or animating algorithms
 	 */
 	private void constructTabComponents() {
-
+		
 		JPanel graphPanel = new EditorView<V, E>(editorHandler);
-		JPanel algoPanel = new AlgoView(algoHandler);
-
+		
+		JPanel algoPanel = new AlgoView<V, E>(algoHandler);
 		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		tabpane.addTab("graph", graphPanel);
