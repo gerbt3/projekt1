@@ -96,9 +96,10 @@ public class AlgoView<V,E> extends JPanel {
         			if (algoName.equals(algoMethods.get(i).getName())) index = i;
         		}
             	currentAlgoMethod = algoMethods.get(index);
+
             }
 		});
-		
+
 		JPanel toolPanel = new JPanel(new FlowLayout());
 		
 		toolPanel.add(selectionButton);
