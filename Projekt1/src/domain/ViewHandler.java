@@ -21,10 +21,6 @@ public class ViewHandler<V,E> {
 		graphView.paintGraph(g);
 	}
 
-	public void setFlag(Attribut attr, boolean selected) {
-		graphView.setFlag(attr, selected);
-	}
-
 	public void deleteEdge() {
 		graphView.deleteEdge();
 		

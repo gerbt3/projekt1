@@ -232,12 +232,6 @@ public class GraphTool<V,E> {
 		viewHandler.setGraph(currentGraph);
 	}
 
-	public void itemChanged(Attribut attr, boolean selected) {
-		
-		viewHandler.setFlag(attr, selected);
-		viewHandler.setGraph(currentGraph);
-	}
-
 	public Vector<Method> getAnnotatedMethods() {
 		return parser.getAnnotatedMethods();
 	}

@@ -82,4 +82,9 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 			currentState.changeAttribut(text);
 	}
 
+	public Decorable getSelected() {
+		
+		return selectState.getSelected();
+	}
+
 }

@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -14,7 +17,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import examples.Decorable;
 import examples.Edge;
@@ -28,51 +34,54 @@ public class GraphComponent<V,E> extends JComponent{
 	public static double width=20.0;
 	private HashMap<Vertex<V>, Ellipse2D.Double> vertices = new HashMap<>();
 	private HashMap<Edge<E>, Line2D.Double> edges=new HashMap<>();
-	private GraphView<V,E> graphview;
+	private GraphView<V,E> graphView;
 	private Line2D.Double unfinishedLine=null;
-	private boolean name=false, weight=false, string=false;
+	private boolean nameFlag=false, weightFlag=false, stringFlag=false;
+	private JCheckBoxMenuItem name, weight, string;
 	private double zoomSize=2.5;
+	private ItemListener nameListener, weightListener, stringListener;
 	Dimension myDimension=new Dimension(800, 800);
-	public GraphComponent(GraphView<V,E> graphView){
-		this.graphview=graphView;
-		this.addMouseListener(new MouseAdapter(){
-			@Override
-			public void mousePressed(MouseEvent e){
-				if(e.getButton()==MouseEvent.BUTTON1){
-					Decorable d=findDecorable(e);
-					graphview.mouseDown(d, findPoint(e));
-				}
-			}
-			
-			@Override
-			public void mouseReleased(MouseEvent e){
-				if(e.getButton()==MouseEvent.BUTTON1){
-					Decorable d=findDecorable(e);
-					graphview.mouseUp(d, findPoint(e));
-				}
-				if(e.getButton()==MouseEvent.BUTTON3){
-					// Popupmenu
-				}
-			}
-		});
-		this.addMouseMotionListener(new MouseMotionAdapter(){
-			@Override
-			public void mouseDragged(MouseEvent e) {
 
-				if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
-					Decorable d=findDecorable(e);
-					graphview.mouseDrag(d, findPoint(e));
-				}
-			}
-		});
+	public GraphComponent(GraphView<V,E> gv, ActionListener renameListener){
+
+		this.graphView=gv;
+		createListeners(renameListener);
 	}
 
-	private Point findPoint(MouseEvent e) {
-		Point p=e.getPoint();
-		p.setLocation(p.getX()/zoomSize,p.getY()/zoomSize);
-		return p;
+	public void setGraph(Graph<V,E> g){
+		graph=g;
+		vertices.clear();
+		edges.clear();
+		double x,y, maxx=0,maxy=0;
+		Iterator<Vertex<V>> itv=graph.vertices();
+		Iterator<Edge<E>> ite=graph.edges();
+		Vertex<V> v;
+		Edge<E> e;
+		Vertex<V>[] ver;
+		while(itv.hasNext()){
+			v=(Vertex<V>) itv.next();
+
+			x=(double)v.get(Attribut.pos_x)*zoomSize;
+			y=(double)v.get(Attribut.pos_y)*zoomSize;
+			vertices.put(v, new Ellipse2D.Double(x,y,width*zoomSize,width*zoomSize));
+
+			if(x>maxx)
+				maxx=x;
+			if(y>maxy)
+				maxy=y;
+		}
+		while(ite.hasNext()){
+			e=(Edge<E>)ite.next();
+			ver=g.endVertices(e);
+			this.setLine(ver[0], ver[1], e);
+		}
+
+		myDimension=new Dimension((int)(maxx+width*zoomSize)+10, (int)(maxy+width*zoomSize)+10);
+		this.setSize(myDimension);
+		repaint();
+
 	}
-	
+
 	public void paintComponent(Graphics g){
 		Graphics2D g2=(Graphics2D)g;
 		Vertex<V> v;
@@ -84,8 +93,8 @@ public class GraphComponent<V,E> extends JComponent{
 			v=this.findKey(vertices, ellipse);
 			g2.setColor((Color)v.get(Attribut.color));
 			g2.draw(ellipse);
-			if(v.has(Attribut.name)&&name){
-				g2.drawString((String)v.get(Attribut.name), (int)(7+(double)v.get(Attribut.pos_x)), (int)(width/2+(double)v.get(Attribut.pos_y)));
+			if(v.has(Attribut.name)&&nameFlag){
+				g2.drawString((String)v.get(Attribut.name), (int)((double)v.get(Attribut.pos_x)*zoomSize)+3, (int)(width*zoomSize/2.0+(double)v.get(Attribut.pos_y)*zoomSize));
 			}
 
 		}
@@ -94,14 +103,14 @@ public class GraphComponent<V,E> extends JComponent{
 			e=this.findKey(edges, line);
 			g2.setColor((Color)e.get(Attribut.color));
 			g2.draw(line);
-			if(e.has(Attribut.weight)&&weight){
+			if(e.has(Attribut.weight)&&weightFlag){
 				g2.drawString((String)e.get(Attribut.weight), (int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
 			}
 			if(graph.isDirected())
 				drawArrowHead(g2, new Point((int) line.x2, (int) line.y2),new Point((int) line.x1, (int) line.y1));
 
 		}
-		
+
 		if(unfinishedLine!=null){
 			g2.draw(unfinishedLine);
 			if(graph.isDirected())
@@ -155,44 +164,12 @@ public class GraphComponent<V,E> extends JComponent{
 		edges.put(e, new Line2D.Double(x1+(Math.cos(alpha)*radius)*ax,y1+(Math.sin(alpha)*radius)*ay,x2+(Math.cos(alpha)*radius)*bx,y2+(Math.sin(alpha)*radius)*by));
 	}
 
-	public void setGraph(Graph<V,E> g){
-		graph=g;
-		vertices.clear();
-		edges.clear();
-		double x,y, maxx=0,maxy=0;
-		Iterator<Vertex<V>> itv=graph.vertices();
-		Iterator<Edge<E>> ite=graph.edges();
-		Vertex<V> v;
-		Edge<E> e;
-		Vertex<V>[] ver;
-		while(itv.hasNext()){
-			v=(Vertex<V>) itv.next();
-			
-			x=(double)v.get(Attribut.pos_x)*zoomSize;
-			y=(double)v.get(Attribut.pos_y)*zoomSize;
-			vertices.put(v, new Ellipse2D.Double(x,y,width*zoomSize,width*zoomSize));
 
-			if(x>maxx)
-				maxx=x;
-			if(y>maxy)
-				maxy=y;
-		}
-		while(ite.hasNext()){
-			e=(Edge<E>)ite.next();
-			ver=g.endVertices(e);
-			this.setLine(ver[0], ver[1], e);
-		}
 
-		myDimension=new Dimension((int)(maxx+width*zoomSize)+10, (int)(maxy+width*zoomSize)+10);
-		this.setSize(myDimension);
-		repaint();
-		
-	}
-	
 	@Override 
 	public Dimension getPreferredSize(){
 		return myDimension;
-		
+
 	}
 
 	private Decorable findDecorable(MouseEvent e){
@@ -222,6 +199,12 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
+	private Point findPoint(MouseEvent e) {
+		Point p=e.getPoint();
+		p.setLocation(p.getX()/zoomSize,p.getY()/zoomSize);
+		return p;
+	}
+
 	public <V1, K> K findKey(HashMap<K,V1> map, V1 value ){
 		for (Entry<K, V1> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
@@ -246,19 +229,125 @@ public class GraphComponent<V,E> extends JComponent{
 	public void setFlag(Attribut attr, boolean selected) {
 		switch(attr){
 		case name:
-			this.name=selected;
+			this.nameFlag=selected;
 			break;
 		case weight:
-			this.weight=selected;
+			this.weightFlag=selected;
 			break;
-		case string: this.string=selected;
+		case string: this.stringFlag=selected;
 		}
-		
+
 	}
 
 	public void setZoomSize(int value) {
 		this.zoomSize=value/4.0;
 		this.setGraph(graph);
-		System.out.println(this.getSize());
 	}
+
+	public void setPopupCheckBox(Attribut attr, boolean selected) {
+		switch (attr){
+		case name:
+			name.setState(selected);
+			break;
+		case weight:
+			weight.setState(selected);
+			break;
+		case string:
+			string.setState(selected);
+			break;
+		}
+
+	}
+
+	private void createListeners(ActionListener renameListener){
+		JPopupMenu popupRename = new JPopupMenu();
+		JMenuItem rename = new JMenuItem("Rename...");
+		popupRename.add(rename);
+		rename.addActionListener(renameListener);
+		JPopupMenu popupVisible = new JPopupMenu();
+		name = new JCheckBoxMenuItem("name");
+		weight = new JCheckBoxMenuItem("weight");
+		string = new JCheckBoxMenuItem("string");
+		popupVisible.add(name);
+		popupVisible.add(weight);
+		popupVisible.add(string);
+		nameListener=new ItemListener(){
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+
+				nameFlag=name.isSelected();
+				graphView.setMenuCheckBox(Attribut.name, nameFlag);
+				repaint();
+			}
+
+		};
+		name.addItemListener(nameListener);
+		weightListener= new ItemListener(){
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+
+				weightFlag=weight.isSelected();
+				graphView.setMenuCheckBox(Attribut.weight, weightFlag);
+				repaint();
+			}
+
+		};
+		weight.addItemListener(weightListener);
+		stringListener=new ItemListener(){
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+
+				stringFlag=string.isSelected();
+				graphView.setMenuCheckBox(Attribut.string, stringFlag);
+				repaint();
+			}
+
+		};
+		string.addItemListener(stringListener);
+		this.addMouseListener(new MouseAdapter(){
+			@Override
+			public void mousePressed(MouseEvent e){
+				if(e.getButton()==MouseEvent.BUTTON1){
+					Decorable d=findDecorable(e);
+					graphView.mouseDown(d, findPoint(e));
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e){
+
+				Decorable d=findDecorable(e);
+				if(e.getButton()==MouseEvent.BUTTON1){
+
+					graphView.mouseUp(d, findPoint(e));
+				}
+				if(e.getButton()==MouseEvent.BUTTON3){
+					if(d!=null){
+						graphView.mouseDown(d, findPoint(e));
+						popupRename.show(graphView, e.getX(), e.getY());
+
+					}
+					else{
+						popupVisible.show(graphView, e.getX(), e.getY());
+						repaint();
+					}
+
+				}
+			}
+		});
+		this.addMouseMotionListener(new MouseMotionAdapter(){
+			@Override
+			public void mouseDragged(MouseEvent e) {
+
+				if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
+					Decorable d=findDecorable(e);
+					graphView.mouseDrag(d, findPoint(e));
+				}
+			}
+		});
+	}
+
 }

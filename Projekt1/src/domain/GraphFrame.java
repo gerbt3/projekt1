@@ -14,7 +14,11 @@ import java.nio.file.Path;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -22,6 +26,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import domain.EditorHandler.State;
+import examples.Decorable;
+import examples.Edge;
+import examples.Vertex;
 
 /*
  * Constructs the frame with the different menus
@@ -36,13 +43,15 @@ public class GraphFrame<V, E> extends JFrame {
 	private AlgoHandler<V,E> algoHandler;
 	private MenuHandler<V,E> menuHandler;
 	private String currentGraphName;
+	private ActionListener renameListener;
 
 	public GraphFrame(GraphTool<V,E> gt) {
 		
 		this.editorHandler=new EditorHandler<V,E>(gt);
 		this.algoHandler=new AlgoHandler<V,E>(gt);
 		this.menuHandler=new MenuHandler<V,E>(gt);
-		this.graphView=new GraphView<V,E>(menuHandler);
+		createRenameListener();
+		this.graphView=new GraphView<V,E>(renameListener);
 		graphView.setHandler(editorHandler);
 		constructMenuComponents();
 		constructTabComponents();
@@ -53,30 +62,82 @@ public class GraphFrame<V, E> extends JFrame {
 		setVisible(true);
 	}
 
+	
+
 	//------------------------------------------------------------------------------------//
 	// Helper methods for constructing the frame
 	//------------------------------------------------------------------------------------//
 
-	
 
+	private void createRenameListener() {
+		renameListener=new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text;
+				Decorable d = editorHandler.getSelected();
+				if(d==null){
+					JOptionPane.showMessageDialog(graphView, "No shape selected");
+				}
+				else{
+					if(d instanceof Vertex){
+						text="Change name";
+					}
+					else{
+						text="Change weight";
+					}
+					String usertext=JOptionPane.showInputDialog(text);
+					if(usertext!=null)
+					editorHandler.changeAttribut(usertext);
+				}
+
+			}
+
+		};
+		
+	}
 	/*
 	 * Constructs the main menu with options for creating a new graph
 	 * or saving and opening graphs
 	 */
 	private void constructMenuComponents() {
 
-		JPanel menuPanel = new JPanel();
+		JMenuBar menubar=new JMenuBar();
+		JMenu file = new JMenu("File");
+		JMenu edit = new JMenu("Edit");
+		JMenu view = new JMenu("View");
+		JMenuItem newGraph = new JMenuItem("New");
+		JMenuItem save = new JMenuItem("Save");
+		JMenuItem saveAs = new JMenuItem("Save as");
+		JMenuItem open = new JMenuItem("Open");
+		JMenuItem delete = new JMenuItem("Delete");
+		JMenuItem undo = new JMenuItem("Undo");
+		JMenuItem redo = new JMenuItem("Redo");
+		JMenuItem rename = new JMenuItem("Rename...");
+		JCheckBoxMenuItem name = graphView.getNameItem();
+		JCheckBoxMenuItem weight = graphView.getWeightItem();
+		JCheckBoxMenuItem string = graphView.getStringItem();
 
-		JButton newButton = new JButton("New");
-		JButton saveButton = new JButton("Save");
-		JButton saveAsButton = new JButton("Save as");
-		JButton openButton = new JButton("Open");
-		JButton deleteButton = new JButton("Delete");
+		file.add(newGraph);
+		file.add(save);
+		file.add(saveAs);
+		file.add(open);
+		file.add(delete);
+		edit.add(undo);
+		edit.add(redo);
+		edit.add(rename);
+		view.add(name);
+		view.add(weight);
+		view.add(string);
+		menubar.add(file);
+		menubar.add(edit);
+		menubar.add(view);
+		this.setJMenuBar(menubar);
 
 		/*
 		 * Creates a new undirected or directed graph
 		 */
-		newButton.addActionListener(new ActionListener() {
+		newGraph.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
 				chooseGraphOption();
@@ -87,7 +148,7 @@ public class GraphFrame<V, E> extends JFrame {
 		 * Saves the current graph
 		 * Asks for a name if the graph doesn't have one
 		 */
-		saveButton.addActionListener(new ActionListener() {
+		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
 				if (currentGraphName == null) currentGraphName = askForGraphName();
@@ -99,7 +160,7 @@ public class GraphFrame<V, E> extends JFrame {
 		 * Saves the current graph under a new name
 		 * Warns before overwriting an existing graph
 		 */
-		saveAsButton.addActionListener(new ActionListener() {
+		saveAs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
 				currentGraphName = askForGraphName();
@@ -111,7 +172,7 @@ public class GraphFrame<V, E> extends JFrame {
 		 * Opens a saved graph for the directory GraphFiles
 		 * Calls the openGraph method of the menuHandler class
 		 */
-		openButton.addActionListener(new ActionListener() {
+		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
 				String[] options = getFileNames();
@@ -143,11 +204,11 @@ public class GraphFrame<V, E> extends JFrame {
 		 * Deletes a saved graph
 		 * Warns before deleting a graph
 		 */
-		deleteButton.addActionListener(new ActionListener() {
+		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
 				String[] options = getFileNames();
-				
+
 				String name = (String) JOptionPane.showInputDialog(
 						null,
 						"Choose a graph",
@@ -158,10 +219,10 @@ public class GraphFrame<V, E> extends JFrame {
 						options[0]);
 
 				if (name != null && !name.isEmpty()) {
-					
+
 					File file = new File("GraphFiles/" + name + ".ser");
 					Path path = file.toPath();
-					
+
 					int deleteOption = 0;
 					for (int i = 0; i < options.length; i++) {
 						if (options[i].equals(name)) {
@@ -170,9 +231,9 @@ public class GraphFrame<V, E> extends JFrame {
 									"Delete a graph", JOptionPane.YES_NO_OPTION);
 						}
 					}
-					
+
 					if (deleteOption == JOptionPane.YES_OPTION) {
-						
+
 						try {
 							Files.delete(path);
 						} catch (NoSuchFileException x) {
@@ -184,27 +245,21 @@ public class GraphFrame<V, E> extends JFrame {
 							System.err.println(x);
 						}
 					}
-					
+
 				}
 			}
 		});
 
-		menuPanel.add(newButton);
-		menuPanel.add(saveButton);
-		menuPanel.add(saveAsButton);
-		menuPanel.add(openButton);
-		menuPanel.add(deleteButton);
-
-		add(menuPanel, BorderLayout.NORTH);
+		rename.addActionListener(renameListener);
 	}
 
 	/*
 	 * Constructs the tabs for either drawing graphs or animating algorithms
 	 */
 	private void constructTabComponents() {
-		
+
 		JPanel graphPanel = new EditorView<V, E>(editorHandler);
-		
+
 		JPanel algoPanel = new AlgoView<V, E>(algoHandler);
 		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
@@ -356,5 +411,4 @@ public class GraphFrame<V, E> extends JFrame {
 	public GraphView<V, E> getGraphView() {
 		return graphView;
 	}
-
 }
