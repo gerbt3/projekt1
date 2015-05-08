@@ -67,4 +67,8 @@ public class SelectState<V,E> extends EditorState {
 			graphTool.changeAttribut(selected,Attribut.weight, text);
 		}
 	}
+	
+	public Decorable getSelected() {
+		return selected;
+	}
 }

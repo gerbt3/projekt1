@@ -208,33 +208,9 @@ public class GraphTool<V,E> {
 	//------------------------------------------------------------------------------------//
 	// Helper-methods for executing an algorithm
 	//------------------------------------------------------------------------------------//
-	
-	/*
-	 * Returns the start vertex for an algorithm,
-	 * that needs one
-	 */
-	public Vertex<V> getStartVertex() {
-		// TODO angewählter Vertex holen
-		return null;
-	}
-
-	/*
-	 * Returns the end vertex for an algorithm,
-	 * that needs one
-	 */
-	public Vertex<V> getStopVertex() {
-		// TODO angewählter Vertex holen
-		return null;
-	}
 
 	public void changeAttribut(Decorable d, Attribut attr, String text){
 		d.set(attr, text);
-		viewHandler.setGraph(currentGraph);
-	}
-
-	public void itemChanged(Attribut attr, boolean selected) {
-		
-		viewHandler.setFlag(attr, selected);
 		viewHandler.setGraph(currentGraph);
 	}
 
@@ -261,8 +237,8 @@ public class GraphTool<V,E> {
 	}
 	
 	/*
-	 * Serializes the graph after each change an algorithm
-	 * in the GraphExamples class made
+	 * Serializes the graph after each change 
+	 * an algorithm in the GraphExamples class made
 	 */
 	public void serializeGraph(Graph<V,E> g) {
 		try {

@@ -1,5 +1,6 @@
 package domain;
 
+import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -50,12 +51,7 @@ public class AnnotationParser<V, E> {
 		Graph<V,E> graph = graphTool.getCurrentGraph();
 		Vertex<V> v1=startVertex, v2=endVertex;
 		if(method!=null){
-			if(method.getAnnotation(Algorithm.class).vertex()){
-				v1=graphTool.getStartVertex();
-			}
-			if(method.getAnnotation(Algorithm.class).vertex2()){
-				v2=graphTool.getStopVertex();
-			}
+	
 			if(!method.getAnnotation(Algorithm.class).vertex()){
 				try {
 					method.invoke(graphExamples, graph);

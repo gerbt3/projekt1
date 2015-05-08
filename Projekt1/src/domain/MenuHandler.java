@@ -25,10 +25,5 @@ public class MenuHandler<V,E> {
 	public void createGraph(boolean directed){
 		graphTool.createGraph(directed);
 	}
-
-	public void itemChanged(Attribut attr, boolean selected) {
-		graphTool.itemChanged(attr, selected);
-		
-	}
 	
 }

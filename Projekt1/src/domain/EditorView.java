@@ -1,6 +1,8 @@
 package domain;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +17,9 @@ public class EditorView<V, E> extends JPanel {
 	private EditorHandler<V,E> editorHandler;
 	
 	public EditorView(EditorHandler<V,E> handler) {
+		
+		this.setBackground(new Color(100,100,100));
+		
 		this.editorHandler=handler;
 		setLayout(new BorderLayout());
 		constructPanelComponents();
@@ -26,15 +31,6 @@ public class EditorView<V, E> extends JPanel {
 		JButton deleteButton = new JButton("Delete");
 		JButton vertexButton = new JButton("Vertex");
 		JButton edgeButton = new JButton("Edge");
-		JTextField attributText = new JTextField(15);
-		JButton editAttributButton=new JButton("Edit");
-		
-		editAttributButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				editorHandler.changeAttribut(attributText.getText());
-			}
-		});
 		
 		selectionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -60,17 +56,19 @@ public class EditorView<V, E> extends JPanel {
             }
          });
 		
-		
-		
 		JPanel toolPanel = new JPanel(new FlowLayout());
-		
-		toolPanel.add(attributText);
-		toolPanel.add(editAttributButton);
+
 		toolPanel.add(selectionButton);
 		toolPanel.add(deleteButton);
 		toolPanel.add(vertexButton);
 		toolPanel.add(edgeButton);
 		
+		//Changes appearance of buttons
+		Component[] comp = toolPanel.getComponents();
+		for (Component c : comp) {
+			c.setBackground(new Color(100,100,100));
+			c.setForeground(Color.white);
+		}
 		
 		add(toolPanel, BorderLayout.NORTH);
 	}

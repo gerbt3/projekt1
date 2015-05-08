@@ -1,5 +1,6 @@
 package examples;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,7 +17,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import javax.swing.JButton;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+
 import domain.Algorithm;
+import domain.Attribut;
 import domain.GraphTool;
 
 
@@ -157,18 +164,20 @@ public class GraphExamples<V,E> {
 		// an attribute DISTANCE and PQLOCATOR
 		while(it.hasNext()){
 			Vertex<V> v = it.next();
-			//-----------------------------------------------
-			//Saves the graph with the current changes
-			graphTool.serializeGraph(g);
-			//-----------------------------------------------
 			v.set(DISTANCE,Double.POSITIVE_INFINITY);
 			Locator<Double,Vertex<V>> loc = pq.insert(Double.POSITIVE_INFINITY,v);
 			v.set(PQLOCATOR,loc);
 		}
 		// correct the attributes for s
 		s.set(DISTANCE,0.0);
+	//-----------------------------------------------
+		//Saves the graph with the current changes
+		s.set(Attribut.color, Color.green);
+		graphTool.serializeGraph(g);
+	//-----------------------------------------------
 		pq.replaceKey((Locator<Double,Vertex<V>>)s.get(PQLOCATOR),0.0);
 		while( ! pq.isEmpty()){
+			
 			Vertex<V> u = pq.removeMin().element();
 			// now make the relaxation step for all 
 			// neighbours:
@@ -177,6 +186,13 @@ public class GraphExamples<V,E> {
 			else eIt = g.incidentEdges(u);
 			while (eIt.hasNext()){
 				Edge<E> e = eIt.next();
+			//-----------------------------------------------
+				//Saves the graph with the current changes
+				if (!u.equals(s)) u.set(Attribut.color, Color.red);
+				e.set(Attribut.color, Color.red);
+				graphTool.serializeGraph(g);
+				//e.set(Attribut.color, Color.black);
+			//-----------------------------------------------
 				double weight = 1.0; // default weight
 				if (e.has(WEIGHT)) weight = (Double)e.get(WEIGHT);
 				Vertex<V> z = g.opposite(e, u);
@@ -361,13 +377,13 @@ public class GraphExamples<V,E> {
 		Iterator<Vertex<V>> it = g.vertices();
 		while (it.hasNext()) dijkstra(g, it.next());
 	}
-	
+		
 	/**
 	 * @param args
 	 * 
 	 */
 	public static void main(String[] args) {
-
+		
 		// make an undirected graph
 		IncidenceListGraph<String,String> g = 
 			new IncidenceListGraph<>(false);
@@ -395,6 +411,7 @@ public class GraphExamples<V,E> {
 		//System.out.println(g);
 		ge.setGateways();
 		
+		//TODO opens a second window
 		graphTool = new GraphTool(g, ge);
 		
 //		System.out.print("Path: ");

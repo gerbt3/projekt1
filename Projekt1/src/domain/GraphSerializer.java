@@ -109,7 +109,6 @@ public class GraphSerializer<V,E> {
 	/*
 	 * Returns an Arraylist of Graphs deserialized from serialized list of graphs
 	 */
-	// Has to be tested if it works!!!!
 	public ArrayList<Graph<V,E>> getAlgoGraphs() throws IOException, ClassNotFoundException {
 		
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
@@ -117,11 +116,10 @@ public class GraphSerializer<V,E> {
 		
 		for (int i = 0; i < byteAlgoGraphs.size(); i++) {
 		
-			ois.read(byteAlgoGraphs.get(i));
+			ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(i)));
 			
 			try {			
 				algoGraphs.add((Graph<V,E>) ois.readObject());
-				System.out.println("Graph " + i + " name " + algoGraphs.get(i));
 			} catch (IOException e1) {
 				System.out.println("@GraphSerializer: GraphSerializer failed to deserialize a graph");
 				e1.printStackTrace();

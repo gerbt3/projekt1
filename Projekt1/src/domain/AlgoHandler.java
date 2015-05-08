@@ -17,6 +17,9 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	private boolean selectedState = false;
 	private Method currentAlgoMethod;
 	private ArrayList<Graph<V,E>> algoGraphs;
+	private Vertex<V> startVertex;
+	private Vertex<V> endVertex;
+	private Thread algoThread;
 	
 	public AlgoHandler(GraphTool<V, E> gt) {
 		selectState = new SelectState<V,E>(gt);
@@ -59,11 +62,47 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	// Methods for controlling an algorithm
 	//------------------------------------------------------------------------------------//
 	
+	/*
+	 * Executes the algorithm method
+	 * and starts a new thread to animate 
+	 * the different states of the graph
+	 */
 	public void startAlgo(Method currentAlgoMethod) {
 		this.currentAlgoMethod = currentAlgoMethod;
-		//algoGraphs = graphTool.executeMethod(currentAlgoMethod);
-		for (Graph<V,E> g : algoGraphs) System.out.println(g);
+		algoGraphs = graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
+		startVertex = null;
+		endVertex = null;
 		
+		algoThread = new Thread(new RunAlgo());
+		algoThread.start();
+	}
+	
+	/*
+	 * Stops the animation of an algorithm
+	 * and interrupts the algoThread
+	 */
+	public void stopAlgo() {
+		algoThread.interrupt();
+	}
+	
+	/*
+	 * Gets the current selection from the AnnotationParser
+	 * and saves it as the startVertex
+	 */
+	public void setStartVertex() {
+		Decorable d = selectState.getSelected();
+		if (d instanceof Vertex) startVertex = (Vertex<V>) d;
+		clearSelected();
+	}
+	
+	/*
+	 * Gets the current selection from the AnnotationParser
+	 * and saves it as the endVertex
+	 */
+	public void setEndVertex() {
+		Decorable d = selectState.getSelected();
+		if (d instanceof Vertex) endVertex = (Vertex<V>) d;
+		clearSelected();
 	}
 	
 	/*
@@ -80,4 +119,24 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		//graphTool.executeMethod(method);
 	}
 	
+	/*
+	 * Thread for animating an algorithm
+	 */
+	private class RunAlgo implements Runnable {
+		public void run() {
+			int i = 0;
+			for (Graph<V,E> g : algoGraphs) {
+				System.out.println("@AlgoHandler, startAlgo: graph " + i++ + " : " );
+				System.out.println(g);
+				try {
+					
+					Thread.sleep(2000);
+					
+				} catch (InterruptedException e) {
+					System.out.println("@AlgoHandler: RunAlgo: run: Thread interrupted");
+				}
+				//graphTool.setCurrentGraph(g);
+			}
+		}
+	}
 }
