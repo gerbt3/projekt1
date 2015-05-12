@@ -52,7 +52,6 @@ public class GraphExamples<V,E> {
 
 	public GraphExamples(Graph<V,E> g){
 		this.g=g;
-		graphTool = new GraphTool(g, this);
 	}
 	
 	public void setNumbers(){
@@ -409,10 +408,9 @@ public class GraphExamples<V,E> {
 		Edge e_i = g.insertEdge(vG,vF,"GF");
 		Edge e_j = g.insertEdge(vF,vE,"FE");
 		//System.out.println(g);
-		ge.setGateways();
 		
-		//TODO opens a second window
 		graphTool = new GraphTool(g, ge);
+		ge.setGateways();
 		
 //		System.out.print("Path: ");
 //		Vertex<String> [] path = ge.shortestPath(vA,vG);

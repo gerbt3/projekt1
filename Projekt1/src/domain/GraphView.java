@@ -19,6 +19,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import design.CustomScrollBarUI;
 import examples.Decorable;
 import examples.Graph;
 
@@ -34,6 +35,14 @@ public class GraphView<V,E> extends JPanel {
 		comp = new GraphComponent<V, E>(this, renameListener);
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(comp);
+		//Changes the background of main area
+		scrollPane.getViewport().setBackground(Color.white);
+		//Changes the appearance of the scrollbars of the scrollpane
+		scrollPane.getVerticalScrollBar().setBackground(new Color(100,100,100));
+		scrollPane.getVerticalScrollBar().setUI(new CustomScrollBarUI());
+		scrollPane.getHorizontalScrollBar().setBackground(new Color(100,100,100));
+		scrollPane.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
+		
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
 		this.constructComponents();

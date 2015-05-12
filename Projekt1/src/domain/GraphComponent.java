@@ -1,5 +1,6 @@
 package domain;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -91,6 +92,16 @@ public class GraphComponent<V,E> extends JComponent{
 		for( Iterator<Ellipse2D.Double> itv = vertices.values().iterator(); itv.hasNext(); ){
 			ellipse=itv.next();
 			v=this.findKey(vertices, ellipse);
+		//-----------------------------------------------
+			//Fills the ellipse and set the line thickness
+			int red = ((Color)v.get(Attribut.color)).getRed();
+			int green = ((Color)v.get(Attribut.color)).getGreen();
+			int blue = ((Color)v.get(Attribut.color)).getBlue();
+			Color fillColor = new Color(red, green, blue, 255*1/4);
+			g2.setColor(fillColor);
+			g2.fill(ellipse);
+			g2.setStroke(new BasicStroke(2));
+		//-----------------------------------------------
 			g2.setColor((Color)v.get(Attribut.color));
 			g2.draw(ellipse);
 			if(v.has(Attribut.name)&&nameFlag){
