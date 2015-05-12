@@ -35,7 +35,6 @@ public class AlgoView<V,E> extends JPanel {
 	
 	private void constructPanelComponents() {
 			
-		JButton selectionButton = new JButton("Select");
 		JButton startButton = new JButton("Start");
 		JButton backButton = new JButton("Back");
 		JButton forwardButton = new JButton("Forward");
@@ -57,12 +56,9 @@ public class AlgoView<V,E> extends JPanel {
 		JComboBox algoList = new JComboBox(algoMethodNames);
 		currentAlgoMethod = algoMethods.get(algoList.getSelectedIndex());
 		
-		selectionButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-            	algoHandler.setSelectedState(true);
-            }
-         });
-		
+		/*
+		 * 
+		 */
 		startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	
@@ -79,10 +75,6 @@ public class AlgoView<V,E> extends JPanel {
             	} else {
             	 	
             		algoHandler.startAlgo(currentAlgoMethod);
-                	algoHandler.setSelectedState(false);
-                	
-                	//TODO: check if needed here:
-                	startVertexButton.setEnabled(false);
             	}
             	
             }
@@ -90,26 +82,25 @@ public class AlgoView<V,E> extends JPanel {
 		
 		backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	algoHandler.setSelectedState(false);
+            	
             }
          });
 		
 		forwardButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	algoHandler.setSelectedState(false);
+            	
             }
          });
 		
 		stopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	algoHandler.stopAlgo();
-            	algoHandler.setSelectedState(false);
             }
          });
 		
 		commitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	algoHandler.setSelectedState(false);
+            	
             }
          });
 		
@@ -122,7 +113,13 @@ public class AlgoView<V,E> extends JPanel {
         			if (algoName.equals(algoMethods.get(i).getName())) index = i;
         		}
             	currentAlgoMethod = algoMethods.get(index);
-
+            	
+            	//Reset all selections and stop the timer
+            	algoHandler.stopAlgo();
+            	algoHandler.clearStartEndVertex();
+            	startVertexSelected = false;
+            	endVertexSelected = false;
+            	
             	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex()) {
             		startVertexButton.setVisible(true);
             	} else {
@@ -153,7 +150,6 @@ public class AlgoView<V,E> extends JPanel {
 
 		JPanel toolPanel = new JPanel(new FlowLayout());
 		
-		toolPanel.add(selectionButton);
 		toolPanel.add(startButton);
 		toolPanel.add(backButton);
 		toolPanel.add(forwardButton);

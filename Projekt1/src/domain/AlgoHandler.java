@@ -1,9 +1,13 @@
 package domain;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Vector;
+
+import javax.swing.Timer;
 
 import examples.Decorable;
 import examples.Edge;
@@ -20,17 +24,29 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	private Vertex<V> startVertex;
 	private Vertex<V> endVertex;
 	private Thread algoThread;
+	private Timer t;
 	
 	public AlgoHandler(GraphTool<V, E> gt) {
 		selectState = new SelectState<V,E>(gt);
 		this.graphTool=gt;
 		algoGraphs = new ArrayList<>();
+		t = new Timer(1, new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				
+				int i = 0;
+				for (Graph<V,E> g : algoGraphs) {
+					System.out.println("@AlgoHandler, startAlgo: graph " + i++ + " : " );
+					System.out.println(g);
+					graphTool.setCurrentGraph(g);
+				}	
+			}
+		});
 	}
 
 	@Override
 	public void mouseDown(Decorable d, Point p) {
 		//Only vertices can be selected
-		if (selectedState && d instanceof Vertex) selectState.mouseDown(d, p);
+		if (d instanceof Vertex) selectState.mouseDown(d, p);
 		else selectState.mouseDown(null, null);
 	}
 
@@ -44,10 +60,6 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	public void mouseUp(Decorable d, Point p) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	public void setSelectedState(boolean selectedState) {
-		this.selectedState = selectedState;
 	}
 	
 	/*
@@ -64,25 +76,18 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	
 	/*
 	 * Executes the algorithm method
-	 * and starts a new thread to animate 
-	 * the different states of the graph
 	 */
 	public void startAlgo(Method currentAlgoMethod) {
 		this.currentAlgoMethod = currentAlgoMethod;
 		algoGraphs = graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
-		startVertex = null;
-		endVertex = null;
-		
-		algoThread = new Thread(new RunAlgo());
-		algoThread.start();
+		t.start();
 	}
 	
 	/*
 	 * Stops the animation of an algorithm
-	 * and interrupts the algoThread
 	 */
 	public void stopAlgo() {
-		algoThread.interrupt();
+		if (t.isRunning()) t.stop();
 	}
 	
 	/*
@@ -106,6 +111,14 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	}
 	
 	/*
+	 * Deletes the saved start and end vertex
+	 */
+	public void clearStartEndVertex() {
+		startVertex = null;
+		endVertex = null;
+	}
+	
+	/*
 	 * Gets all annotated methods from the AnnotationParser
 	 */
 	public Vector<Method> getAnnotatedMethods() {
@@ -119,24 +132,4 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		//graphTool.executeMethod(method);
 	}
 	
-	/*
-	 * Thread for animating an algorithm
-	 */
-	private class RunAlgo implements Runnable {
-		public void run() {
-			int i = 0;
-			for (Graph<V,E> g : algoGraphs) {
-				System.out.println("@AlgoHandler, startAlgo: graph " + i++ + " : " );
-				System.out.println(g);
-				try {
-					
-					Thread.sleep(2000);
-					
-				} catch (InterruptedException e) {
-					System.out.println("@AlgoHandler: RunAlgo: run: Thread interrupted");
-				}
-				graphTool.setCurrentGraph(g);
-			}
-		}
-	}
 }
