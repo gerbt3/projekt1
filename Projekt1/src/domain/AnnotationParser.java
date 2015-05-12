@@ -54,7 +54,7 @@ public class AnnotationParser<V, E> {
 	
 			if(!method.getAnnotation(Algorithm.class).vertex()){
 				try {
-					method.invoke(graphExamples, graph);
+					method.invoke(graphExamples, graph, graphTool);
 				} catch (IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
 					e.printStackTrace();
@@ -64,7 +64,7 @@ public class AnnotationParser<V, E> {
 				if(v1==null) throw new NullPointerException("startvertex");
 				if(!method.getAnnotation(Algorithm.class).vertex2()){
 					try {
-						method.invoke(graphExamples, graph, v1);
+						method.invoke(graphExamples, graph, v1, graphTool);
 					} catch (IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException e) {
 						e.printStackTrace();
@@ -73,7 +73,7 @@ public class AnnotationParser<V, E> {
 					if(v2==null)throw new NullPointerException("stopvertex");
 
 					try {
-						method.invoke(graphExamples, graph, v1, v2);
+						method.invoke(graphExamples, graph, v1, v2, graphTool);
 					} catch (IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException e) {
 						e.printStackTrace();

@@ -6,5 +6,15 @@ public enum Attribut {
 	color,
 	name,
 	weight,
-	string
+	string,
+    NUMBER,
+    VISITED,
+    DISCOVERY,
+    // for dijkstra:
+    DISTANCE,
+    PQLOCATOR,    
+    //for kruskal 
+    MSF,
+    CLUSTER 
+
 }

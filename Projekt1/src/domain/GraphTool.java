@@ -224,16 +224,19 @@ public class GraphTool<V,E> {
 	 * Return value will be null, if the deserializing of the graphs fails
 	 * and has to be tested for it
 	 */
-	public ArrayList<Graph<V, E>> executeMethod(Method method, Vertex<V> startVertex, Vertex<V> endVertex) {
+	public void executeMethod(Method method, Vertex<V> startVertex, Vertex<V> endVertex) {
 		parser.executeMethod(method, startVertex, endVertex);
-		ArrayList<Graph<V,E>> algoGraphs = null;
 		try {
-			algoGraphs = graphSerializer.getAlgoGraphs();
+			graphSerializer.deserializeAlgoGraphs();
 		} catch (ClassNotFoundException | IOException e) {
-			System.out.println("@GraphTool: GraphSerializer failed to deserialize a graph");
+			System.out.println("@GraphTool: executeMethod: Failed to deserialize graphs");
 			e.printStackTrace();
 		}
-		return algoGraphs;
+	}
+	
+	public Graph<V,E> getNextGraph() {
+		if (graphSerializer.hasNextGraph()) return graphSerializer.getNextGraph();
+		else return null;
 	}
 	
 	/*

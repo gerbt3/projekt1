@@ -36,6 +36,7 @@ public class AlgoView<V,E> extends JPanel {
 	private void constructPanelComponents() {
 			
 		JButton startButton = new JButton("Start");
+		JButton pauseButton = new JButton("Pause");
 		JButton backButton = new JButton("Back");
 		JButton forwardButton = new JButton("Forward");
 		JButton stopButton = new JButton("Stop");
@@ -56,9 +57,7 @@ public class AlgoView<V,E> extends JPanel {
 		JComboBox algoList = new JComboBox(algoMethodNames);
 		currentAlgoMethod = algoMethods.get(algoList.getSelectedIndex());
 		
-		/*
-		 * 
-		 */
+	
 		startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	
@@ -76,6 +75,12 @@ public class AlgoView<V,E> extends JPanel {
             	 	
             		algoHandler.startAlgo(currentAlgoMethod);
             	}
+            	
+            }
+         });
+		
+		pauseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
             	
             }
          });
@@ -100,7 +105,7 @@ public class AlgoView<V,E> extends JPanel {
 		
 		commitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	//TODO Currently does nothing
             }
          });
 		
@@ -151,6 +156,7 @@ public class AlgoView<V,E> extends JPanel {
 		JPanel toolPanel = new JPanel(new FlowLayout());
 		
 		toolPanel.add(startButton);
+		toolPanel.add(pauseButton);
 		toolPanel.add(backButton);
 		toolPanel.add(forwardButton);
 		toolPanel.add(stopButton);

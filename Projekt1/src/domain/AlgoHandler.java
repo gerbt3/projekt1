@@ -18,12 +18,10 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	
 	private GraphTool<V,E> graphTool;
 	private SelectState<V,E> selectState;
-	private boolean selectedState = false;
 	private Method currentAlgoMethod;
 	private ArrayList<Graph<V,E>> algoGraphs;
 	private Vertex<V> startVertex;
 	private Vertex<V> endVertex;
-	private Thread algoThread;
 	private Timer t;
 	
 	public AlgoHandler(GraphTool<V, E> gt) {
@@ -79,8 +77,20 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 */
 	public void startAlgo(Method currentAlgoMethod) {
 		this.currentAlgoMethod = currentAlgoMethod;
-		algoGraphs = graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
+		graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
 		t.start();
+	}
+	
+	public void pauseAlgo() {
+		
+	}
+	
+	public void previousAlgo() {
+		
+	}
+	
+	public void nextAlgo() {
+		
 	}
 	
 	/*
@@ -88,6 +98,10 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 */
 	public void stopAlgo() {
 		if (t.isRunning()) t.stop();
+	}
+	
+	public void setTimerTime(int time) {
+		t.setDelay(time);
 	}
 	
 	/*

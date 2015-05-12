@@ -23,7 +23,8 @@ import examples.Vertex;
 public class GraphSerializer<V,E> {
 
 	private ArrayList<byte[]> byteAlgoGraphs;
-	private int editorIndex, algoIndex;
+	ArrayList<Graph<V,E>> algoGraphs = new ArrayList<>();
+	private int algoIndex = 0;
 	
 	public GraphSerializer(){
 		byteAlgoGraphs= new ArrayList<byte[]>();
@@ -107,12 +108,11 @@ public class GraphSerializer<V,E> {
 	}
 	
 	/*
-	 * Returns an Arraylist of Graphs deserialized from serialized list of graphs
+	 * Deserializes all temporary copies of the graphs
 	 */
-	public ArrayList<Graph<V,E>> getAlgoGraphs() throws IOException, ClassNotFoundException {
+	public void deserializeAlgoGraphs() throws IOException, ClassNotFoundException {
 		
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
-		ArrayList<Graph<V,E>> algoGraphs = new ArrayList<>();
 		
 		for (int i = 0; i < byteAlgoGraphs.size(); i++) {
 		
@@ -127,7 +127,57 @@ public class GraphSerializer<V,E> {
 				ois.close();
 			}
 		}
+	}
+
+	/*
+	 * Checks if the arraylist of graphs has a next element,
+	 * going from the algoIndex
+	 */
+	public boolean hasNextGraph() {
+		if (algoIndex >= algoGraphs.size()-1) return false;
+		else return true;
+	}
+	
+	/*
+	 * Returns the next element in the arraylist of graphs
+	 * If the next element exists, has to be checked first
+	 */
+	public Graph<V,E> getNextGraph() {
+		algoIndex++;
+		return algoGraphs.get(algoIndex);
+	}
+	
+	/*
+	 * Checks if the arraylist of graphs has a previous element,
+	 * going from the algoIndex
+	 */
+	public boolean hasPreviousGraph() {
+		if (algoIndex <= 0) return false;
+		else return true;
+	}
+	
+	/*
+	 * Returns the previous element in the arraylist of graphs
+	 * If the previous element exists, has to be checked first
+	 */
+	public Graph<V,E> getPreviousGraph() {
+		algoIndex--;
+		return algoGraphs.get(algoIndex);
 		
-		return algoGraphs;
+	}
+	
+	/*
+	 * Set the index for the arraylist of graphs 
+	 * back to the beginning
+	 */
+	public void resetAlgoIndex() {
+		algoIndex = 0;
+	}
+	
+	/*
+	 * Returns the size of the arraylist of graphs
+	 */
+	public int getAlgoGraphsSize() {
+		return algoGraphs.size();
 	}
 }
