@@ -2,24 +2,18 @@ package domain;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import design.CustomScrollBarUI;
 import examples.Decorable;
 import examples.Graph;
 
@@ -38,14 +32,8 @@ public class GraphView<V,E> extends JPanel {
 
 		//Changes the background of main area
 		scrollPane.getViewport().setBackground(Color.white);
-		//Changes the appearance of the scrollbars of the scrollpane
-		scrollPane.getVerticalScrollBar().setBackground(new Color(100,100,100));
-		scrollPane.getVerticalScrollBar().setUI(new CustomScrollBarUI());
-		scrollPane.getHorizontalScrollBar().setBackground(new Color(100,100,100));
-		scrollPane.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
-		
+
 		this.setLayout(new BorderLayout());
-		this.setBackground(Color.WHITE);
 		this.constructComponents();
 		this.add(scrollPane, BorderLayout.CENTER);
 	}

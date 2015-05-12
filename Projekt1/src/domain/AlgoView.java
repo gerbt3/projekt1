@@ -162,13 +162,6 @@ public class AlgoView<V,E> extends JPanel {
 		toolPanel.add(endVertexButton);
 		endVertexButton.setVisible(false);
 		
-		//Changes appearance of buttons
-		Component[] comp = toolPanel.getComponents();
-		for (Component c : comp) {
-			c.setBackground(new Color(100,100,100));
-			c.setForeground(Color.white);
-		}
-		
 		add(toolPanel, BorderLayout.NORTH);
 	}
 }

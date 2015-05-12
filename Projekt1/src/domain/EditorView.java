@@ -62,13 +62,6 @@ public class EditorView<V, E> extends JPanel {
 		toolPanel.add(vertexButton);
 		toolPanel.add(edgeButton);
 		
-		//Changes appearance of buttons
-		Component[] comp = toolPanel.getComponents();
-		for (Component c : comp) {
-			c.setBackground(new Color(100,100,100));
-			c.setForeground(Color.white);
-		}
-		
 		add(toolPanel, BorderLayout.NORTH);
 	}
 }

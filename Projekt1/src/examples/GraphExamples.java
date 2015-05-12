@@ -1,27 +1,11 @@
 package examples;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Stack;
-
-import javax.swing.JButton;
-import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicArrowButton;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-
 import domain.Algorithm;
 import domain.Attribut;
 import domain.GraphTool;

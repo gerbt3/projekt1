@@ -49,9 +49,6 @@ public class GraphFrame<V, E> extends JFrame {
 
 	public GraphFrame(GraphTool<V,E> gt) {
 		
-		//Changes the appearance of the frame
-		this.getContentPane().setBackground(new Color(100,100,100));
-		
 		this.editorHandler=new EditorHandler<V,E>(gt);
 		this.algoHandler=new AlgoHandler<V,E>(gt);
 		this.menuHandler=new MenuHandler<V,E>(gt);
@@ -139,21 +136,6 @@ public class GraphFrame<V, E> extends JFrame {
 		menubar.add(view);
 		this.setJMenuBar(menubar);
 
-		Component[] fileComp = file.getComponents();
-		for (Component c : fileComp) {
-			c.setBackground(new Color(100,100,100));
-		}
-		
-		Color darkgrey = new Color(100,100,100);
-		menubar.setBackground(darkgrey);
-		file.setBackground(darkgrey);
-		newGraph.setBackground(darkgrey);
-		save.setBackground(darkgrey);
-		saveAs.setBackground(darkgrey);
-		open.setBackground(darkgrey);
-		delete.setBackground(darkgrey);
-		
-		
 		/*
 		 * Creates a new undirected or directed graph
 		 */
@@ -304,10 +286,6 @@ public class GraphFrame<V, E> extends JFrame {
 			}
 
 		});
-		
-		//Changes appearance of tabs
-		tabpane.setBackground(new Color(100,100,100));
-		tabpane.setForeground(Color.white);
 		
 		add(tabpane, BorderLayout.SOUTH);
 	}
