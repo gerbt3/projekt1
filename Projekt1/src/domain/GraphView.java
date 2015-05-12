@@ -35,6 +35,7 @@ public class GraphView<V,E> extends JPanel {
 		comp = new GraphComponent<V, E>(this, renameListener);
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(comp);
+
 		//Changes the background of main area
 		scrollPane.getViewport().setBackground(Color.white);
 		//Changes the appearance of the scrollbars of the scrollpane

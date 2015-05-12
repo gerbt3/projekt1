@@ -67,6 +67,8 @@ public class GraphFrame<V, E> extends JFrame {
 		setVisible(true);
 	}
 
+	
+
 	//------------------------------------------------------------------------------------//
 	// Helper methods for constructing the frame
 	//------------------------------------------------------------------------------------//
@@ -99,7 +101,6 @@ public class GraphFrame<V, E> extends JFrame {
 		};
 		
 	}
-	
 	/*
 	 * Constructs the main menu with options for creating a new graph
 	 * or saving and opening graphs
@@ -264,7 +265,7 @@ public class GraphFrame<V, E> extends JFrame {
 							System.err.println(x);
 						}
 					}
-					
+
 				}
 			}
 		});
