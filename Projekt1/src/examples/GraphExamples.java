@@ -411,7 +411,7 @@ public class GraphExamples<V,E> {
 		graphTool = new GraphTool(g, ge);
 		
 		//System.out.println(g);
-		ge.setGateways();
+		//ge.setGateways();
 		
 		
 		

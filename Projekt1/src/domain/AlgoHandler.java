@@ -135,7 +135,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 				} catch (InterruptedException e) {
 					System.out.println("@AlgoHandler: RunAlgo: run: Thread interrupted");
 				}
-				//graphTool.setCurrentGraph(g);
+				graphTool.setCurrentGraph(g);
 			}
 		}
 	}

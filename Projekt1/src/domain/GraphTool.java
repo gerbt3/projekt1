@@ -249,4 +249,9 @@ public class GraphTool<V,E> {
 		}
 	}
 	
+	public void setCurrentGraph(Graph g) {
+		currentGraph = g;
+		viewHandler.setGraph(currentGraph);
+	}
+	
 }
