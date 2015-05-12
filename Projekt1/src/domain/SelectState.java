@@ -1,6 +1,8 @@
 package domain;
 
+import java.awt.Color;
 import java.awt.Point;
+
 import examples.Decorable;
 import examples.Edge;
 import examples.Vertex;
@@ -11,6 +13,8 @@ public class SelectState<V,E> extends EditorState {
 	private GraphTool<V, E> graphTool;
 	private Decorable selected;
 	private Point selectedPoint;
+	private Color oldColor;
+	
 	public SelectState(GraphTool<V,E> g){
 		this.graphTool=g;
 	}
@@ -19,12 +23,13 @@ public class SelectState<V,E> extends EditorState {
 	public void mouseDown(Decorable d, Point p) {
 
 		if(selected!=null){
-			graphTool.setColor(selected, GraphTool.STANDARD);
+			graphTool.setColor(selected, oldColor);
 			selected=null;
 		}
 
 		if(d!=null){
 			selected=d;
+			oldColor=(Color) d.get(Attribut.color);
 			graphTool.setColor(d, GraphTool.SELECTED);
 			selectedPoint=p;
 		}

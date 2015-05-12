@@ -107,6 +107,9 @@ public class GraphComponent<V,E> extends JComponent{
 			if(v.has(Attribut.name)&&nameFlag){
 				g2.drawString((String)v.get(Attribut.name), (int)((double)v.get(Attribut.pos_x)*zoomSize)+3, (int)(width*zoomSize/2.0+(double)v.get(Attribut.pos_y)*zoomSize));
 			}
+			if(v.has(Attribut.string)&&stringFlag){
+				g2.drawString((String)v.get(Attribut.string), (int) ((int)((double)v.get(Attribut.pos_x)*zoomSize)+width*zoomSize), (int)((double)v.get(Attribut.pos_y)*zoomSize));
+			}
 
 		}
 		for( Iterator<Line2D.Double> ite = edges.values().iterator(); ite.hasNext(); ){
@@ -116,6 +119,9 @@ public class GraphComponent<V,E> extends JComponent{
 			g2.draw(line);
 			if(e.has(Attribut.weight)&&weightFlag){
 				g2.drawString((String)e.get(Attribut.weight), (int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+			}
+			if(e.has(Attribut.string)&&stringFlag){
+				g2.drawString((String)e.get(Attribut.string),(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2)+15);
 			}
 			if(graph.isDirected())
 				drawArrowHead(g2, new Point((int) line.x2, (int) line.y2),new Point((int) line.x1, (int) line.y1));
