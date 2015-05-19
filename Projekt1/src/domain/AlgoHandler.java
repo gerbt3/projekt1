@@ -27,7 +27,8 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		this.graphTool=gt;
 		t = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				graphTool.nextGraph();
+				if (graphTool.hasNextGraph()) graphTool.nextGraph();
+				else stopAlgo();
 			}
 		});
 	}
@@ -82,6 +83,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	//Pauses the timer for animating an algorithm
 	public void pauseAlgo() {
 		t.stop();
+		graphTool.resetStartButton();
 	}
 	
 	//Gets the previous step in the animation of an algorithm
@@ -99,9 +101,20 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 * and stops the timer for animating an algorithm
 	 */
 	public void stopAlgo() {
-		if (t.isRunning()) t.stop();
-		graphTool.stop();
-		graphTool.resetColor();	
+		if (t.isRunning()) {
+			t.stop();
+			graphTool.stop();
+			graphTool.resetStartButton();
+			graphTool.resetColor();
+		}
+	}
+	
+	/*
+	 * Returns true,
+	 * if the timer for animating an algorithm is running
+	 */
+	public boolean algoIsRunning(){
+		return t.isRunning();
 	}
 	
 	/*
@@ -110,6 +123,10 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 */
 	public void setTimerTime(int time) {
 		t.setDelay(time);
+	}
+	
+	public void resetColor() {
+		graphTool.resetColor();
 	}
 	
 	//------------------------------------------------------------------------------------//

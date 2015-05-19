@@ -45,6 +45,7 @@ public class GraphFrame<V, E> extends JFrame {
 	private GraphView<V,E> graphView;
 	private EditorView<V,E> editorPanel;
 	private EditorHandler<V,E> editorHandler;
+	private AlgoView<V,E> algoPanel;
 	private AlgoHandler<V,E> algoHandler;
 	private GraphTool graphTool;
 	private String currentGraphName;
@@ -177,6 +178,8 @@ public class GraphFrame<V, E> extends JFrame {
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
+				//Stops running algorithms animations
+				//before opening a new graph
 				algoHandler.stopAlgo();
 				
 				String[] options = getFileNames();
@@ -264,7 +267,7 @@ public class GraphFrame<V, E> extends JFrame {
 
 		editorPanel = new EditorView<V, E>(editorHandler);
 
-		JPanel algoPanel = new AlgoView<V, E>(algoHandler);
+		algoPanel = new AlgoView<V, E>(algoHandler);
 		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		ImageIcon graphIcon = new ImageIcon("Images/draw.png");
@@ -430,7 +433,6 @@ public class GraphFrame<V, E> extends JFrame {
 			try {
 				graphTool.saveGraph(name);
 				currentGraphName = name;
-				graphTool.setGraphSaved(true);
 			} catch (IOException e) {
 				System.out.println("@GraphFrame: Failed to save a graph");
 				e.printStackTrace();
@@ -440,5 +442,14 @@ public class GraphFrame<V, E> extends JFrame {
 
 	public GraphView<V, E> getGraphView() {
 		return graphView;
+	}
+
+	/*
+	 * Resets the color of the startbutton
+	 * after the animations of algorithms has finished
+	 */
+	public void resetStartButton() {
+		algoPanel.resetStartButton();
+		
 	}
 }

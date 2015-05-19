@@ -245,12 +245,19 @@ public class GraphTool<V,E> {
 	 * and has to be tested for it
 	 */
 	public void executeMethod(Method method, Vertex<V> startVertex, Vertex<V> endVertex) {
-		parser.executeMethod(method, startVertex, endVertex);
-		try {
-			graphSerializer.deserializeAlgoGraphs();
-		} catch (ClassNotFoundException | IOException e) {
-			System.out.println("@GraphTool: executeMethod: Failed to deserialize graphs");
-			e.printStackTrace();
+		boolean isStart = graphSerializer.isStart();
+		//Executes the algorithm and serializes all generates graphs only
+		//when the animation is started, not when it's paused
+		//When it's gets started, isStart is true
+		if (isStart) {
+			parser.executeMethod(method, startVertex, endVertex);
+			try {
+				graphSerializer.deserializeAlgoGraphs();
+				resetColor();
+			} catch (ClassNotFoundException | IOException e) {
+				System.out.println("@GraphTool: executeMethod: Failed to deserialize graphs");
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -263,6 +270,13 @@ public class GraphTool<V,E> {
 			currentGraph = graphSerializer.getPreviousGraph();
 			viewHandler.setGraph(currentGraph);
 		}
+	}
+	
+	/*
+	 * Checks if the arraylist of graphs has a next element
+	 */
+	public boolean hasNextGraph() {
+		return graphSerializer.hasNextGraph();
 	}
 	
 	/*
@@ -297,24 +311,11 @@ public class GraphTool<V,E> {
 		}
 	}
 	
-	//------------------------------------------------------------------------------------//
-	// Helper-methods for checking if graph is saved before changing tabs
-	//------------------------------------------------------------------------------------//
-	
 	/*
-	 * Sets a flag if the current graph was saved
-	 * after making changes to it or not
+	 * Resets the color of the startbutton
+	 * after the animations of algorithms has finished
 	 */
-	public void setGraphSaved(boolean saved) {
-		graphSaved = saved;
+	public void resetStartButton() {
+		viewHandler.resetStartButton();
 	}
-	
-	/*
-	 * Returns whether the current graph was saved
-	 * after making changes to it or not
-	 */
-	public boolean getGraphSaved() {
-		return graphSaved;
-	}
-	
 }

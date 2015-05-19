@@ -88,13 +88,4 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 		
 		return selectState.getSelected();
 	}
-
-	/*
-	 * Set whether the graph is saved or not
-	 * in the graphtool class
-	 */
-	public void setGraphSaved(boolean saved) {
-		graphTool.setGraphSaved(saved);
-	}
-
 }

@@ -180,7 +180,7 @@ public class GraphExamples<V,E> {
 		s.set(Attribut.string,"0");
 		//-------
 		s.set(Attribut.DISTANCE,0.0);
-		pq.replaceKey((Locator<Double,Vertex<V>>)s.get(Attribut.PQLOCATOR),0.0);
+		//pq.replaceKey((Locator<Double,Vertex<V>>)s.get(Attribut.PQLOCATOR),0.0);
 		while( ! pq.isEmpty()){
 			Vertex<V> u = pq.removeMin().element();    
 			///-------

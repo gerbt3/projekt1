@@ -28,7 +28,10 @@ public class AlgoView<V,E> extends JPanel {
 	private Method currentAlgoMethod;
 	private boolean startVertexSelected = false;
 	private boolean endVertexSelected = false;
-
+	JButton startButton;
+	ImageIcon playIcon;
+	private boolean isStartButton = true;
+	
 	public AlgoView(AlgoHandler<V,E> algoHandler) {	
 		
 		this.setBackground(new Color(100,100,100));
@@ -44,7 +47,7 @@ public class AlgoView<V,E> extends JPanel {
 	 */
 	private void constructPanelComponents() {
 		
-		ImageIcon playIcon = new ImageIcon("Images/play.png");
+		playIcon = new ImageIcon("Images/play.png");
 		ImageIcon leftIcon = new ImageIcon("Images/left.png");
 		ImageIcon rightIcon = new ImageIcon("Images/right.png");
 		ImageIcon pauseIcon = new ImageIcon("Images/pause.png");
@@ -52,12 +55,10 @@ public class AlgoView<V,E> extends JPanel {
 		ImageIcon startvertexIcon = new ImageIcon("Images/startvertex.png");
 		ImageIcon endvertexIcon = new ImageIcon("Images/endvertex.png");
 		
-		JButton startButton = new JButton(playIcon);
-		JButton pauseButton = new JButton(pauseIcon);
+		startButton = new JButton(playIcon);
 		JButton backButton = new JButton(leftIcon);
 		JButton forwardButton = new JButton(rightIcon);
 		JButton stopButton = new JButton(stopIcon);
-		JButton commitButton = new JButton("Commit");
 		//If the algorithm needs an start or a end vertex
 		JButton startVertexButton = new JButton(startvertexIcon);
 		JButton endVertexButton = new JButton(endvertexIcon);
@@ -96,23 +97,27 @@ public class AlgoView<V,E> extends JPanel {
 		startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	
-            	//If algorithm needs a startVertex or an endVertex and they're not set,
-            	//then prompt for the vertices to be set
-            	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex() && !startVertexSelected) {
-            		JOptionPane.showMessageDialog(null, "A start vertex needs to be selected");
-            	} else if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex2() && !endVertexSelected) {
-            		JOptionPane.showMessageDialog(null, "A end vertex needs to be selected");
+            	if (isStartButton) {
+            		
+            		//If algorithm needs a startVertex or an endVertex and they're not set,
+                	//then prompt for the vertices to be set
+                	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex() && !startVertexSelected) {
+                		JOptionPane.showMessageDialog(null, "A start vertex needs to be selected");
+                	} else if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex2() && !endVertexSelected) {
+                		JOptionPane.showMessageDialog(null, "A end vertex needs to be selected");
+                	} else {
+                		algoHandler.startAlgo(currentAlgoMethod);
+                		JButton source = (JButton) event.getSource();
+                		source.setBackground(new Color(184,207,229));
+                	}
+                	startButton.setIcon(pauseIcon);
+                	isStartButton = false;
+                	
             	} else {
-            		algoHandler.startAlgo(currentAlgoMethod);
+            		algoHandler.pauseAlgo();
+            		startButton.setIcon(playIcon);
+            		isStartButton = true;
             	}
-            	
-            }
-         });
-		
-		//Pauses the automatic animation of an algorithm
-		pauseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-            	algoHandler.pauseAlgo();
             }
          });
 		
@@ -134,13 +139,6 @@ public class AlgoView<V,E> extends JPanel {
 		stopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	algoHandler.stopAlgo();
-            }
-         });
-		
-		//Currently has no implementation
-		commitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-            	//TODO Functions to implement?
             }
          });
 		
@@ -194,11 +192,9 @@ public class AlgoView<V,E> extends JPanel {
 		JPanel toolPanel = new JPanel(new FlowLayout());
 		
 		toolPanel.add(startButton);
-		toolPanel.add(pauseButton);
 		toolPanel.add(backButton);
 		toolPanel.add(forwardButton);
 		toolPanel.add(stopButton);
-		//toolPanel.add(commitButton);
 		toolPanel.add(algoList);
 		//Buttons for startvertex and endvertex
 		//are only shown if an algorithm needs them 
@@ -208,5 +204,15 @@ public class AlgoView<V,E> extends JPanel {
 		endVertexButton.setVisible(false);
 		
 		add(toolPanel, BorderLayout.NORTH);
+	}
+	
+	/*
+	 * Resets the color of the startbutton
+	 * after the animations of algorithms has finished
+	 */
+	public void resetStartButton() {
+		startButton.setBackground(null);
+		startButton.setIcon(playIcon);
+		isStartButton = true;
 	}
 }

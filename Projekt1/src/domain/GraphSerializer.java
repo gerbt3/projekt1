@@ -25,6 +25,7 @@ public class GraphSerializer<V,E> {
 	private ArrayList<byte[]> byteAlgoGraphs;
 	ArrayList<Graph<V,E>> algoGraphs;
 	private int algoIndex = 0;
+	private boolean isStart = true;
 	
 	public GraphSerializer(){
 		byteAlgoGraphs= new ArrayList<byte[]>();
@@ -110,29 +111,52 @@ public class GraphSerializer<V,E> {
 	}
 	
 	/*
+	 * Returns true if an animation of an algorithm gets started
+	 * Returns false if an animation of an algorithm gets paused
+	 */
+	public boolean isStart() {
+		return isStart;
+	}
+	
+	/*
 	 * Deserializes all temporary copies of the graphs
 	 */
-	public void deserializeAlgoGraphs() throws IOException, ClassNotFoundException {
-		
-		algoGraphs.clear();
-	
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
-		
-		for (int i = 0; i < byteAlgoGraphs.size(); i++) {
-		
-			ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(i)));
+	public boolean deserializeAlgoGraphs() throws IOException, ClassNotFoundException {
+		System.out.println("@GraphSerializer: deserializeAlgoGraphs: " + isStart);
+		if (isStart) {
+			System.out.println("@GraphSerializer: deserializeAlgoGraphs: should be true: " + isStart);
 			
-			try {			
-				algoGraphs.add((Graph<V,E>) ois.readObject());
-			} catch (IOException e1) {
-				System.out.println("@GraphSerializer: GraphSerializer failed to deserialize a graph");
-				e1.printStackTrace();
-			} finally {
-				ois.close();
+			//Clears 
+			algoGraphs.clear();
+			algoIndex = 0;
+			
+			System.out.println("deserialize before: algoGraph size: " + algoGraphs.size());
+			System.out.println("deserialize before: byteAlgoGraphs size: " + byteAlgoGraphs.size());
+		
+			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
+			
+			for (int i = 0; i < byteAlgoGraphs.size(); i++) {
+			
+				ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(i)));
+				
+				try {			
+					algoGraphs.add((Graph<V,E>) ois.readObject());
+				} catch (IOException e1) {
+					System.out.println("@GraphSerializer: GraphSerializer failed to deserialize a graph");
+					e1.printStackTrace();
+				} finally {
+					ois.close();
+				}
 			}
+			System.out.println("deserialize after: algoGraph size: " + algoGraphs.size());
+			byteAlgoGraphs.clear();
+			
+			System.out.println("deserialize after: byteAlgoGraphs size: " + byteAlgoGraphs.size());
+			isStart = false;
+			return true;
 		}
 		
-		byteAlgoGraphs.clear();
+		return false;
 	}
 
 	/*
@@ -140,6 +164,8 @@ public class GraphSerializer<V,E> {
 	 * going from the algoIndex
 	 */
 	public boolean hasNextGraph() {
+		System.out.println("algoGraph size: " + algoGraphs.size());
+		System.out.println("hasNextGraph: " + (algoIndex >= algoGraphs.size()-1));
 		if (algoIndex >= algoGraphs.size()-1) return false;
 		else return true;
 	}
@@ -150,6 +176,7 @@ public class GraphSerializer<V,E> {
 	 */
 	public Graph<V,E> getNextGraph() {
 		algoIndex++;
+		System.out.println("algoIndex: " + algoIndex);
 		return algoGraphs.get(algoIndex);
 	}
 	
@@ -178,12 +205,10 @@ public class GraphSerializer<V,E> {
 	 */
 	public void resetAlgoIndex() {
 		algoIndex = 0;
+		isStart = true;
 	}
 	
-	/*
-	 * Returns the size of the arraylist of graphs
-	 */
-	public int getAlgoGraphsSize() {
-		return algoGraphs.size();
+	public void clearByteAlgoGraphs() {
+		
 	}
 }

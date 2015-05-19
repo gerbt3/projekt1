@@ -56,7 +56,6 @@ public class EditorView<V, E> extends JPanel {
 		deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                editorHandler.deleteDecorable();
-               editorHandler.setGraphSaved(false);
             }
          });
 		
@@ -64,7 +63,6 @@ public class EditorView<V, E> extends JPanel {
 		vertexButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                editorHandler.setState(State.VERTEX);
-               editorHandler.setGraphSaved(false);
             }
          });
 		
@@ -72,7 +70,6 @@ public class EditorView<V, E> extends JPanel {
 		edgeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                editorHandler.setState(State.EDGE);
-               editorHandler.setGraphSaved(false);
             }
          });
 		

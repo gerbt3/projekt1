@@ -38,4 +38,12 @@ public class ViewHandler<V,E> {
 	public boolean chooseGraphOption() {
 		return frame.chooseGraphOption();
 	}
+
+	/*
+	 * Resets the color of the startbutton
+	 * after the animations of algorithms has finished
+	 */
+	public void resetStartButton() {
+		frame.resetStartButton();
+	}
 }
