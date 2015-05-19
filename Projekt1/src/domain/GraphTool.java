@@ -26,6 +26,7 @@ public class GraphTool<V,E> {
 	private GraphSerializer<V, E> graphSerializer;
 	private AnnotationParser<V,E> parser;
 	private ViewHandler<V,E> viewHandler;
+	private boolean graphSaved = true;
 	
 	public GraphTool(GraphExamples<V,E> ge){
 		this(new IncidenceListGraph<V,E>(), ge);
@@ -172,8 +173,25 @@ public class GraphTool<V,E> {
 	public void deleteEdge(){
 		viewHandler.deleteEdge();
 	}
+	
 	public void setColor(Decorable d, Color c){
 		d.set(Attribut.color, c);
+		viewHandler.setGraph(currentGraph);
+	}
+	
+	/*
+	 * Changes the color of each vertex and edge
+	 * of the current graph to black
+	 */
+	public void resetColor() {
+		Iterator<Vertex<V>> vIt = currentGraph.vertices();
+		while (vIt.hasNext()) {
+			vIt.next().set(Attribut.color, Color.black);
+		}
+		Iterator<Edge<E>> eIt = currentGraph.edges();
+		while (eIt.hasNext()) {
+			eIt.next().set(Attribut.color, Color.black);
+		}
 		viewHandler.setGraph(currentGraph);
 	}
 
@@ -197,12 +215,14 @@ public class GraphTool<V,E> {
 	
 	public void saveGraph(String name) throws IOException {
 		graphSerializer.saveGraph(name, currentGraph);
+		viewHandler.setGraph(currentGraph);
 	}
 	
-	public void openGraph(String name) throws IOException {
+	public Graph<V,E> openGraph(String name) throws IOException {
 		Graph graph = graphSerializer.openGraph(name);
 		currentGraph = graph;
 		viewHandler.setGraph(currentGraph);
+		return currentGraph;
 	}
 	
 	//------------------------------------------------------------------------------------//
@@ -234,9 +254,34 @@ public class GraphTool<V,E> {
 		}
 	}
 	
-	public Graph<V,E> getNextGraph() {
-		if (graphSerializer.hasNextGraph()) return graphSerializer.getNextGraph();
-		else return null;
+	/*
+	 * Get the previous graph in the algorithm animation
+	 * based on the current position in the arraylist of graphs
+	 */
+	public void previousGraph() {
+		if (graphSerializer.hasPreviousGraph()) {
+			currentGraph = graphSerializer.getPreviousGraph();
+			viewHandler.setGraph(currentGraph);
+		}
+	}
+	
+	/*
+	 * Get the previous graph in the algorithm animation
+	 * based on the current position in the arraylist of graphs
+	 */
+	public void nextGraph() {
+		if (graphSerializer.hasNextGraph()) {
+			currentGraph = graphSerializer.getNextGraph();
+			viewHandler.setGraph(currentGraph);
+		}
+	}
+	
+	/*
+	 * Resets the current index in the arraylist of graphs,
+	 * when the algorithm animation gets stopped 
+	 */
+	public void stop() {
+		graphSerializer.resetAlgoIndex();
 	}
 	
 	/*
@@ -252,9 +297,24 @@ public class GraphTool<V,E> {
 		}
 	}
 	
-	public void setCurrentGraph(Graph g) {
-		currentGraph = g;
-		viewHandler.setGraph(currentGraph);
+	//------------------------------------------------------------------------------------//
+	// Helper-methods for checking if graph is saved before changing tabs
+	//------------------------------------------------------------------------------------//
+	
+	/*
+	 * Sets a flag if the current graph was saved
+	 * after making changes to it or not
+	 */
+	public void setGraphSaved(boolean saved) {
+		graphSaved = saved;
+	}
+	
+	/*
+	 * Returns whether the current graph was saved
+	 * after making changes to it or not
+	 */
+	public boolean getGraphSaved() {
+		return graphSaved;
 	}
 	
 }

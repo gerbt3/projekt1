@@ -118,7 +118,19 @@ public class GraphComponent<V,E> extends JComponent{
 			g2.setColor((Color)e.get(Attribut.color));
 			g2.draw(line);
 			if(e.has(Attribut.weight)&&weightFlag){
-				g2.drawString((String)e.get(Attribut.weight), (int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+			//--------------------------------------------
+				//Whether the graph comes from graphexamples or not 
+				//it has to be casted differently
+				if (e.get(Attribut.weight) instanceof String) {
+					g2.drawString((String) e.get(Attribut.weight), 
+							(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+				} else {
+					//For graphs from graphexamples
+					g2.drawString(Double.toString((Double) e.get(Attribut.weight)), 
+							(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+				}
+			//--------------------------------------------
+				
 			}
 			if(e.has(Attribut.string)&&stringFlag){
 				g2.drawString((String)e.get(Attribut.string),(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2)+15);

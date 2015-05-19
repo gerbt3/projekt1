@@ -18,8 +18,6 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	
 	private GraphTool<V,E> graphTool;
 	private SelectState<V,E> selectState;
-	private Method currentAlgoMethod;
-	private ArrayList<Graph<V,E>> algoGraphs;
 	private Vertex<V> startVertex;
 	private Vertex<V> endVertex;
 	private Timer t;
@@ -27,16 +25,9 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	public AlgoHandler(GraphTool<V, E> gt) {
 		selectState = new SelectState<V,E>(gt);
 		this.graphTool=gt;
-		algoGraphs = new ArrayList<>();
-		t = new Timer(1, new ActionListener() {
+		t = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				
-				int i = 0;
-				for (Graph<V,E> g : algoGraphs) {
-					System.out.println("@AlgoHandler, startAlgo: graph " + i++ + " : " );
-					System.out.println(g);
-					graphTool.setCurrentGraph(g);
-				}	
+				graphTool.nextGraph();
 			}
 		});
 	}
@@ -69,40 +60,61 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	}
 	
 	//------------------------------------------------------------------------------------//
-	// Methods for controlling an algorithm
+	// Methods for controlling the animating of an algorithm
 	//------------------------------------------------------------------------------------//
 	
 	/*
-	 * Executes the algorithm method
+	 * Gets all annotated methods from the AnnotationParser
+	 */
+	public Vector<Method> getAnnotatedMethods() {
+		return graphTool.getAnnotatedMethods();
+	}
+	
+	/*
+	 * Executes an algorithm method
+	 * and start the timer for animating it
 	 */
 	public void startAlgo(Method currentAlgoMethod) {
-		this.currentAlgoMethod = currentAlgoMethod;
 		graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
 		t.start();
 	}
 	
+	//Pauses the timer for animating an algorithm
 	public void pauseAlgo() {
-		
+		t.stop();
 	}
 	
+	//Gets the previous step in the animation of an algorithm
 	public void previousAlgo() {
-		
+		graphTool.previousGraph();
 	}
 	
+	//Gets the next step in the animation of an algorithm
 	public void nextAlgo() {
-		
+		graphTool.nextGraph();
 	}
 	
 	/*
 	 * Stops the animation of an algorithm
+	 * and stops the timer for animating an algorithm
 	 */
 	public void stopAlgo() {
 		if (t.isRunning()) t.stop();
+		graphTool.stop();
+		graphTool.resetColor();	
 	}
 	
+	/*
+	 * Changes the delay of the timer
+	 * for animating an algorithm to a given time
+	 */
 	public void setTimerTime(int time) {
 		t.setDelay(time);
 	}
+	
+	//------------------------------------------------------------------------------------//
+	// Methods for controlling the startvertex and endvertex of an algorithm
+	//------------------------------------------------------------------------------------//
 	
 	/*
 	 * Gets the current selection from the AnnotationParser
@@ -131,19 +143,4 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		startVertex = null;
 		endVertex = null;
 	}
-	
-	/*
-	 * Gets all annotated methods from the AnnotationParser
-	 */
-	public Vector<Method> getAnnotatedMethods() {
-		return graphTool.getAnnotatedMethods();
-	}
-	
-	/*
-	 * Gives the AnnotationParser a method to execute
-	 */
-	public void executeMethod(Method method) {
-		//graphTool.executeMethod(method);
-	}
-	
 }

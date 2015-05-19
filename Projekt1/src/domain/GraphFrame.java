@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
@@ -30,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import domain.EditorHandler.State;
 import examples.Decorable;
 import examples.Edge;
+import examples.Graph;
 import examples.Vertex;
 
 /*
@@ -39,19 +41,25 @@ import examples.Vertex;
 public class GraphFrame<V, E> extends JFrame {
 
 	public static final int FRAME_WIDTH = 900;
-	public static final int FRAME_HEIGHT = 600;
+	public static final int FRAME_HEIGHT = 700;
 	private GraphView<V,E> graphView;
+	private EditorView<V,E> editorPanel;
 	private EditorHandler<V,E> editorHandler;
 	private AlgoHandler<V,E> algoHandler;
-	private MenuHandler<V,E> menuHandler;
+	private GraphTool graphTool;
 	private String currentGraphName;
 	private ActionListener renameListener;
+	JMenu edit;
+	JMenuItem newGraph;
+	JMenuItem save;
+	JMenuItem saveAs;
+	JMenuItem delete;
 
 	public GraphFrame(GraphTool<V,E> gt) {
 		
 		this.editorHandler=new EditorHandler<V,E>(gt);
 		this.algoHandler=new AlgoHandler<V,E>(gt);
-		this.menuHandler=new MenuHandler<V,E>(gt);
+		graphTool = gt;
 		createRenameListener();
 		this.graphView=new GraphView<V,E>(renameListener);
 		graphView.setHandler(editorHandler);
@@ -69,7 +77,6 @@ public class GraphFrame<V, E> extends JFrame {
 	//------------------------------------------------------------------------------------//
 	// Helper methods for constructing the frame
 	//------------------------------------------------------------------------------------//
-
 
 	private void createRenameListener() {
 		renameListener=new ActionListener(){
@@ -106,13 +113,13 @@ public class GraphFrame<V, E> extends JFrame {
 
 		JMenuBar menubar=new JMenuBar();
 		JMenu file = new JMenu("File");
-		JMenu edit = new JMenu("Edit");
+		edit = new JMenu("Edit");
 		JMenu view = new JMenu("View");
-		JMenuItem newGraph = new JMenuItem("New");
-		JMenuItem save = new JMenuItem("Save");
-		JMenuItem saveAs = new JMenuItem("Save as");
+		newGraph = new JMenuItem("New");
+		save = new JMenuItem("Save");
+		saveAs = new JMenuItem("Save as");
 		JMenuItem open = new JMenuItem("Open");
-		JMenuItem delete = new JMenuItem("Delete");
+		delete = new JMenuItem("Delete");
 		JMenuItem undo = new JMenuItem("Undo");
 		JMenuItem redo = new JMenuItem("Redo");
 		JMenuItem rename = new JMenuItem("Rename...");
@@ -136,9 +143,7 @@ public class GraphFrame<V, E> extends JFrame {
 		menubar.add(view);
 		this.setJMenuBar(menubar);
 
-		/*
-		 * Creates a new undirected or directed graph
-		 */
+		//Creates a new undirected or directed graph
 		newGraph.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
@@ -158,10 +163,8 @@ public class GraphFrame<V, E> extends JFrame {
 			}
 		});
 
-		/*
-		 * Saves the current graph under a new name
-		 * Warns before overwriting an existing graph
-		 */
+		//Saves the current graph under a new name
+		//Warns before overwriting an existing graph
 		saveAs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
@@ -170,10 +173,7 @@ public class GraphFrame<V, E> extends JFrame {
 			}
 		});
 
-		/*
-		 * Opens a saved graph for the directory GraphFiles
-		 * Calls the openGraph method of the menuHandler class
-		 */
+		//Opens a saved graph for the directory GraphFiles		
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
@@ -191,10 +191,13 @@ public class GraphFrame<V, E> extends JFrame {
 				if (name != null && !name.isEmpty()) {
 
 					try {
-						menuHandler.openGraph(name);
+						Graph<V,E> g = graphTool.openGraph(name);
+						//Changes the edge button whether the graph is directed or not
+						if (g.isDirected()) editorPanel.changeDirectionEdgeButton(true);
+						else editorPanel.changeDirectionEdgeButton(false);
 						currentGraphName = name;
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
+						System.out.println("@GraphFrame: Failed to open a graph");
 						e.printStackTrace();
 					}
 				}
@@ -202,10 +205,8 @@ public class GraphFrame<V, E> extends JFrame {
 			}
 		});
 
-		/*
-		 * Deletes a saved graph
-		 * Warns before deleting a graph
-		 */
+		//Deletes a saved graph
+		//Warns before deleting a graph
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
@@ -255,18 +256,24 @@ public class GraphFrame<V, E> extends JFrame {
 		rename.addActionListener(renameListener);
 	}
 
-	/*
-	 * Constructs the tabs for either drawing graphs or animating algorithms
-	 */
+	
+	//Constructs the tabs for either drawing graphs or animating algorithms
 	private void constructTabComponents() {
 
-		JPanel graphPanel = new EditorView<V, E>(editorHandler);
+		editorPanel = new EditorView<V, E>(editorHandler);
 
 		JPanel algoPanel = new AlgoView<V, E>(algoHandler);
 		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
-		tabpane.addTab("graph", graphPanel);
-		tabpane.addTab("algo", algoPanel);
+		ImageIcon graphIcon = new ImageIcon("Images/draw.png");
+		ImageIcon algoIcon = new ImageIcon("Images/anim.png");
+		
+		tabpane.addTab("", editorPanel);
+		tabpane.addTab("", algoPanel);
+		
+		tabpane.setIconAt(0, graphIcon);
+		tabpane.setIconAt(1, algoIcon);
+		
 		tabpane.addChangeListener(new ChangeListener(){
 
 			@Override
@@ -275,19 +282,71 @@ public class GraphFrame<V, E> extends JFrame {
 				int i=tabpane.getSelectedIndex();
 				if(i==0){
 					algoHandler.clearSelected();
+					algoHandler.stopAlgo();
 					graphView.setHandler(editorHandler);
 					editorHandler.setState(State.SELECT);
-				}
-				else
-				{
+					//Recolors all vertices and edges black
+					graphTool.resetColor();
+					//Reactivates the save and delete option
+					edit.setEnabled(true);
+					newGraph.setEnabled(true);
+					save.setEnabled(true);
+					saveAs.setEnabled(true);
+					delete.setEnabled(true);
+					
+				} else {
+					
 					graphView.setHandler(algoHandler);
 					editorHandler.setState(State.INACTIVE);
+					graphTool.resetColor();
+					
+					//If graph is not saved, prompt for saving it
+					int saveOption = 0;
+					if (!graphTool.getGraphSaved()) {
+						
+						saveOption = JOptionPane.showConfirmDialog(null,
+								"Do you want to save the graph?", 
+								"Save graph", JOptionPane.YES_NO_OPTION);
+						
+						if (saveOption == JOptionPane.YES_OPTION) {
+							if (currentGraphName == null) currentGraphName = askForGraphName();
+							saveGraph(currentGraphName);
+						} else {
+							
+							//If user doesn't want to save the graph
+							//change the tab either way
+							changeTabToAlgoView();
+						}
+						
+					} else {
+						
+						//If graph is saved, change the tab
+						changeTabToAlgoView();
+					} 
 				}
 			}
 
 		});
 		
 		add(tabpane, BorderLayout.SOUTH);
+	}
+	
+	/*
+	 * Handles everything that needs to be done
+	 * before the tab can be changed to the algoview
+	 */
+	private void changeTabToAlgoView() {
+		
+		graphView.setHandler(algoHandler);
+		editorHandler.setState(State.INACTIVE);
+		//Recolors all vertices and edges black
+		graphTool.resetColor();
+		//Deactivates the save and delete option
+		edit.setEnabled(false);
+		newGraph.setEnabled(false);
+		save.setEnabled(false);
+		saveAs.setEnabled(false);
+		delete.setEnabled(false);
 	}
 
 	//------------------------------------------------------------------------------------//
@@ -297,7 +356,6 @@ public class GraphFrame<V, E> extends JFrame {
 	/*
 	 * Creates a new graph
 	 * Gives the choice to create a directed or an undirected graph
-	 * Calls the createGraph method of the menuHandler class
 	 */
 	public boolean chooseGraphOption(){
 		Object[] options = {"Undirected graph", "Directed graph"};
@@ -314,11 +372,13 @@ public class GraphFrame<V, E> extends JFrame {
 		}
 		else{
 			if (choice == 0) {
-				menuHandler.createGraph(false);
+				graphTool.createGraph(false);
+				editorPanel.changeDirectionEdgeButton(false);
 				currentGraphName = null;
 				return true;
 			} else {
-				menuHandler.createGraph(true);
+				graphTool.createGraph(true);
+				editorPanel.changeDirectionEdgeButton(true);
 				currentGraphName = null;
 				return true;
 			}
@@ -395,17 +455,17 @@ public class GraphFrame<V, E> extends JFrame {
 
 	/*
 	 * Saves the graph under the given name
-	 * Calls the saveGraph method of the menuHandler class
 	 */
 	private void saveGraph(String name) {
 
 		if (name != null) {
 
 			try {
-				menuHandler.saveGraph(name);
+				graphTool.saveGraph(name);
 				currentGraphName = name;
+				graphTool.setGraphSaved(true);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("@GraphFrame: Failed to save a graph");
 				e.printStackTrace();
 			}
 		}

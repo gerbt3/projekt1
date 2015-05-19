@@ -16,7 +16,8 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	private VertexState<V,E> vertexState;
 	private EdgeState<V,E> edgeState;
 	private SelectState<V,E> selectState;
-
+	private GraphTool graphTool;
+	
 	public EditorHandler(SelectState<V,E> selectState, VertexState<V,E> vertexState,EdgeState<V,E> edgeState){
 		currentState=selectState;
 		this.selectState=selectState;
@@ -25,6 +26,7 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	}
 
 	public EditorHandler(GraphTool<V, E> gt) {
+		graphTool = gt;
 		this.selectState=new SelectState<V,E>(gt);
 		this.vertexState=new VertexState<V,E>(gt);
 		this.edgeState=new EdgeState<V,E>(gt);
@@ -85,6 +87,14 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	public Decorable getSelected() {
 		
 		return selectState.getSelected();
+	}
+
+	/*
+	 * Set whether the graph is saved or not
+	 * in the graphtool class
+	 */
+	public void setGraphSaved(boolean saved) {
+		graphTool.setGraphSaved(saved);
 	}
 
 }

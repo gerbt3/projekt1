@@ -23,11 +23,12 @@ import examples.Vertex;
 public class GraphSerializer<V,E> {
 
 	private ArrayList<byte[]> byteAlgoGraphs;
-	ArrayList<Graph<V,E>> algoGraphs = new ArrayList<>();
+	ArrayList<Graph<V,E>> algoGraphs;
 	private int algoIndex = 0;
 	
 	public GraphSerializer(){
 		byteAlgoGraphs= new ArrayList<byte[]>();
+		algoGraphs = new ArrayList<Graph<V,E>>();
 	}
 	
 	//------------------------------------------------------------------------------------//
@@ -111,6 +112,8 @@ public class GraphSerializer<V,E> {
 	 * Deserializes all temporary copies of the graphs
 	 */
 	public void deserializeAlgoGraphs() throws IOException, ClassNotFoundException {
+		
+		algoGraphs = new ArrayList<Graph<V,E>>();
 		
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
 		

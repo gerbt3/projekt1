@@ -10,10 +10,15 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 public class AlgoView<V,E> extends JPanel {
@@ -33,22 +38,51 @@ public class AlgoView<V,E> extends JPanel {
 		constructPanelComponents();
 	}
 	
+	/*
+	 * Constructs a panel with buttons for choosing different algorithm
+	 * and animating automatically or manually
+	 */
 	private void constructPanelComponents() {
-			
-		JButton startButton = new JButton("Start");
-		JButton pauseButton = new JButton("Pause");
-		JButton backButton = new JButton("Back");
-		JButton forwardButton = new JButton("Forward");
-		JButton stopButton = new JButton("Stop");
+		
+		ImageIcon playIcon = new ImageIcon("Images/play.png");
+		ImageIcon leftIcon = new ImageIcon("Images/left.png");
+		ImageIcon rightIcon = new ImageIcon("Images/right.png");
+		ImageIcon pauseIcon = new ImageIcon("Images/pause.png");
+		ImageIcon stopIcon = new ImageIcon("Images/stop1.png");
+		ImageIcon startvertexIcon = new ImageIcon("Images/startvertex.png");
+		ImageIcon endvertexIcon = new ImageIcon("Images/endvertex.png");
+		
+		JButton startButton = new JButton(playIcon);
+		JButton pauseButton = new JButton(pauseIcon);
+		JButton backButton = new JButton(leftIcon);
+		JButton forwardButton = new JButton(rightIcon);
+		JButton stopButton = new JButton(stopIcon);
 		JButton commitButton = new JButton("Commit");
 		//If the algorithm needs an start or a end vertex
-		JButton startVertexButton = new JButton("Startvertex");
-		JButton endVertexButton = new JButton("Endvertex");
+		JButton startVertexButton = new JButton(startvertexIcon);
+		JButton endVertexButton = new JButton(endvertexIcon);
 		
+		//Slider for controlling the tempo of the animation of an algorithm
+		JSlider slider = new JSlider(100, 10000);
+		slider.setValue(1000);
+		slider.addChangeListener(new ChangeListener(){
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				algoHandler.setTimerTime(slider.getValue());
+			}
+		});
 		
-		/*
-		 * Makes a list to choose from with all available algorithms
-		 */
+		FlowLayout fl = new FlowLayout();
+		JPanel p = new JPanel(fl);
+		
+		ImageIcon timeIcon = new ImageIcon("Images/time.png");
+		
+		p.add(new JLabel(timeIcon));
+		p.add(slider);
+	
+		add(p, BorderLayout.SOUTH);
+		
+		//Makes a list to choose from with all available algorithms
 		Vector<Method> algoMethods = algoHandler.getAnnotatedMethods();
 		String[] algoMethodNames = new String[algoMethods.size()];
 		for (int i = 0; i < algoMethods.size(); i++) {
@@ -57,58 +91,59 @@ public class AlgoView<V,E> extends JPanel {
 		JComboBox algoList = new JComboBox(algoMethodNames);
 		currentAlgoMethod = algoMethods.get(algoList.getSelectedIndex());
 		
-	
+		//Starts the automatic animation of an algorithm
 		startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	
             	//If algorithm needs a startVertex or an endVertex and they're not set,
             	//then prompt for the vertices to be set
             	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex() && !startVertexSelected) {
-            		
             		JOptionPane.showMessageDialog(null, "A start vertex needs to be selected");
-            	
             	} else if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex2() && !endVertexSelected) {
-            		
             		JOptionPane.showMessageDialog(null, "A end vertex needs to be selected");
-            	
             	} else {
-            	 	
             		algoHandler.startAlgo(currentAlgoMethod);
             	}
             	
             }
          });
 		
+		//Pauses the automatic animation of an algorithm
 		pauseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	algoHandler.pauseAlgo();
             }
          });
 		
+		//Goes a step back in the animation of an algorithm
 		backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	algoHandler.previousAlgo();
             }
          });
 		
+		//Goes a step forward in the animation of an algorithm
 		forwardButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	
+            	algoHandler.nextAlgo();
             }
          });
 		
+		//Stops the animation of an algorithm
 		stopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	algoHandler.stopAlgo();
             }
          });
 		
+		//Currently has no implementation
 		commitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-            	//TODO Currently does nothing
+            	//TODO Functions to implement?
             }
          });
 		
+		//A list to choose different algorithms from
 		algoList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	
@@ -139,6 +174,7 @@ public class AlgoView<V,E> extends JPanel {
             }
 		});
 		
+		//To set a selected vertex as startvertex if needed
 		startVertexButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	algoHandler.setStartVertex();
@@ -146,6 +182,7 @@ public class AlgoView<V,E> extends JPanel {
             }
          });
 		
+		//To set a selected vertex as endvertex if needed
 		endVertexButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	algoHandler.setEndVertex();
@@ -160,9 +197,10 @@ public class AlgoView<V,E> extends JPanel {
 		toolPanel.add(backButton);
 		toolPanel.add(forwardButton);
 		toolPanel.add(stopButton);
-		toolPanel.add(commitButton);
+		//toolPanel.add(commitButton);
 		toolPanel.add(algoList);
-		//Buttons are only shown if algorithm needs them 
+		//Buttons for startvertex and endvertex
+		//are only shown if an algorithm needs them 
 		toolPanel.add(startVertexButton);
 		startVertexButton.setVisible(false);
 		toolPanel.add(endVertexButton);

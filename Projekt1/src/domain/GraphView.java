@@ -2,12 +2,15 @@ package domain;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -85,7 +88,18 @@ public class GraphView<V,E> extends JPanel {
 				comp.setZoomSize(slider.getValue());
 			}
 		});
-		add(slider, BorderLayout.SOUTH);
+		
+		FlowLayout fl = new FlowLayout();
+		JPanel p = new JPanel(fl);
+		
+		ImageIcon pzoomIcon = new ImageIcon("Images/pzoom.png");
+		ImageIcon mzoomIcon = new ImageIcon("Images/mzoom.png");
+		
+		p.add(new JLabel(pzoomIcon));
+		p.add(slider);
+		p.add(new JLabel(mzoomIcon));
+		
+		add(p, BorderLayout.SOUTH);
 	}
 
 	public JCheckBoxMenuItem getNameItem(){
