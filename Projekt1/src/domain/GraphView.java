@@ -95,9 +95,9 @@ public class GraphView<V,E> extends JPanel {
 		ImageIcon pzoomIcon = new ImageIcon("Images/pzoom.png");
 		ImageIcon mzoomIcon = new ImageIcon("Images/mzoom.png");
 		
-		p.add(new JLabel(pzoomIcon));
-		p.add(slider);
 		p.add(new JLabel(mzoomIcon));
+		p.add(slider);
+		p.add(new JLabel(pzoomIcon));
 		
 		add(p, BorderLayout.SOUTH);
 	}

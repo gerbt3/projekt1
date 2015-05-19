@@ -94,6 +94,7 @@ public class GraphSerializer<V,E> {
 	 * Makes a temporary copy of a graph by serializing
 	 */
 	public void serializeGraph(Graph<V, E> g) throws IOException{
+		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = null;
 		try {			
@@ -113,8 +114,8 @@ public class GraphSerializer<V,E> {
 	 */
 	public void deserializeAlgoGraphs() throws IOException, ClassNotFoundException {
 		
-		algoGraphs = new ArrayList<Graph<V,E>>();
-		
+		algoGraphs.clear();
+	
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
 		
 		for (int i = 0; i < byteAlgoGraphs.size(); i++) {
@@ -130,6 +131,8 @@ public class GraphSerializer<V,E> {
 				ois.close();
 			}
 		}
+		
+		byteAlgoGraphs.clear();
 	}
 
 	/*

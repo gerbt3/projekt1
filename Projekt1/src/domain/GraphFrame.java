@@ -177,6 +177,8 @@ public class GraphFrame<V, E> extends JFrame {
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 
+				algoHandler.stopAlgo();
+				
 				String[] options = getFileNames();
 
 				String name = (String) JOptionPane.showInputDialog(
@@ -194,7 +196,7 @@ public class GraphFrame<V, E> extends JFrame {
 						Graph<V,E> g = graphTool.openGraph(name);
 						//Changes the edge button whether the graph is directed or not
 						if (g.isDirected()) editorPanel.changeDirectionEdgeButton(true);
-						else editorPanel.changeDirectionEdgeButton(false);
+						else editorPanel.changeDirectionEdgeButton(false);		
 						currentGraphName = name;
 					} catch (IOException e) {
 						System.out.println("@GraphFrame: Failed to open a graph");
@@ -298,55 +300,20 @@ public class GraphFrame<V, E> extends JFrame {
 					
 					graphView.setHandler(algoHandler);
 					editorHandler.setState(State.INACTIVE);
+					//Recolors all vertices and edges black
 					graphTool.resetColor();
-					
-					//If graph is not saved, prompt for saving it
-					int saveOption = 0;
-					if (!graphTool.getGraphSaved()) {
-						
-						saveOption = JOptionPane.showConfirmDialog(null,
-								"Do you want to save the graph?", 
-								"Save graph", JOptionPane.YES_NO_OPTION);
-						
-						if (saveOption == JOptionPane.YES_OPTION) {
-							if (currentGraphName == null) currentGraphName = askForGraphName();
-							saveGraph(currentGraphName);
-						} else {
-							
-							//If user doesn't want to save the graph
-							//change the tab either way
-							changeTabToAlgoView();
-						}
-						
-					} else {
-						
-						//If graph is saved, change the tab
-						changeTabToAlgoView();
-					} 
+					//Deactivates the save and delete option
+					edit.setEnabled(false);
+					newGraph.setEnabled(false);
+					save.setEnabled(false);
+					saveAs.setEnabled(false);
+					delete.setEnabled(false);
 				}
 			}
 
 		});
 		
 		add(tabpane, BorderLayout.SOUTH);
-	}
-	
-	/*
-	 * Handles everything that needs to be done
-	 * before the tab can be changed to the algoview
-	 */
-	private void changeTabToAlgoView() {
-		
-		graphView.setHandler(algoHandler);
-		editorHandler.setState(State.INACTIVE);
-		//Recolors all vertices and edges black
-		graphTool.resetColor();
-		//Deactivates the save and delete option
-		edit.setEnabled(false);
-		newGraph.setEnabled(false);
-		save.setEnabled(false);
-		saveAs.setEnabled(false);
-		delete.setEnabled(false);
 	}
 
 	//------------------------------------------------------------------------------------//
