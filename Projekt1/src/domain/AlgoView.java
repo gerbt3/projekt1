@@ -65,6 +65,7 @@ public class AlgoView<V,E> extends JPanel {
 		//Slider for controlling the tempo of the animation of an algorithm
 		JSlider slider = new JSlider(100, 10000);
 		slider.setValue(1000);
+		slider.setInverted(true);
 		slider.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e) {

@@ -34,7 +34,7 @@ public class EditorView<V, E> extends JPanel {
 	 */
 	private void constructPanelComponents() {
 		
-		ImageIcon selectIcon = new ImageIcon("Images/selection3.png");
+		ImageIcon selectIcon = new ImageIcon("Images/selection4.png");
 		ImageIcon deleteIcon = new ImageIcon("Images/delete1.png");
 		ImageIcon vertexIcon = new ImageIcon("Images/vertex.png");
 		edgeIcon = new ImageIcon("Images/edge.png");
