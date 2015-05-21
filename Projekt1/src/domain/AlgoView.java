@@ -110,9 +110,9 @@ public class AlgoView<V,E> extends JPanel {
                 		algoHandler.startAlgo(currentAlgoMethod);
                 		JButton source = (JButton) event.getSource();
                 		source.setBackground(new Color(184,207,229));
+                		startButton.setIcon(pauseIcon);
+                    	isStartButton = false;
                 	}
-                	startButton.setIcon(pauseIcon);
-                	isStartButton = false;
                 	
             	} else {
             		algoHandler.pauseAlgo();
