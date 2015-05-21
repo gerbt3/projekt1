@@ -257,6 +257,18 @@ public class GraphFrame<V, E> extends JFrame {
 				}
 			}
 		});
+		
+		undo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				graphTool.undo();
+			}
+		});
+		
+		redo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				graphTool.redo();
+			}
+		});
 
 		rename.addActionListener(renameListener);
 	}

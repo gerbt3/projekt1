@@ -69,7 +69,7 @@ public class GraphExamples<V,E> {
 	@Algorithm
 	public void kruskal(Graph<V,E> g, GraphTool t){
 //-----------------------------------------------------------------
-		t.serializeGraph(g);
+		t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
 		
 		// gives the Object MSF to each
@@ -121,7 +121,7 @@ public class GraphExamples<V,E> {
 				e.set(Attribut.MSF,null);
 //-----------------------------------------------------------------
 				e.set(Attribut.color, Color.red);
-				t.serializeGraph(g);
+				t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
 				// merge the two clusters
 				// make sure that cluster2 is the smaller
@@ -130,7 +130,7 @@ public class GraphExamples<V,E> {
 						v.set(Attribut.CLUSTER,cluster1);
 //-----------------------------------------------------------------
 						v.set(Attribut.color, Color.red);
-						t.serializeGraph(g);
+						t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
 						cluster1.add(v);
 					}
@@ -140,7 +140,7 @@ public class GraphExamples<V,E> {
 						v.set(Attribut.CLUSTER,cluster2);
 //-----------------------------------------------------------------
 						v.set(Attribut.color, Color.red);
-						t.serializeGraph(g);
+						t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
 						cluster2.add(v);
 					}
@@ -152,7 +152,7 @@ public class GraphExamples<V,E> {
 	@Algorithm(vertex=true)
 	public void dijkstra(Graph<V,E> g,Vertex<V> s, GraphTool t){
 //-----------------------------------------------------------------
-		t.serializeGraph(g);
+		t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
 		
 		// sets the attribute 's' of each vertex 'u' from wich 
@@ -172,7 +172,7 @@ public class GraphExamples<V,E> {
 			v.set(Attribut.PQLOCATOR,loc);
 //-----------------------------------------------------------------
 			v.set(Attribut.color, Color.red);
-			t.serializeGraph(g);
+			t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
 		}
 		// correct the attributes for s
@@ -180,7 +180,7 @@ public class GraphExamples<V,E> {
 		s.set(Attribut.string,"0");
 		//-------
 		s.set(Attribut.DISTANCE,0.0);
-		//pq.replaceKey((Locator<Double,Vertex<V>>)s.get(Attribut.PQLOCATOR),0.0);
+//-->	pq.replaceKey((Locator<Double,Vertex<V>>)s.get(Attribut.PQLOCATOR),0.0);
 		while( ! pq.isEmpty()){
 			Vertex<V> u = pq.removeMin().element();    
 			///-------
@@ -189,7 +189,7 @@ public class GraphExamples<V,E> {
 				Edge<E> e = (Edge<E>)u.get(Attribut.DISCOVERY);
 //-----------------------------------------------------------------
 				e.set(Attribut.color,Color.RED);
-				t.serializeGraph(g);
+				t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
 			}
 
@@ -230,7 +230,7 @@ public class GraphExamples<V,E> {
 					z.set(Attribut.string,""+newDist);
 					z.set(Attribut.DISCOVERY,e);
 					z.set(s, u); // gateway (will eventually be changed later!)
-					pq.replaceKey((Locator<Double,Vertex<V>>) z.get(Attribut.PQLOCATOR), newDist);
+//-->				pq.replaceKey((Locator<Double,Vertex<V>>) z.get(Attribut.PQLOCATOR), newDist);
 				}
 			}
 		}
@@ -413,7 +413,7 @@ public class GraphExamples<V,E> {
 	 * 
 	 */
 	public static void main(String[] args) {
-
+		
 		// make an undirected graph
 		IncidenceListGraph<String,String> g = 
 				new IncidenceListGraph<>(false);
@@ -440,7 +440,7 @@ public class GraphExamples<V,E> {
 		Edge e_j = g.insertEdge(vF,vE,"FE");
 
 		GraphTool t = new GraphTool(g, ge);
-
+		
 		//    A__B     F
 		//      /|\   /|
 		//     / | \ / |

@@ -54,29 +54,39 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	}
 
 	public void mouseDown(Decorable d, Point p){
-		if(currentState!=null)
-			currentState.mouseDown(d, p);
+		if(currentState!=null) 
+			currentState.mouseDown(d, p);	
 	}
 	public  void mouseDrag(Decorable d, Point p){
 		if(currentState!=null)
 			currentState.mouseDrag(d, p);
 	}
+	
 	public  void mouseUp(Decorable d, Point p){
 		if(currentState!=null)
-			currentState.mouseUp(d, p);
-	}
-	public void deleteDecorable(){
-		if(currentState!=null)
-			currentState.deleteDecorable();
+			currentState.mouseUp(d, p);	
 	}
 	
-	public void undo(){
-		if(currentState!=null)
-			currentState.undo();
+	
+	public void deleteDecorable(){
+		if(currentState!=null) {
+			graphTool.serializeEditorGraph();
+			currentState.deleteDecorable();
+		}
 	}
+	
+	/*
+	 * Undoes the last saved action
+	 */
+	public void undo(){
+		graphTool.undo();
+		
+	}
+	/*
+	 * Redoes the next saved action
+	 */
 	public void redo(){
-		if(currentState!=null)
-			currentState.redo();
+		graphTool.redo();
 	}
 
 	public void changeAttribut(String text) {

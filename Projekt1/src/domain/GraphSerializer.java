@@ -22,12 +22,15 @@ import examples.Vertex;
  */
 public class GraphSerializer<V,E> {
 
+	private ArrayList<byte[]> byteEditorGraphs;
+	private int editorIndex = 0;
 	private ArrayList<byte[]> byteAlgoGraphs;
 	ArrayList<Graph<V,E>> algoGraphs;
 	private int algoIndex = 0;
 	private boolean isStart = true;
 	
 	public GraphSerializer(){
+		byteEditorGraphs= new ArrayList<byte[]>();
 		byteAlgoGraphs= new ArrayList<byte[]>();
 		algoGraphs = new ArrayList<Graph<V,E>>();
 	}
@@ -88,13 +91,110 @@ public class GraphSerializer<V,E> {
 	}
 
 	//------------------------------------------------------------------------------------//
-	// Methods for coping graph temporarily
+	// Methods for coping graph temporarily in the graph editor
 	//------------------------------------------------------------------------------------//
 	
 	/*
 	 * Makes a temporary copy of a graph by serializing
+	 * For undoing and redoing actions in the graph editor
 	 */
-	public void serializeGraph(Graph<V, E> g) throws IOException{
+	public void serializeEditorGraph(Graph<V, E> g, boolean undo) throws IOException{
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = null;
+		try {			
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(g);
+			if(editorIndex < byteEditorGraphs.size()) {
+				for (int i = editorIndex; i < byteEditorGraphs.size(); i++) byteEditorGraphs.remove(i);
+				byteEditorGraphs.add(editorIndex, bos.toByteArray());
+			}
+			else byteEditorGraphs.add(editorIndex, bos.toByteArray());
+			if (!undo) editorIndex++;
+		} catch (IOException e1) {
+			System.out.println("@GraphSerializer: GraphSerializer failed to serialize a graph");
+			e1.printStackTrace();
+		} finally {
+			oos.close();
+		}
+	}
+	
+	/*
+	 * Deserializes all temporary copies of the graphs
+	 * For undoing and redoing actions in the graph editor
+	 * Returns null, if the graph doesn't exist
+	 */
+	public Graph<V,E> deserializeEditorGraph(int index) throws IOException, ClassNotFoundException {
+		
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteEditorGraphs.get(index)));
+		try {			
+			return (Graph<V,E>) ois.readObject();
+		} catch (IOException e1) {
+			System.out.println("@GraphSerializer: GraphSerializer failed to deserialize a graph");
+			e1.printStackTrace();
+		} finally {
+			ois.close();
+		}
+		return null;	
+	}
+	
+	/*
+	 * Checks if the arraylist of graphs has a previous element,
+	 * going from the editorIndex
+	 */
+	public boolean isUndoPossible() {
+		if (editorIndex <= 0) return false;
+		else return true;
+	}
+	
+	/*
+	 * Returns the previous element in the arraylist of graphs
+	 * If the previous element exists, has to be checked first
+	 * Returns null, if the graph doesn't exist
+	 */
+	public Graph<V,E> undo(Graph<V,E> g) throws ClassNotFoundException, IOException {
+		serializeEditorGraph(g, true);
+		if (editorIndex > 0) editorIndex--;
+		return deserializeEditorGraph(editorIndex);
+	}
+	
+	/*
+	 * Checks if the arraylist of graphs has a next element,
+	 * going from the editorIndex
+	 */
+	public boolean isRedoPossible() {
+		if (editorIndex > byteEditorGraphs.size()-1) return false;
+		else return true;
+	}
+	
+	/*
+	 * Returns the next element in the arraylist of graphs
+	 * If the next element exists, has to be checked first
+	 * Returns null, if the graph doesn't exist
+	 */
+	public Graph<V,E> redo() throws ClassNotFoundException, IOException {
+		if (editorIndex < byteEditorGraphs.size()-1) editorIndex++;
+		return deserializeEditorGraph(editorIndex);
+	}
+	
+	/*
+	 * Resets the byte array and the index
+	 * for saving graphs for undoing and redoing actions
+	 */
+	public void clearEditorGraphs() {
+		byteEditorGraphs.clear();
+		editorIndex = 0;
+	}
+	
+	//------------------------------------------------------------------------------------//
+	// Methods for coping graph temporarily in the algorithm editor
+	//------------------------------------------------------------------------------------//
+	
+	/*
+	 * Makes a temporary copy of a graph by serializing
+	 * For animating an algorithm in the algorithm editor
+	 */
+	public void serializeAlgoGraph(Graph<V, E> g) throws IOException{
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = null;
@@ -120,19 +220,18 @@ public class GraphSerializer<V,E> {
 	
 	/*
 	 * Deserializes all temporary copies of the graphs
+	 * For animating an algorithm in the algorithm editor
 	 */
 	public boolean deserializeAlgoGraphs() throws IOException, ClassNotFoundException {
-		System.out.println("@GraphSerializer: deserializeAlgoGraphs: " + isStart);
+		
+		//Only deserializes the graphs, when the animation gets started
+		//non when it gets paused
 		if (isStart) {
-			System.out.println("@GraphSerializer: deserializeAlgoGraphs: should be true: " + isStart);
 			
-			//Clears 
+			//Clears the list of deserialized graphs
 			algoGraphs.clear();
 			algoIndex = 0;
 			
-			System.out.println("deserialize before: algoGraph size: " + algoGraphs.size());
-			System.out.println("deserialize before: byteAlgoGraphs size: " + byteAlgoGraphs.size());
-		
 			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteAlgoGraphs.get(0)));
 			
 			for (int i = 0; i < byteAlgoGraphs.size(); i++) {
@@ -148,10 +247,10 @@ public class GraphSerializer<V,E> {
 					ois.close();
 				}
 			}
-			System.out.println("deserialize after: algoGraph size: " + algoGraphs.size());
+			
+			//Clears the list of serialized graphs
 			byteAlgoGraphs.clear();
 			
-			System.out.println("deserialize after: byteAlgoGraphs size: " + byteAlgoGraphs.size());
 			isStart = false;
 			return true;
 		}
@@ -164,8 +263,6 @@ public class GraphSerializer<V,E> {
 	 * going from the algoIndex
 	 */
 	public boolean hasNextGraph() {
-		System.out.println("algoGraph size: " + algoGraphs.size());
-		System.out.println("hasNextGraph: " + (algoIndex >= algoGraphs.size()-1));
 		if (algoIndex >= algoGraphs.size()-1) return false;
 		else return true;
 	}
@@ -176,8 +273,7 @@ public class GraphSerializer<V,E> {
 	 */
 	public Graph<V,E> getNextGraph() {
 		algoIndex++;
-		System.out.println("algoIndex: " + algoIndex);
-		return algoGraphs.get(algoIndex);
+		return algoGraphs.get(algoIndex-1);
 	}
 	
 	/*
@@ -195,20 +291,17 @@ public class GraphSerializer<V,E> {
 	 */
 	public Graph<V,E> getPreviousGraph() {
 		algoIndex--;
-		return algoGraphs.get(algoIndex);
-		
+		return algoGraphs.get(algoIndex+1);
 	}
 	
 	/*
-	 * Set the index for the arraylist of graphs 
-	 * back to the beginning
+	 * Clears the byte array, the array list and the index
+	 * of graphs for animating algorithms
 	 */
-	public void resetAlgoIndex() {
+	public void clearAlgoGraphs() {
+		byteAlgoGraphs.clear();
+		algoGraphs.clear();
 		algoIndex = 0;
 		isStart = true;
-	}
-	
-	public void clearByteAlgoGraphs() {
-		
 	}
 }

@@ -77,7 +77,6 @@ public class GraphView<V,E> extends JPanel {
 
 	/*
 	 * Constructs the menu for handling the attributes of vertices and edges
-	 * Calls the itemChanged method of the menuHandler class
 	 */
 	private void constructComponents() {
 

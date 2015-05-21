@@ -74,11 +74,10 @@ public class AlgoView<V,E> extends JPanel {
 			}
 		});
 		
+		//For the layout for the slider with its icon
 		FlowLayout fl = new FlowLayout();
 		JPanel p = new JPanel(fl);
-		
 		ImageIcon timeIcon = new ImageIcon("Images/time.png");
-		
 		p.add(new JLabel(timeIcon));
 		p.add(slider);
 	
@@ -97,6 +96,8 @@ public class AlgoView<V,E> extends JPanel {
 		startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
             	
+            	//Executes an algorithm and its animation when it get started
+            	//Otherwise it only gets paused
             	if (isStartButton) {
             		
             		//If algorithm needs a startVertex or an endVertex and they're not set,
@@ -159,17 +160,14 @@ public class AlgoView<V,E> extends JPanel {
             	startVertexSelected = false;
             	endVertexSelected = false;
             	
-            	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex()) {
+            	//Set the buttons for startvertex or endvertex visible or invisible
+            	//whether they are needed for an algorithm or not
+            	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex()) 
             		startVertexButton.setVisible(true);
-            	} else {
-            		startVertexButton.setVisible(false);
-            	}
-            	
-            	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex2()) {
+            	else startVertexButton.setVisible(false);
+            	if (currentAlgoMethod.getAnnotation(Algorithm.class).vertex2()) 
             		endVertexButton.setVisible(true);
-            	} else {
-            		endVertexButton.setVisible(false);
-            	}
+            	else endVertexButton.setVisible(false);
             }
 		});
 		
@@ -196,8 +194,6 @@ public class AlgoView<V,E> extends JPanel {
 		toolPanel.add(forwardButton);
 		toolPanel.add(stopButton);
 		toolPanel.add(algoList);
-		//Buttons for startvertex and endvertex
-		//are only shown if an algorithm needs them 
 		toolPanel.add(startVertexButton);
 		startVertexButton.setVisible(false);
 		toolPanel.add(endVertexButton);

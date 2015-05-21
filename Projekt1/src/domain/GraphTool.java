@@ -1,8 +1,6 @@
 package domain;
 
-import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 import java.awt.Color;
@@ -26,7 +24,6 @@ public class GraphTool<V,E> {
 	private GraphSerializer<V, E> graphSerializer;
 	private AnnotationParser<V,E> parser;
 	private ViewHandler<V,E> viewHandler;
-	private boolean graphSaved = true;
 	
 	public GraphTool(GraphExamples<V,E> ge){
 		this(new IncidenceListGraph<V,E>(), ge);
@@ -35,13 +32,15 @@ public class GraphTool<V,E> {
 	}
 	
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
-	
+		
 		currentGraph=g;
 		this.calculatePositions(currentGraph);
 		parser = new AnnotationParser<V,E>(ge, this);
 		graphSerializer = new GraphSerializer<V, E>();
 		viewHandler=new ViewHandler<V,E>(this);
 		viewHandler.setGraph(currentGraph);
+		
+		clearEditorGraphs();
 	}
 	
 	public Graph<V,E> getCurrentGraph() {
@@ -99,7 +98,7 @@ public class GraphTool<V,E> {
 	}
 
 	public void moveVertex(Vertex<V> v, Point p){
-		Dimension d=viewHandler.getSize();
+		//Dimension d=viewHandler.getSize();
 		double radius = GraphComponent.width/2.0;
 		double x=p.getX();
 		double y=p.getY();
@@ -129,7 +128,7 @@ public class GraphTool<V,E> {
 	}
 
 	public void insertEdge(Vertex<V> startVertex, Point p2) {
-		double radius=GraphComponent.width/2.0;
+		//double radius=GraphComponent.width/2.0;
 		Point p1=new Point();
 		p1.setLocation((double)startVertex.get(Attribut.pos_x),(double)startVertex.get(Attribut.pos_y));
 		viewHandler.insertEdge(p1, p2);
@@ -219,14 +218,83 @@ public class GraphTool<V,E> {
 	}
 	
 	public Graph<V,E> openGraph(String name) throws IOException {
-		Graph graph = graphSerializer.openGraph(name);
-		currentGraph = graph;
+		currentGraph = graphSerializer.openGraph(name);
 		viewHandler.setGraph(currentGraph);
 		return currentGraph;
 	}
 	
 	//------------------------------------------------------------------------------------//
-	// Helper-methods for executing an algorithm
+	// Helper-methods for undoing and redoing an action in the graph editor
+	//------------------------------------------------------------------------------------//
+	
+	/*
+	 * Serializes a graph after a change was made to it
+	 */
+	public void serializeEditorGraph() {
+		try {
+			resetColor();
+			graphSerializer.serializeEditorGraph(currentGraph, false);
+		} catch (IOException e) {
+			System.out.println("@GraphTool: GraphSerializer failed to serialize a graph");
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Undoes the last saved action in the graph editor
+	 * if the action is possible
+	 */
+	public void undo() {
+		if (graphSerializer.isUndoPossible()) {
+			Graph<V,E> g = null;
+			
+			try {
+				g = graphSerializer.undo(currentGraph);
+			} catch (ClassNotFoundException | IOException e) {
+				System.out.println("@GraphTool: undo(): failed to deserialize a graph");
+				e.printStackTrace();
+			}
+			
+			if (g != null) {
+				currentGraph = g;
+				viewHandler.setGraph(currentGraph); 
+			}
+		}
+	}
+	
+	/*
+	 * Redoes the next saved action in the graph editor
+	 * if the action is possible
+	 */
+	public void redo() {
+		if (graphSerializer.isRedoPossible()) {
+			
+			Graph<V,E> g = null;
+			
+			try {
+				g = graphSerializer.redo();
+			} catch (ClassNotFoundException | IOException e) {
+				System.out.println("@GraphTool: undo(): failed to deserialize a graph");
+				e.printStackTrace();
+			}
+			
+			if (g != null) {
+				currentGraph = g;
+				viewHandler.setGraph(currentGraph); 
+			}
+		}	
+	}
+	
+	/*
+	 * Resets the byte array and the index
+	 * for saving graphs for undoing and redoing actions
+	 */
+	public void clearEditorGraphs() {
+		graphSerializer.clearEditorGraphs();
+	}
+	
+	//------------------------------------------------------------------------------------//
+	// Helper-methods for executing an animating an algorithm in the algorithm editor
 	//------------------------------------------------------------------------------------//
 
 	public void changeAttribut(Decorable d, Attribut attr, String text){
@@ -250,6 +318,7 @@ public class GraphTool<V,E> {
 		//when the animation is started, not when it's paused
 		//When it's gets started, isStart is true
 		if (isStart) {
+			resetColor();
 			parser.executeMethod(method, startVertex, endVertex);
 			try {
 				graphSerializer.deserializeAlgoGraphs();
@@ -287,6 +356,9 @@ public class GraphTool<V,E> {
 		if (graphSerializer.hasNextGraph()) {
 			currentGraph = graphSerializer.getNextGraph();
 			viewHandler.setGraph(currentGraph);
+		} else {
+			//Stops the animation when it gets to end manually
+			stop();
 		}
 	}
 	
@@ -295,18 +367,18 @@ public class GraphTool<V,E> {
 	 * when the algorithm animation gets stopped 
 	 */
 	public void stop() {
-		graphSerializer.resetAlgoIndex();
+		graphSerializer.clearAlgoGraphs();
 	}
 	
 	/*
 	 * Serializes the graph after each change 
 	 * an algorithm in the GraphExamples class made
 	 */
-	public void serializeGraph(Graph<V,E> g) {
+	public void serializeAlgoGraph(Graph<V,E> g) {
 		try {
-			graphSerializer.serializeGraph(g);
+			graphSerializer.serializeAlgoGraph(g);
 		} catch (IOException e) {
-			System.out.println("@GraphTool: GraphSerializer failed to serialize a graph");
+			System.out.println("@GraphTool: serializeAlgoGraph: GraphSerializer failed to serialize a graph");
 			e.printStackTrace();
 		}
 	}
@@ -318,4 +390,5 @@ public class GraphTool<V,E> {
 	public void resetStartButton() {
 		viewHandler.resetStartButton();
 	}
+	
 }
