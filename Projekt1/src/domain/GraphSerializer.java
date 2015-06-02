@@ -23,7 +23,7 @@ import examples.Vertex;
 public class GraphSerializer<V,E> {
 
 	private ArrayList<byte[]> byteEditorGraphs;
-	private int editorIndex = 0;
+	private int editorIndex = -1;
 	private ArrayList<byte[]> byteAlgoGraphs;
 	ArrayList<Graph<V,E>> algoGraphs;
 	private int algoIndex = 0;
@@ -98,21 +98,20 @@ public class GraphSerializer<V,E> {
 	 * Makes a temporary copy of a graph by serializing
 	 * For undoing and redoing actions in the graph editor
 	 */
-	public void serializeEditorGraph(Graph<V, E> g, boolean undo) throws IOException{
+	public void serializeEditorGraph(Graph<V, E> g) throws IOException{
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = null;
 		try {			
 			oos = new ObjectOutputStream(bos);
-			oos.writeObject(g);
-			if(editorIndex < byteEditorGraphs.size()) {
-				for (int i = editorIndex; i < byteEditorGraphs.size(); i++) byteEditorGraphs.remove(i);
-				//for (int i = byteEditorGraphs.size()-1; i>=editorIndex ; i--) byteEditorGraphs.remove(i);
-				
-				byteEditorGraphs.add(editorIndex, bos.toByteArray());
+			oos.writeObject(g);			
+			if(editorIndex!=byteEditorGraphs.size()){
+				for(int i=byteEditorGraphs.size()-1;i>editorIndex;i--){
+					byteEditorGraphs.remove(i);
+				}
 			}
-			else byteEditorGraphs.add(editorIndex, bos.toByteArray());
-			if (!undo) editorIndex++;
+			editorIndex++;
+			byteEditorGraphs.add(editorIndex, bos.toByteArray());
 		} catch (IOException e1) {
 			System.out.println("@GraphSerializer: GraphSerializer failed to serialize a graph");
 			e1.printStackTrace();
@@ -155,8 +154,7 @@ public class GraphSerializer<V,E> {
 	 * Returns null, if the graph doesn't exist
 	 */
 	public Graph<V,E> undo(Graph<V,E> g) throws ClassNotFoundException, IOException {
-		serializeEditorGraph(g, true);
-		if (editorIndex > 0) editorIndex--;
+		if(isUndoPossible())editorIndex--;
 		return deserializeEditorGraph(editorIndex);
 	}
 	
@@ -165,7 +163,7 @@ public class GraphSerializer<V,E> {
 	 * going from the editorIndex
 	 */
 	public boolean isRedoPossible() {
-		if (editorIndex > byteEditorGraphs.size()-1) return false;
+		if (editorIndex >= byteEditorGraphs.size()-1) return false;
 		else return true;
 	}
 	
@@ -175,7 +173,7 @@ public class GraphSerializer<V,E> {
 	 * Returns null, if the graph doesn't exist
 	 */
 	public Graph<V,E> redo() throws ClassNotFoundException, IOException {
-		if (editorIndex < byteEditorGraphs.size()-1) editorIndex++;
+		if (isRedoPossible()) editorIndex++;
 		return deserializeEditorGraph(editorIndex);
 	}
 	
@@ -185,7 +183,7 @@ public class GraphSerializer<V,E> {
 	 */
 	public void clearEditorGraphs() {
 		byteEditorGraphs.clear();
-		editorIndex = 0;
+		editorIndex = -1;
 	}
 	
 	//------------------------------------------------------------------------------------//

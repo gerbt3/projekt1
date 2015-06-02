@@ -31,7 +31,6 @@ public class SelectState<V,E> extends EditorState {
 		}
 
 		if(d!=null){
-			graphTool.serializeEditorGraph();
 			selected=d;
 			oldColor=(Color) d.get(Attribut.color);
 			graphTool.setColor(d, GraphTool.SELECTED);
@@ -58,6 +57,7 @@ public class SelectState<V,E> extends EditorState {
 	@Override
 	public void mouseUp(Decorable d, Point p) {
 		this.mouseDrag(d, p);
+		graphTool.serializeEditorGraph();
 	}
 
 	/*

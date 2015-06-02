@@ -32,10 +32,12 @@ public class GraphTool<V,E> {
 		this(new IncidenceListGraph<V,E>(), ge);
 		if(!viewHandler.chooseGraphOption())
 			this.createGraph(false);
+		else
+			this.createGraph(true);
 	}
 	
 	/*
-	 * construvtor with graph
+	 * constructor with graph
 	 */
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
 		
@@ -45,8 +47,7 @@ public class GraphTool<V,E> {
 		graphSerializer = new GraphSerializer<V, E>();
 		viewHandler=new ViewHandler<V,E>(this);
 		viewHandler.setGraph(currentGraph);
-		
-		clearEditorGraphs();
+		serializeEditorGraph();
 	}
 	
 	/*
@@ -66,8 +67,10 @@ public class GraphTool<V,E> {
 	 */
 	public void createGraph(boolean directed){
 		currentGraph=new IncidenceListGraph<V, E>(directed);
+		graphSerializer.clearEditorGraphs();
 		nameIndex=1;
 		viewHandler.setGraph(currentGraph);
+		serializeEditorGraph();
 	}
 
 	/*
@@ -104,7 +107,6 @@ public class GraphTool<V,E> {
 	 */
 	public Vertex<V> insertVertex(Point p){
 
-		serializeEditorGraph();
 		Vertex<V> v=currentGraph.insertVertex((V) "");
 		double radius = GraphComponent.width/2.0;
 		v.set(Attribut.pos_x, p.getX()-radius);
@@ -114,6 +116,7 @@ public class GraphTool<V,E> {
 		nameIndex++;
 		// graph speichern
 		viewHandler.setGraph(currentGraph);
+		serializeEditorGraph();
 		return v;
 	}
 	
@@ -146,7 +149,6 @@ public class GraphTool<V,E> {
 	 */
 	public void insertEdge(Vertex<V> from, Vertex<V> to) {
 		
-		serializeEditorGraph();
 		Edge<E> e_from;
 		if(currentGraph.isDirected()){
 			for(Iterator<Edge<E>>it1=currentGraph.incidentInEdges(to);it1.hasNext();){
@@ -177,7 +179,7 @@ public class GraphTool<V,E> {
 		e.set(Attribut.weight, 1.0);
 		viewHandler.deleteEdge();
 		viewHandler.setGraph(currentGraph);
-
+		serializeEditorGraph();
 	}
 
 	/*
@@ -215,19 +217,19 @@ public class GraphTool<V,E> {
 	/*
 	 * removes a Vertex from the graph
 	 */
-	public void deleteVertex(Vertex<V> selected) {
-		serializeEditorGraph();
+	public void deleteVertex(Vertex<V> selected) {	
 		currentGraph.removeVertex(selected);
 		viewHandler.setGraph(currentGraph);
+		serializeEditorGraph();
 	}
 
 	/*
 	 * removes an Edge from the graph
 	 */
 	public void deleteEdge(Edge<E> selected) {
-		serializeEditorGraph();
 		currentGraph.removeEdge(selected);
 		viewHandler.setGraph(currentGraph);
+		serializeEditorGraph();
 	}
 	
 	//------------------------------------------------------------------------------------//
@@ -242,6 +244,8 @@ public class GraphTool<V,E> {
 	public Graph<V,E> openGraph(String name) throws IOException {
 		currentGraph = graphSerializer.openGraph(name);
 		viewHandler.setGraph(currentGraph);
+		graphSerializer.clearEditorGraphs();
+		graphSerializer.serializeEditorGraph(currentGraph);
 		return currentGraph;
 	}
 	
@@ -255,7 +259,8 @@ public class GraphTool<V,E> {
 	public void serializeEditorGraph() {
 		try {
 			resetColor();
-			graphSerializer.serializeEditorGraph(currentGraph, false);
+			graphSerializer.serializeEditorGraph(currentGraph);
+			
 		} catch (IOException e) {
 			System.out.println("@GraphTool: GraphSerializer failed to serialize a graph");
 			e.printStackTrace();
@@ -307,14 +312,6 @@ public class GraphTool<V,E> {
 		}	
 	}
 	
-	/*
-	 * Resets the byte array and the index
-	 * for saving graphs for undoing and redoing actions
-	 */
-	public void clearEditorGraphs() {
-		graphSerializer.clearEditorGraphs();
-	}
-	
 	//------------------------------------------------------------------------------------//
 	// Helper-methods for executing an animating an algorithm in the algorithm editor
 	//------------------------------------------------------------------------------------//
@@ -322,10 +319,10 @@ public class GraphTool<V,E> {
 	/*
 	 * changes an attribut of a decorable
 	 */
-	public void changeAttribut(Decorable d, Attribut attr, String text){
-		serializeEditorGraph();
+	public void changeAttribut(Decorable d, Attribut attr, String text){	
 		d.set(attr, text);
 		viewHandler.setGraph(currentGraph);
+		serializeEditorGraph();
 	}
 
 	/*
