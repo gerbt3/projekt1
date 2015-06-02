@@ -1,13 +1,10 @@
 package domain;
 
-import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Vector;
 
-import examples.Edge;
 import examples.Graph;
 import examples.GraphExamples;
 import examples.Vertex;
@@ -24,6 +21,9 @@ public class AnnotationParser<V, E> {
 		this.graphTool=gt;
 	}
 
+	/*
+	 * returns annotated methods
+	 */
 	public Vector<Method> getAnnotatedMethods(){
 	
 		annotatedMethods=new ArrayList<>();
@@ -36,11 +36,17 @@ public class AnnotationParser<V, E> {
 		return new Vector<Method>(annotatedMethods);
 	}
 
+	/*
+	 * returns if the method needs a startvertex
+	 */
 	public boolean isStartvertexNeeded(Method method){
 		return method.getAnnotation(Algorithm.class).vertex();
 	}
 	
-	public boolean isStopvertexNeeded(Method method){
+	/*
+	 * returns if the method needs a endvertex
+	 */
+	public boolean isEndvertexNeeded(Method method){
 		return method.getAnnotation(Algorithm.class).vertex2();
 	}
 	

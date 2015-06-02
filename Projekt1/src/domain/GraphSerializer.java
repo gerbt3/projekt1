@@ -107,6 +107,8 @@ public class GraphSerializer<V,E> {
 			oos.writeObject(g);
 			if(editorIndex < byteEditorGraphs.size()) {
 				for (int i = editorIndex; i < byteEditorGraphs.size(); i++) byteEditorGraphs.remove(i);
+				//for (int i = byteEditorGraphs.size()-1; i>=editorIndex ; i--) byteEditorGraphs.remove(i);
+				
 				byteEditorGraphs.add(editorIndex, bos.toByteArray());
 			}
 			else byteEditorGraphs.add(editorIndex, bos.toByteArray());

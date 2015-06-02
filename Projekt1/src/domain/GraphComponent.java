@@ -12,6 +12,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class GraphComponent<V,E> extends JComponent{
 	private boolean nameFlag=false, weightFlag=false, stringFlag=false;
 	private JCheckBoxMenuItem name, weight, string;
 	private double zoomSize=2.5;
+	private JMenuItem rename;
 	private ItemListener nameListener, weightListener, stringListener;
 	Dimension myDimension=new Dimension(800, 800);
 
@@ -49,6 +51,10 @@ public class GraphComponent<V,E> extends JComponent{
 		createListeners(renameListener);
 	}
 
+	/*
+	 * creates foreach Vertex an Ellipse and foreach Edge a Line
+	 * considers the zoomsize by calculating the right size
+	 */
 	public void setGraph(Graph<V,E> g){
 		graph=g;
 		vertices.clear();
@@ -83,8 +89,13 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
+	/*
+	 * paints all vertices and edges
+	 * and arrows and attributes if needed
+	 */
 	public void paintComponent(Graphics g){
 		Graphics2D g2=(Graphics2D)g;
+		AffineTransform saved = g2.getTransform();
 		Vertex<V> v;
 		Edge<E> e;
 		Ellipse2D.Double ellipse;
@@ -92,7 +103,7 @@ public class GraphComponent<V,E> extends JComponent{
 		for( Iterator<Ellipse2D.Double> itv = vertices.values().iterator(); itv.hasNext(); ){
 			ellipse=itv.next();
 			v=this.findKey(vertices, ellipse);
-		//-----------------------------------------------
+			//-----------------------------------------------
 			//Fills the ellipse and set the line thickness
 			int red = ((Color)v.get(Attribut.color)).getRed();
 			int green = ((Color)v.get(Attribut.color)).getGreen();
@@ -101,14 +112,14 @@ public class GraphComponent<V,E> extends JComponent{
 			g2.setColor(fillColor);
 			g2.fill(ellipse);
 			g2.setStroke(new BasicStroke(2));
-		//-----------------------------------------------
+			//-----------------------------------------------
 			g2.setColor((Color)v.get(Attribut.color));
 			g2.draw(ellipse);
 			if(v.has(Attribut.name)&&nameFlag){
 				g2.drawString((String)v.get(Attribut.name), (int)((double)v.get(Attribut.pos_x)*zoomSize)+3, (int)(width*zoomSize/2.0+(double)v.get(Attribut.pos_y)*zoomSize));
 			}
 			if(v.has(Attribut.string)&&stringFlag){
-				g2.drawString((String)v.get(Attribut.string), (int) ((int)((double)v.get(Attribut.pos_x)*zoomSize)+width*zoomSize), (int)((double)v.get(Attribut.pos_y)*zoomSize));
+				g2.drawString((String)v.get(Attribut.string), (int) ((int)((double)v.get(Attribut.pos_x)*zoomSize)+width*zoomSize)+3, (int)(width*zoomSize/2.0+(double)v.get(Attribut.pos_y)*zoomSize));
 			}
 
 		}
@@ -117,24 +128,36 @@ public class GraphComponent<V,E> extends JComponent{
 			e=this.findKey(edges, line);
 			g2.setColor((Color)e.get(Attribut.color));
 			g2.draw(line);
+			double length = Math.sqrt(Math.pow(line.getX2()-line.getX1(), 2) + Math.pow(line.getY2()-line.getY1(), 2) );
+			double angle = Math.acos((line.getX2() - line.getX1()) / length);
+			if(line.getX1() > line.getX2()){
+				angle = Math.toRadians(180) - angle;
+				angle = line.getY1() > line.getY2() ? angle : -angle;
+			}else{
+				angle = line.getY1() > line.getY2() ? -angle : angle;
+			}
+			AffineTransform rotate=AffineTransform.getRotateInstance(angle,(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+			g2.transform(rotate);
+
 			if(e.has(Attribut.weight)&&weightFlag){
-			//--------------------------------------------
+				//--------------------------------------------
 				//Whether the graph comes from graphexamples or not 
 				//it has to be casted differently
 				if (e.get(Attribut.weight) instanceof String) {
 					g2.drawString((String) e.get(Attribut.weight), 
-							(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+							(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2)-4);
 				} else {
 					//For graphs from graphexamples
 					g2.drawString(Double.toString((Double) e.get(Attribut.weight)), 
-							(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2));
+							(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2)-4);
 				}
-			//--------------------------------------------
-				
+				//--------------------------------------------
+
 			}
 			if(e.has(Attribut.string)&&stringFlag){
 				g2.drawString((String)e.get(Attribut.string),(int) (line.getX1()+line.getX2())/2,(int) ((line.getY1()+line.getY2())/2)+15);
 			}
+			g2.setTransform(saved);
 			if(graph.isDirected())
 				drawArrowHead(g2, new Point((int) line.x2, (int) line.y2),new Point((int) line.x1, (int) line.y1));
 
@@ -166,7 +189,10 @@ public class GraphComponent<V,E> extends JComponent{
 			rho = theta - phi;
 		}
 	}
-
+	/*
+	 * calculates where the edge intersects the vertex, and set this points
+	 * to creates a Line with the calculated points as start- and endpoint 
+	 */
 	private void setLine(Vertex<V> from, Vertex<V> to, Edge<E> e){
 
 		double radius=GraphComponent.width*zoomSize/2.0;
@@ -194,13 +220,18 @@ public class GraphComponent<V,E> extends JComponent{
 	}
 
 
-
+	/*
+	 * method to set the ScrollPane
+	 */
 	@Override 
 	public Dimension getPreferredSize(){
 		return myDimension;
 
 	}
 
+	/*
+	 * search if the mouse clicked on a Decorable
+	 */
 	private Decorable findDecorable(MouseEvent e){
 		double distance=5.0;
 		Point p=e.getPoint();
@@ -228,13 +259,19 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
+	/*
+	 * calculates the right position, where the mouse is
+	 */
 	private Point findPoint(MouseEvent e) {
 		Point p=e.getPoint();
 		p.setLocation(p.getX()/zoomSize,p.getY()/zoomSize);
 		return p;
 	}
 
-	public <V1, K> K findKey(HashMap<K,V1> map, V1 value ){
+	/*
+	 * returns the decorable by handover a Line or a Ellipse
+	 */
+	private <V1, K> K findKey(HashMap<K,V1> map, V1 value ){
 		for (Entry<K, V1> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
 				return entry.getKey();
@@ -243,6 +280,10 @@ public class GraphComponent<V,E> extends JComponent{
 		return null;
 	}
 
+	/*
+	 * sets a line when a Edge is not yet in the graph,
+	 * but the mouse is dragging a Line from a Vertex to a Point
+	 */
 	public void insertEdge(Point p1, Point p2) {
 		p1.setLocation(p1.getX()*zoomSize+width*zoomSize/2.0,p1.getY()*zoomSize+width*zoomSize/2.0);
 		p2.setLocation(p2.getX()*zoomSize,p2.getY()*zoomSize);
@@ -250,11 +291,17 @@ public class GraphComponent<V,E> extends JComponent{
 		repaint();
 	}
 
+	/*
+	 * if an edge is inserted in the graph the Line will be cleared
+	 */
 	public void deleteEdge(){
 		unfinishedLine=null;
 		repaint();
 	}
 
+	/*
+	 * sets the flag which decide if an attribut is shown or not
+	 */
 	public void setFlag(Attribut attr, boolean selected) {
 		switch(attr){
 		case name:
@@ -267,12 +314,18 @@ public class GraphComponent<V,E> extends JComponent{
 		}
 
 	}
-
+	
+	/*
+	 * sets the zoomsize of the slider
+	 */
 	public void setZoomSize(int value) {
 		this.zoomSize=value/4.0;
 		this.setGraph(graph);
 	}
-
+	
+	/*
+	 * sets the state of the checkbox which allows the visibility of the attributs
+	 */
 	public void setPopupCheckBox(Attribut attr, boolean selected) {
 		switch (attr){
 		case name:
@@ -288,9 +341,12 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
+	/*
+	 * creates mouselistener and popuplistener
+	 */
 	private void createListeners(ActionListener renameListener){
 		JPopupMenu popupRename = new JPopupMenu();
-		JMenuItem rename = new JMenuItem("Rename...");
+		rename = new JMenuItem("Rename...");
 		popupRename.add(rename);
 		rename.addActionListener(renameListener);
 		JPopupMenu popupVisible = new JPopupMenu();
@@ -377,6 +433,14 @@ public class GraphComponent<V,E> extends JComponent{
 				}
 			}
 		});
+	}
+
+	/*
+	 * the popup widow is only visible in the editor mode. With this
+	 * method you can disable the rename popup window
+	 */
+	public void setRenameVisibility(boolean b) {
+		rename.setVisible(b);
 	}
 
 }

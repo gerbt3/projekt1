@@ -16,15 +16,8 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	private VertexState<V,E> vertexState;
 	private EdgeState<V,E> edgeState;
 	private SelectState<V,E> selectState;
-	private GraphTool graphTool;
+	private GraphTool<V,E> graphTool;
 	
-	public EditorHandler(SelectState<V,E> selectState, VertexState<V,E> vertexState,EdgeState<V,E> edgeState){
-		currentState=selectState;
-		this.selectState=selectState;
-		this.vertexState=vertexState;
-		this.edgeState=edgeState;
-	}
-
 	public EditorHandler(GraphTool<V, E> gt) {
 		graphTool = gt;
 		this.selectState=new SelectState<V,E>(gt);
@@ -33,6 +26,10 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 		this.currentState=this.selectState;
 	}
 
+	/*
+	 * sets the current state, depending on which state is set,
+	 * another method is called in the other methods of this class
+	 */
 	public void setState(State state){
 		if(currentState instanceof SelectState && !(state==State.SELECT)){
 			currentState.mouseDown(null, null);
@@ -53,15 +50,25 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 		}	
 	}
 
+	/*
+	 * calls the method mouseDown of the currentState
+	 */
 	public void mouseDown(Decorable d, Point p){
 		if(currentState!=null) 
 			currentState.mouseDown(d, p);	
 	}
+	
+	/*
+	 * calls the method mouseDrag of the currentState
+	 */
 	public  void mouseDrag(Decorable d, Point p){
 		if(currentState!=null)
 			currentState.mouseDrag(d, p);
 	}
 	
+	/*
+	 * calls the method mouseUp of the currentState
+	 */
 	public  void mouseUp(Decorable d, Point p){
 		if(currentState!=null)
 			currentState.mouseUp(d, p);	
@@ -70,7 +77,6 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	
 	public void deleteDecorable(){
 		if(currentState!=null) {
-			graphTool.serializeEditorGraph();
 			currentState.deleteDecorable();
 		}
 	}
@@ -89,11 +95,18 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 		graphTool.redo();
 	}
 
+	/*
+	 * if the currentState is SelectState,
+	 * the attribut of the selected Decorable will be changed
+	 */
 	public void changeAttribut(String text) {
 		if(currentState!=null)
 			currentState.changeAttribut(text);
 	}
 
+	/*
+	 * returns the selected Decorable
+	 */
 	public Decorable getSelected() {
 		
 		return selectState.getSelected();

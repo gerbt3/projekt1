@@ -2,12 +2,10 @@ package domain;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;

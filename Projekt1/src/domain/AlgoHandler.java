@@ -4,14 +4,11 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.Timer;
 
 import examples.Decorable;
-import examples.Edge;
-import examples.Graph;
 import examples.Vertex;
 
 public class AlgoHandler<V,E> implements Handler<V,E> {

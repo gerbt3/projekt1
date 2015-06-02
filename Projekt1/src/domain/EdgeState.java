@@ -13,6 +13,9 @@ public class EdgeState<V, E> extends EditorState {
 		this.graphTool=g;
 	}
 
+	/*
+	 * if a Vertex is clicked, the vertex is the startvertex of the new edge
+	 */
 	@Override
 	public void mouseDown(Decorable d, Point p) {
 
@@ -24,12 +27,19 @@ public class EdgeState<V, E> extends EditorState {
 		}
 	}
 
+	/*
+	 * this method calls graphtool to draw an unfinished line
+	 */
 	@Override
 	public void mouseDrag(Decorable d, Point p) {
 		if(startVertex!=null)
 			graphTool.insertEdge(startVertex, p);
 	}
 
+	/*
+	 * if a startvertex is selected and the mouseUp is over a vertex,
+	 * this method calls graphtool to insert a new edge into the graph
+	 */
 	@Override
 	public void mouseUp(Decorable d, Point p) {
 

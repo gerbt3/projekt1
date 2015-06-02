@@ -19,6 +19,9 @@ public class SelectState<V,E> extends EditorState {
 		this.graphTool=g;
 	}
 
+	/*
+	 * if a decorable is clicked, it will change the color
+	 */
 	@Override
 	public void mouseDown(Decorable d, Point p) {
 
@@ -28,6 +31,7 @@ public class SelectState<V,E> extends EditorState {
 		}
 
 		if(d!=null){
+			graphTool.serializeEditorGraph();
 			selected=d;
 			oldColor=(Color) d.get(Attribut.color);
 			graphTool.setColor(d, GraphTool.SELECTED);
@@ -35,7 +39,10 @@ public class SelectState<V,E> extends EditorState {
 		}
 
 	}
-
+	
+	/*
+	 * moves the selected Vertex to his new position
+	 */
 	@Override
 	public void mouseDrag(Decorable d, Point p) {
 
@@ -45,11 +52,17 @@ public class SelectState<V,E> extends EditorState {
 		}
 	}
 
+	/*
+	 * moves the selected Vertex to his new position
+	 */
 	@Override
 	public void mouseUp(Decorable d, Point p) {
 		this.mouseDrag(d, p);
 	}
 
+	/*
+	 * deletes an edge or a vertex
+	 */
 	@Override
 	public void deleteDecorable(){
 		if(selected!=null){
@@ -63,6 +76,9 @@ public class SelectState<V,E> extends EditorState {
 		}
 	}
 	
+	/*
+	 * changes the name of a vertex or the weight of an edge
+	 */
 	@Override
 	public void changeAttribut(String text){
 		if(selected instanceof Vertex){
@@ -73,6 +89,9 @@ public class SelectState<V,E> extends EditorState {
 		}
 	}
 
+	/*
+	 * returns the selected decorable
+	 */
 	public Decorable getSelected() {
 		
 		return selected;

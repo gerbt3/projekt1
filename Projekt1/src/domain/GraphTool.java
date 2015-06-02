@@ -25,12 +25,18 @@ public class GraphTool<V,E> {
 	private AnnotationParser<V,E> parser;
 	private ViewHandler<V,E> viewHandler;
 	
+	/*
+	 * constructor without graph
+	 */
 	public GraphTool(GraphExamples<V,E> ge){
 		this(new IncidenceListGraph<V,E>(), ge);
 		if(!viewHandler.chooseGraphOption())
 			this.createGraph(false);
 	}
 	
+	/*
+	 * construvtor with graph
+	 */
 	public GraphTool(Graph<V,E> g, GraphExamples<V,E> ge){
 		
 		currentGraph=g;
@@ -43,6 +49,9 @@ public class GraphTool<V,E> {
 		clearEditorGraphs();
 	}
 	
+	/*
+	 * returns currentGraph
+	 */
 	public Graph<V,E> getCurrentGraph() {
 		return currentGraph;
 	}
@@ -51,15 +60,21 @@ public class GraphTool<V,E> {
 	// Methods for drawing a graph
 	//------------------------------------------------------------------------------------//
 	
+	/*
+	 * creates a new Graph
+	 * if the param directed is true, the graph is directed
+	 */
 	public void createGraph(boolean directed){
 		currentGraph=new IncidenceListGraph<V, E>(directed);
 		nameIndex=1;
 		viewHandler.setGraph(currentGraph);
 	}
 
+	/*
+	 * calculate the position of for vertices so that the vertices are arranged in a circle
+	 */
 	private void calculatePositions(Graph<V, E> g) {
 
-		//Dimension d=viewHandler.getSize();
 		double number=g.numberOfVertices();
 		double radius=number*10;
 		Iterator<Vertex<V>> it =g.vertices();
@@ -84,7 +99,12 @@ public class GraphTool<V,E> {
 		}
 	}
 
+	/*
+	 * inserts a new vertex into the graph
+	 */
 	public Vertex<V> insertVertex(Point p){
+
+		serializeEditorGraph();
 		Vertex<V> v=currentGraph.insertVertex((V) "");
 		double radius = GraphComponent.width/2.0;
 		v.set(Attribut.pos_x, p.getX()-radius);
@@ -96,30 +116,14 @@ public class GraphTool<V,E> {
 		viewHandler.setGraph(currentGraph);
 		return v;
 	}
-
+	
+	/*
+	 * moves a vertex to another position
+	 */
 	public void moveVertex(Vertex<V> v, Point p){
-		//Dimension d=viewHandler.getSize();
 		double radius = GraphComponent.width/2.0;
 		double x=p.getX();
 		double y=p.getY();
-		
-		/*if(x>(d.getWidth()-radius)){
-			v.set(Attribut.pos_x, d.getWidth()-2*radius);
-		}
-		else if(x<(0+radius)){
-			v.set(Attribut.pos_x, 0.0);
-		}
-		else
-			v.set(Attribut.pos_x, x-radius);
-		
-		if(y>(d.getHeight()-radius)){
-			v.set(Attribut.pos_y, d.getHeight()-2*radius);
-		}
-		else if(y<(0+radius)){
-			v.set(Attribut.pos_y, 0.0);
-		}
-		else
-			v.set(Attribut.pos_y, y-radius);*/
 		v.set(Attribut.pos_x, x-radius);
 		v.set(Attribut.pos_y, y-radius);
 		
@@ -127,15 +131,22 @@ public class GraphTool<V,E> {
 		viewHandler.setGraph(currentGraph);
 	}
 
+	/*
+	 * inserts an unfinished line 
+	 */
 	public void insertEdge(Vertex<V> startVertex, Point p2) {
-		//double radius=GraphComponent.width/2.0;
+
 		Point p1=new Point();
 		p1.setLocation((double)startVertex.get(Attribut.pos_x),(double)startVertex.get(Attribut.pos_y));
 		viewHandler.insertEdge(p1, p2);
 	}
 
+	/*
+	 * inserts a new edge into the graph
+	 */
 	public void insertEdge(Vertex<V> from, Vertex<V> to) {
 		
+		serializeEditorGraph();
 		Edge<E> e_from;
 		if(currentGraph.isDirected()){
 			for(Iterator<Edge<E>>it1=currentGraph.incidentInEdges(to);it1.hasNext();){
@@ -163,16 +174,23 @@ public class GraphTool<V,E> {
 		}
 		Edge<E> e=currentGraph.insertEdge(from, to, (E) "");
 		e.set(Attribut.color, STANDARD);
-		e.set(Attribut.weight, "1");
+		e.set(Attribut.weight, 1.0);
 		viewHandler.deleteEdge();
 		viewHandler.setGraph(currentGraph);
 
 	}
 
+	/*
+	 * deletes the unfinished line
+	 */
 	public void deleteEdge(){
 		viewHandler.deleteEdge();
 	}
 	
+	/*
+	 * if a vertex is selected, the color changes
+	 * with this method a decorable change his color
+	 */
 	public void setColor(Decorable d, Color c){
 		d.set(Attribut.color, c);
 		viewHandler.setGraph(currentGraph);
@@ -194,12 +212,20 @@ public class GraphTool<V,E> {
 		viewHandler.setGraph(currentGraph);
 	}
 
+	/*
+	 * removes a Vertex from the graph
+	 */
 	public void deleteVertex(Vertex<V> selected) {
+		serializeEditorGraph();
 		currentGraph.removeVertex(selected);
 		viewHandler.setGraph(currentGraph);
 	}
 
+	/*
+	 * removes an Edge from the graph
+	 */
 	public void deleteEdge(Edge<E> selected) {
+		serializeEditorGraph();
 		currentGraph.removeEdge(selected);
 		viewHandler.setGraph(currentGraph);
 	}
@@ -207,10 +233,6 @@ public class GraphTool<V,E> {
 	//------------------------------------------------------------------------------------//
 	// Methods for creating a new graph, saving and loading a graph
 	//------------------------------------------------------------------------------------//
-	
-	public void newGraph(boolean directed) {
-		currentGraph = new IncidenceListGraph<V,E>(directed);
-	}
 	
 	public void saveGraph(String name) throws IOException {
 		graphSerializer.saveGraph(name, currentGraph);
@@ -297,11 +319,18 @@ public class GraphTool<V,E> {
 	// Helper-methods for executing an animating an algorithm in the algorithm editor
 	//------------------------------------------------------------------------------------//
 
+	/*
+	 * changes an attribut of a decorable
+	 */
 	public void changeAttribut(Decorable d, Attribut attr, String text){
+		serializeEditorGraph();
 		d.set(attr, text);
 		viewHandler.setGraph(currentGraph);
 	}
 
+	/*
+	 * returns annotated methods from GraphExamples
+	 */
 	public Vector<Method> getAnnotatedMethods() {
 		return parser.getAnnotatedMethods();
 	}

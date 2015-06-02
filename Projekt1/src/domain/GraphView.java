@@ -41,15 +41,24 @@ public class GraphView<V,E> extends JPanel {
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
 
+	/*
+	 * sets an AlgoHandler or an EditorHandler
+	 */
 	public void setHandler(Handler<V,E> handler) {
 		this.handler = handler;
 	}
 
+	/*
+	 * paints the graph
+	 */
 	public void paintGraph(Graph<V,E> currentGraph) {
 
 		comp.setGraph(currentGraph);
 	}
 
+	/*
+	 * inserts an unfinished line
+	 */
 	public void insertEdge(Point p1, Point p2) {
 
 		comp.insertEdge(p1, p2);
@@ -65,11 +74,17 @@ public class GraphView<V,E> extends JPanel {
 		handler.mouseDrag(d, p);
 	}
 
+	/*
+	 * deletes the unfinished line
+	 */
 	public void deleteEdge() {
 
 		comp.deleteEdge();
 	}
 
+	/*
+	 * sets a flag of an attribute which decides if the attribut is visible or not
+	 */
 	public void setFlag(Attribut attr, boolean selected) {
 		comp.setFlag(attr, selected);
 
@@ -101,6 +116,9 @@ public class GraphView<V,E> extends JPanel {
 		add(p, BorderLayout.SOUTH);
 	}
 
+	/*
+	 * create the name checkboxItem for the menu and returns it
+	 */
 	public JCheckBoxMenuItem getNameItem(){
 		name = new JCheckBoxMenuItem("name");
 		name.addItemListener(new ItemListener(){
@@ -114,6 +132,9 @@ public class GraphView<V,E> extends JPanel {
 		return name;
 	}
 	
+	/*
+	 * create the weight checkboxItem for the menu and returns it
+	 */
 	public JCheckBoxMenuItem getWeightItem(){
 		weight = new JCheckBoxMenuItem("weight");
 		weight.addItemListener(new ItemListener(){
@@ -127,6 +148,9 @@ public class GraphView<V,E> extends JPanel {
 		return weight;
 	}
 	
+	/*
+	 * create the strin checkboxItem for the menu and returns it
+	 */
 	public JCheckBoxMenuItem getStringItem(){
 		string = new JCheckBoxMenuItem("string");
 		string.addItemListener(new ItemListener(){
@@ -140,6 +164,9 @@ public class GraphView<V,E> extends JPanel {
 		return string;
 	}
 
+	/*
+	 * sets the state of the checkbox which allows the visibility of the attributs
+	 */
 	public void setMenuCheckBox(Attribut attr, boolean selected) {
 		switch (attr){
 		case name:
@@ -152,6 +179,15 @@ public class GraphView<V,E> extends JPanel {
 			string.setState(selected);
 			break;
 		}
+		
+	}
+
+	/*
+	 * the popup widow is only visible in the editor mode. With this
+	 * method you can disable the rename popup window
+	 */
+	public void setRenameVisibility(boolean b) {
+		comp.setRenameVisibility(b);
 		
 	}
 

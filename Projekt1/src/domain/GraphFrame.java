@@ -25,6 +25,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -57,7 +58,7 @@ public class GraphFrame<V, E> extends JFrame {
 	JMenuItem delete;
 
 	public GraphFrame(GraphTool<V,E> gt) {
-		
+
 		this.editorHandler=new EditorHandler<V,E>(gt);
 		this.algoHandler=new AlgoHandler<V,E>(gt);
 		graphTool = gt;
@@ -73,12 +74,15 @@ public class GraphFrame<V, E> extends JFrame {
 		setVisible(true);
 	}
 
-	
+
 
 	//------------------------------------------------------------------------------------//
 	// Helper methods for constructing the frame
 	//------------------------------------------------------------------------------------//
 
+	/*
+	 * creates the listener to rename a Vertex or an Edge
+	 */
 	private void createRenameListener() {
 		renameListener=new ActionListener(){
 
@@ -97,14 +101,26 @@ public class GraphFrame<V, E> extends JFrame {
 						text="Change weight";
 					}
 					String usertext=JOptionPane.showInputDialog(text);
-					if(usertext!=null)
-					editorHandler.changeAttribut(usertext);
+					if(usertext!=null){
+						if(d instanceof Edge){
+							double weight=0;
+							try {
+								weight = Double.parseDouble(usertext);
+
+							} catch (NumberFormatException ex) {
+								//If the string cannot be parsed, set the weight to 0
+								System.out.println("@GraphExamples: Failed to parse a string to a double");
+								usertext="0";
+							}
+						}
+						editorHandler.changeAttribut(usertext);
+					}
 				}
 
 			}
 
 		};
-		
+
 	}
 	/*
 	 * Constructs the main menu with options for creating a new graph
@@ -118,15 +134,21 @@ public class GraphFrame<V, E> extends JFrame {
 		JMenu view = new JMenu("View");
 		newGraph = new JMenuItem("New");
 		save = new JMenuItem("Save");
+		save.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
 		saveAs = new JMenuItem("Save as");
 		JMenuItem open = new JMenuItem("Open");
 		delete = new JMenuItem("Delete");
 		JMenuItem undo = new JMenuItem("Undo");
+		undo.setAccelerator(KeyStroke.getKeyStroke("ctrl Z"));
 		JMenuItem redo = new JMenuItem("Redo");
+		redo.setAccelerator(KeyStroke.getKeyStroke("ctrl Y"));
 		JMenuItem rename = new JMenuItem("Rename...");
 		JCheckBoxMenuItem name = graphView.getNameItem();
+		name.setAccelerator(KeyStroke.getKeyStroke("ctrl alt N"));
 		JCheckBoxMenuItem weight = graphView.getWeightItem();
+		weight.setAccelerator(KeyStroke.getKeyStroke("ctrl alt W"));
 		JCheckBoxMenuItem string = graphView.getStringItem();
+		string.setAccelerator(KeyStroke.getKeyStroke("ctrl alt S"));
 
 		file.add(newGraph);
 		file.add(save);
@@ -181,7 +203,7 @@ public class GraphFrame<V, E> extends JFrame {
 				//Stops running algorithms animations
 				//before opening a new graph
 				algoHandler.stopAlgo();
-				
+
 				String[] options = getFileNames();
 
 				String name = (String) JOptionPane.showInputDialog(
@@ -257,13 +279,13 @@ public class GraphFrame<V, E> extends JFrame {
 				}
 			}
 		});
-		
+
 		undo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				graphTool.undo();
 			}
 		});
-		
+
 		redo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				graphTool.redo();
@@ -273,7 +295,7 @@ public class GraphFrame<V, E> extends JFrame {
 		rename.addActionListener(renameListener);
 	}
 
-	
+
 	//Constructs the tabs for either drawing graphs or animating algorithms
 	private void constructTabComponents() {
 
@@ -284,13 +306,13 @@ public class GraphFrame<V, E> extends JFrame {
 
 		ImageIcon graphIcon = new ImageIcon("Images/draw.png");
 		ImageIcon algoIcon = new ImageIcon("Images/anim.png");
-		
+
 		tabpane.addTab("", editorPanel);
 		tabpane.addTab("", algoPanel);
-		
+
 		tabpane.setIconAt(0, graphIcon);
 		tabpane.setIconAt(1, algoIcon);
-		
+
 		tabpane.addChangeListener(new ChangeListener(){
 
 			@Override
@@ -305,19 +327,21 @@ public class GraphFrame<V, E> extends JFrame {
 					//Recolors all vertices and edges black
 					graphTool.resetColor();
 					//Reactivates the save and delete option
+					graphView.setRenameVisibility(true);
 					edit.setEnabled(true);
 					newGraph.setEnabled(true);
 					save.setEnabled(true);
 					saveAs.setEnabled(true);
 					delete.setEnabled(true);
-					
+
 				} else {
-					
+
 					graphView.setHandler(algoHandler);
 					editorHandler.setState(State.INACTIVE);
 					//Recolors all vertices and edges black
 					graphTool.resetColor();
 					//Deactivates the save and delete option
+					graphView.setRenameVisibility(false);
 					edit.setEnabled(false);
 					newGraph.setEnabled(false);
 					save.setEnabled(false);
@@ -327,7 +351,7 @@ public class GraphFrame<V, E> extends JFrame {
 			}
 
 		});
-		
+
 		add(tabpane, BorderLayout.SOUTH);
 	}
 
@@ -452,6 +476,9 @@ public class GraphFrame<V, E> extends JFrame {
 		}
 	}
 
+	/*
+	 * returns the graphview
+	 */
 	public GraphView<V, E> getGraphView() {
 		return graphView;
 	}
@@ -462,6 +489,6 @@ public class GraphFrame<V, E> extends JFrame {
 	 */
 	public void resetStartButton() {
 		algoPanel.resetStartButton();
-		
+
 	}
 }

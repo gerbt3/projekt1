@@ -17,24 +17,32 @@ public class ViewHandler<V,E> {
 		this.graphView=frame.getGraphView();
 	}
 	
+	/*
+	 * paints the graph
+	 */
 	public void setGraph(Graph<V,E> g){
 		graphView.paintGraph(g);
 	}
 
+	/*
+	 * deletes an unfinished line
+	 */
 	public void deleteEdge() {
 		graphView.deleteEdge();
 		
 	}
 
+	/*
+	 * draws an unfinished line
+	 */
 	public void insertEdge(Point p1, Point p2) {
 		graphView.insertEdge(p1, p2);
 		
 	}
 
-	public Dimension getSize() {
-		return graphView.getSize();
-	}
-
+	/*
+	 * choose if a vertex is directed or not
+	 */
 	public boolean chooseGraphOption() {
 		return frame.chooseGraphOption();
 	}
