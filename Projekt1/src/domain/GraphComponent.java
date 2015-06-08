@@ -29,7 +29,11 @@ import examples.Edge;
 import examples.Graph;
 import examples.Vertex;
 
-
+/**
+ * the class GraphComponent represents rhe graphical view of the graph
+ * @param <V> Vertex
+ * @param <E> Edge
+ */
 public class GraphComponent<V,E> extends JComponent{
 
 	private Graph<V,E> graph;
@@ -45,15 +49,21 @@ public class GraphComponent<V,E> extends JComponent{
 	private ItemListener nameListener, weightListener, stringListener;
 	Dimension myDimension=new Dimension(800, 800);
 
+	/**
+	 * constructor
+	 * @param gv GraphView
+	 * @param renameListener ActionListener to rename a vertex or to change the weight of an edge
+	 */
 	public GraphComponent(GraphView<V,E> gv, ActionListener renameListener){
 
 		this.graphView=gv;
 		createListeners(renameListener);
 	}
 
-	/*
+	/**
 	 * creates foreach Vertex an Ellipse and foreach Edge a Line
 	 * considers the zoomsize by calculating the right size
+	 * @param g Graph
 	 */
 	public void setGraph(Graph<V,E> g){
 		graph=g;
@@ -89,7 +99,7 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
-	/*
+	/**
 	 * paints all vertices and edges
 	 * and arrows and attributes if needed
 	 */
@@ -108,7 +118,7 @@ public class GraphComponent<V,E> extends JComponent{
 			int red = ((Color)v.get(Attribut.color)).getRed();
 			int green = ((Color)v.get(Attribut.color)).getGreen();
 			int blue = ((Color)v.get(Attribut.color)).getBlue();
-			Color fillColor = new Color(red, green, blue, 255*1/4);
+			Color fillColor = new Color(red, green, blue, 255/4);
 			g2.setColor(fillColor);
 			g2.fill(ellipse);
 			g2.setStroke(new BasicStroke(2));
@@ -174,6 +184,12 @@ public class GraphComponent<V,E> extends JComponent{
 	}
 
 	//From http://www.coderanch.com/t/340443/GUI/java/Draw-arrow-head-line
+	/**
+	 * draws an arrow head on the tip point
+	 * @param g2 Graphics2D
+	 * @param tip startpoint
+	 * @param tail endpoint
+	 */
 	private void drawArrowHead(Graphics2D g2, Point tip, Point tail) {
 		double phi = Math.toRadians(22);
 		int barb = 12;
@@ -189,9 +205,13 @@ public class GraphComponent<V,E> extends JComponent{
 			rho = theta - phi;
 		}
 	}
-	/*
+
+	/**
 	 * calculates where the edge intersects the vertex, and set this points
-	 * to creates a Line with the calculated points as start- and endpoint 
+	 * to creates a Line with the calculated points as start- and endpoint
+	 * @param from startvertex
+	 * @param to endvertex
+	 * @param e Edge
 	 */
 	private void setLine(Vertex<V> from, Vertex<V> to, Edge<E> e){
 
@@ -229,8 +249,9 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
-	/*
+	/**
 	 * search if the mouse clicked on a Decorable
+	 * @param e MouseEvent
 	 */
 	private Decorable findDecorable(MouseEvent e){
 		double distance=5.0;
@@ -259,8 +280,9 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
-	/*
+	/**
 	 * calculates the right position, where the mouse is
+	 * @param e MouseEvent
 	 */
 	private Point findPoint(MouseEvent e) {
 		Point p=e.getPoint();
@@ -268,8 +290,11 @@ public class GraphComponent<V,E> extends JComponent{
 		return p;
 	}
 
-	/*
+	/**
 	 * returns the decorable by handover a Line or a Ellipse
+	 * @param map hashmap with a Decorable as Key and a graphical representation as value
+	 * @param value graphical representation
+	 * @return the Decorable which is representated by the value
 	 */
 	private <V1, K> K findKey(HashMap<K,V1> map, V1 value ){
 		for (Entry<K, V1> entry : map.entrySet()) {
@@ -280,9 +305,11 @@ public class GraphComponent<V,E> extends JComponent{
 		return null;
 	}
 
-	/*
-	 * sets a line when a Edge is not yet in the graph,
+	/**
+	 * sets a line when a Edge s not yet in the graph,
 	 * but the mouse is dragging a Line from a Vertex to a Point
+	 * @param p1 start point
+	 * @param p2 end point
 	 */
 	public void insertEdge(Point p1, Point p2) {
 		p1.setLocation(p1.getX()*zoomSize+width*zoomSize/2.0,p1.getY()*zoomSize+width*zoomSize/2.0);
@@ -291,7 +318,7 @@ public class GraphComponent<V,E> extends JComponent{
 		repaint();
 	}
 
-	/*
+	/**
 	 * if an edge is inserted in the graph the Line will be cleared
 	 */
 	public void deleteEdge(){
@@ -299,8 +326,10 @@ public class GraphComponent<V,E> extends JComponent{
 		repaint();
 	}
 
-	/*
+	/**
 	 * sets the flag which decide if an attribut is shown or not
+	 * @param attr changed attribut visibility
+	 * @param selected true if the attribut should be visible
 	 */
 	public void setFlag(Attribut attr, boolean selected) {
 		switch(attr){
@@ -315,16 +344,19 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 	
-	/*
+	/**
 	 * sets the zoomsize of the slider
+	 * @param value zoom size
 	 */
 	public void setZoomSize(int value) {
 		this.zoomSize=value/4.0;
 		this.setGraph(graph);
 	}
 	
-	/*
+	/**
 	 * sets the state of the checkbox which allows the visibility of the attributs
+	  * @param attr checkbox attribut
+	 * @param selected true if the checkbox attribut should be visible
 	 */
 	public void setPopupCheckBox(Attribut attr, boolean selected) {
 		switch (attr){
@@ -341,8 +373,9 @@ public class GraphComponent<V,E> extends JComponent{
 
 	}
 
-	/*
+	/**
 	 * creates mouselistener and popuplistener
+	 * @param renameListener listener for popup menuitem
 	 */
 	private void createListeners(ActionListener renameListener){
 		JPopupMenu popupRename = new JPopupMenu();
@@ -435,9 +468,10 @@ public class GraphComponent<V,E> extends JComponent{
 		});
 	}
 
-	/*
+	/**
 	 * the popup widow is only visible in the editor mode. With this
 	 * method you can disable the rename popup window
+	 * @param b true if the rename popup window should be visible
 	 */
 	public void setRenameVisibility(boolean b) {
 		rename.setVisible(b);

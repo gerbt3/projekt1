@@ -148,94 +148,99 @@ public class GraphExamples<V,E> {
 			}            
 		}
 	}
+    @Algorithm(vertex=true)
+    public void dijkstra(Graph<V,E> g,Vertex<V> s, GraphTool t){
+//-----------------------------------------------------------------
 
-	@Algorithm(vertex=true)
-	public void dijkstra(Graph<V,E> g,Vertex<V> s, GraphTool t){
+        
+    	t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
-		t.serializeAlgoGraph(g);
+        
+        // sets the attribute 's' of each vertex 'u' from wich 
+        // we can reach 's' to 'g' where 'g' is the gateway
+        // of 'u' on the shortest path from 'u' to 's' 
+        MyPriorityQueue<Double, Vertex<V>> pq = new MyPriorityQueue<>();
+        Iterator<Vertex<V>> it = g.vertices();
+        // put all vertices to pq and give them
+        // an attribute Attribut.DISTANCE and PQLOCATOR
+        while(it.hasNext()){
+            Vertex<V> v = it.next();
+            v.set(Attribut.DISTANCE,Double.POSITIVE_INFINITY);
+            //-------
+            v.set(Attribut.string,"inf");
+            //-------
+            Locator<Double,Vertex<V>> loc = pq.insert(Double.POSITIVE_INFINITY,v);
+            v.set(Attribut.PQLOCATOR,loc);
 //-----------------------------------------------------------------
-		
-		// sets the attribute 's' of each vertex 'u' from wich 
-		// we can reach 's' to 'g' where 'g' is the gateway
-		// of 'u' on the shortest path from 'u' to 's' 
-		MyPriorityQueue<Double, Vertex<V>> pq = new MyPriorityQueue<>();
-		Iterator<Vertex<V>> it = g.vertices();
-		// put all vertices to pq and give them
-		// an attribute Attribut.DISTANCE and PQLOCATOR
-		while(it.hasNext()){
-			Vertex<V> v = it.next();
-			v.set(Attribut.DISTANCE,Double.POSITIVE_INFINITY);
-			//-------
-			v.set(Attribut.string,"inf");
-			//-------
-			Locator<Double,Vertex<V>> loc = pq.insert(Double.POSITIVE_INFINITY,v);
-			v.set(Attribut.PQLOCATOR,loc);
+            // v.set(Attribut.color, Color.red);
+            t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
-			v.set(Attribut.color, Color.red);
-			t.serializeAlgoGraph(g);
+        }
+        // correct the attributes for s
+        //-------
+        s.set(Attribut.string,"0");
+        //-------
+        s.set(Attribut.DISTANCE,0.0);
+        t.serializeAlgoGraph(g);
+        pq.replaceKey((Locator<Double,Vertex<V>>)s.get(Attribut.PQLOCATOR),0.0);
+        while( ! pq.isEmpty()){
+            Vertex<V> u = pq.removeMin().element();    
+            ///-------
+            u.set(Attribut.color,Color.RED);
+            if (u.has(Attribut.DISCOVERY)){
+                Edge<E> e = (Edge<E>)u.get(Attribut.DISCOVERY);
 //-----------------------------------------------------------------
-		}
-		// correct the attributes for s
-		//-------
-		s.set(Attribut.string,"0");
-		//-------
-		s.set(Attribut.DISTANCE,0.0);
-//-->	pq.replaceKey((Locator<Double,Vertex<V>>)s.get(Attribut.PQLOCATOR),0.0);
-		while( ! pq.isEmpty()){
-			Vertex<V> u = pq.removeMin().element();    
-			///-------
-			u.set(Attribut.color,Color.RED);
-			if (u.has(Attribut.DISCOVERY)){
-				Edge<E> e = (Edge<E>)u.get(Attribut.DISCOVERY);
+                e.set(Attribut.color,Color.RED);
+                t.serializeAlgoGraph(g);
 //-----------------------------------------------------------------
-				e.set(Attribut.color,Color.RED);
-				t.serializeAlgoGraph(g);
-//-----------------------------------------------------------------
-			}
+            }
 
-			// now make the relaxation step for all 
-			// neighbours:
-			Iterator<Edge<E>> eIt;
-			if (g.isDirected()) eIt = g.incidentInEdges(u); // backwards!
-			else eIt = g.incidentEdges(u);
-			while (eIt.hasNext()){
-				Edge<E> e = eIt.next();
-				double weight = 1.0; // default weight
+            // now make the relaxation step for all 
+            // neighbours:
+            Iterator<Edge<E>> eIt;
+            if (g.isDirected()) eIt = g.incidentInEdges(u); // backwards!
+            else eIt = g.incidentEdges(u);
+            while (eIt.hasNext()){
+                Edge<E> e = eIt.next();
+                double weight = 1.0; // default weight
 //-----------------------------------------------------------------
-				//Original version: if (e.has(Attribut.weight)) weight = (Double)e.get(Attribut.weight);
-				
-				//Whether the graph comes from graphexamples or not it has to be casted differently
-				if (e.has(Attribut.weight)) {
-					
-					if (e.get(Attribut.weight) instanceof String) {
-						
-						try {
-							weight = Double.parseDouble((String) e.get(Attribut.weight));
-						} catch (NumberFormatException ex) {
-							//If the string cannot be parsed, set the weight to 0
-							System.out.println("@GraphExamples: Failed to parse a string to a double");
-							weight = 0;
-						}
-					}
-						
-					//For graphs from graphexamples
-					else weight = (Double)e.get(Attribut.weight);
-				}
-//-----------------------------------------------------------------				
-				Vertex<V> z = g.opposite(e, u);
-				//Relaxation
-				double newDist = (Double) u.get(Attribut.DISTANCE) + weight;
-				if (newDist < (Double) z.get(Attribut.DISTANCE)) {
-					z.set(Attribut.DISTANCE,newDist); // new distance of z (can be changed later!)
-					z.set(Attribut.string,""+newDist);
-					z.set(Attribut.DISCOVERY,e);
-					z.set(s, u); // gateway (will eventually be changed later!)
-//-->				pq.replaceKey((Locator<Double,Vertex<V>>) z.get(Attribut.PQLOCATOR), newDist);
-				}
-			}
-		}
+                //Original version: if (e.has(Attribut.weight)) weight = (Double)e.get(Attribut.weight);
+                
+                //Whether the graph comes from graphexamples or not it has to be casted differently
+                if (e.has(Attribut.weight)) {
+                    
+                    if (e.get(Attribut.weight) instanceof String) {
+                        
+                        try {
+                            weight = Double.parseDouble((String) e.get(Attribut.weight));
+                        } catch (NumberFormatException ex) {
+                            //If the string cannot be parsed, set the weight to 0
+                            System.out.println("@GraphExamples: Failed to parse a string to a double");
+                            weight = 0;
+                        }
+                    }
+                        
+                    //For graphs from graphexamples
+                    else weight = (Double)e.get(Attribut.weight);
+                }
+//-----------------------------------------------------------------                
+                Vertex<V> z = g.opposite(e, u);
+                //Relaxation
+                double newDist = (Double) u.get(Attribut.DISTANCE) + weight;
+                if (newDist < (Double) z.get(Attribut.DISTANCE)) {
+                    z.set(Attribut.DISTANCE,newDist); // new distance of z (can be changed later!)
+                    z.set(Attribut.string,""+newDist);
+                    z.set(Attribut.DISCOVERY,e);
+                    z.set(s, u); // gateway (will eventually be changed later!)
+                    pq.replaceKey((Locator<Double,Vertex<V>>) z.get(Attribut.PQLOCATOR), newDist);
+                    t.serializeAlgoGraph(g);
+                }
+            }
+        }
+        t.serializeAlgoGraph(g);
+    }
 
-	}
+
 
 	public int[] shortestPath(int[][] ad, int from, int to){
 		// returns the vertex numbers of the shortest path 

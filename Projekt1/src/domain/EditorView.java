@@ -1,6 +1,7 @@
 package domain;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +12,11 @@ import javax.swing.JPanel;
 
 import domain.EditorHandler.State;
 
-
+/**
+ * The EditorView shows the controls to edit a graph
+ * @param <V> Vertex
+ * @param <E> Edge
+ */
 public class EditorView<V, E> extends JPanel {
 	
 	private EditorHandler<V,E> editorHandler;
@@ -19,6 +24,10 @@ public class EditorView<V, E> extends JPanel {
 	private ImageIcon dedgeIcon;
 	JButton edgeButton;
 	
+	/**
+	 * constructor
+	 * @param handler EditorHandler
+	 */
 	public EditorView(EditorHandler<V,E> handler) {
 		
 		this.editorHandler=handler;
@@ -26,7 +35,7 @@ public class EditorView<V, E> extends JPanel {
 		constructPanelComponents();
 	}
 	
-	/*
+	/**
 	 * Constructs a panel with buttons for selecting, deleting
 	 * or creating vertices or edges
 	 */
@@ -39,14 +48,20 @@ public class EditorView<V, E> extends JPanel {
 		dedgeIcon = new ImageIcon("Images/dedge.png");
 		
 		JButton selectionButton = new JButton(selectIcon);
+		Color bg=selectionButton.getBackground();
 		JButton deleteButton = new JButton(deleteIcon);
 		JButton vertexButton = new JButton(vertexIcon);
 		edgeButton = new JButton(edgeIcon);
-		
+		Color color = new Color(184,207,229);//Color.cyan;//new Color(0,0,255, 255*1/4);
+		selectionButton.setBackground(color);
 		//Selects different vertices and edges individually
 		selectionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                editorHandler.setState(State.SELECT);
+               edgeButton.setBackground(bg);
+               vertexButton.setBackground(bg);
+               selectionButton.setBackground(color);
+               deleteButton.setEnabled(true);
             }
          });
 		
@@ -61,6 +76,10 @@ public class EditorView<V, E> extends JPanel {
 		vertexButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                editorHandler.setState(State.VERTEX);
+               edgeButton.setBackground(bg);
+               vertexButton.setBackground(color);
+               selectionButton.setBackground(bg);
+               deleteButton.setEnabled(false);
             }
          });
 		
@@ -68,6 +87,10 @@ public class EditorView<V, E> extends JPanel {
 		edgeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                editorHandler.setState(State.EDGE);
+               edgeButton.setBackground(color);
+               vertexButton.setBackground(bg);
+               selectionButton.setBackground(bg);
+               deleteButton.setEnabled(false);
             }
          });
 		
@@ -81,9 +104,10 @@ public class EditorView<V, E> extends JPanel {
 		add(toolPanel, BorderLayout.NORTH);
 	}
 	
-	/*
+	/**
 	 * Changes the edge button whether
-	 * the graph is directed or not 
+	 * the graph is directed or not
+	 * @param directed true if the graph is directed
 	 */
 	public void changeDirectionEdgeButton(boolean directed) {
 		if (directed) edgeButton.setIcon(dedgeIcon);

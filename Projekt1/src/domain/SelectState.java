@@ -7,20 +7,29 @@ import examples.Decorable;
 import examples.Edge;
 import examples.Vertex;
 
-
+/**
+ * This class controls the events of the GraphView if the selectstate is chosen
+ * @param <V> Vertex
+ * @param <E> Edge
+ */
 public class SelectState<V,E> extends EditorState {
 
 	private GraphTool<V, E> graphTool;
 	private Decorable selected;
 	private Point selectedPoint;
 	private Color oldColor;
-	
+
+	/**
+	 * constructor
+	 * @param g GraphTool
+	 */
 	public SelectState(GraphTool<V,E> g){
 		this.graphTool=g;
 	}
-
-	/*
-	 * if a decorable is clicked, it will change the color
+	
+	/** if a decorable is clicked, it will change the color
+	 * @param d a vertex or an edge
+	 * @param p point where the mouse was clicked
 	 */
 	@Override
 	public void mouseDown(Decorable d, Point p) {
@@ -38,29 +47,43 @@ public class SelectState<V,E> extends EditorState {
 		}
 
 	}
-	
-	/*
+
+
+	/**
 	 * moves the selected Vertex to his new position
+	 * @param d vertex to move
+	 * @param p new position
 	 */
 	@Override
 	public void mouseDrag(Decorable d, Point p) {
 
-		if(selected instanceof Vertex){
-			if(!(Math.abs(p.getX()-selectedPoint.getX())<=0.5&&Math.abs(p.getY()-selectedPoint.getY())<=0.5))
-				graphTool.moveVertex((Vertex<V>)selected, p);
-		}
+		moveVertex(p);
 	}
 
-	/*
-	 * moves the selected Vertex to his new position
+	private boolean moveVertex(Point p){
+		if(selected instanceof Vertex){
+
+			if(!(Math.abs(p.getX()-selectedPoint.getX())<=0.5&&Math.abs(p.getY()-selectedPoint.getY())<=0.5)){
+				graphTool.moveVertex((Vertex<V>)selected, p);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * moves the selected Vertex to his new position and serializes the graph
+	 * @param d vertex to move
+	 * @param p point where the mouse was clicked
 	 */
 	@Override
 	public void mouseUp(Decorable d, Point p) {
-		this.mouseDrag(d, p);
-		graphTool.serializeEditorGraph();
+
+		if(moveVertex(p))
+			graphTool.serializeEditorGraph();
 	}
 
-	/*
+	/**
 	 * deletes an edge or a vertex
 	 */
 	@Override
@@ -75,9 +98,10 @@ public class SelectState<V,E> extends EditorState {
 			selected=null;
 		}
 	}
-	
-	/*
+
+	/**
 	 * changes the name of a vertex or the weight of an edge
+	 * @param text the nex text
 	 */
 	@Override
 	public void changeAttribut(String text){
@@ -89,11 +113,12 @@ public class SelectState<V,E> extends EditorState {
 		}
 	}
 
-	/*
+	/**
 	 * returns the selected decorable
+	 * @return selected decorable
 	 */
 	public Decorable getSelected() {
-		
+
 		return selected;
 	}
 }

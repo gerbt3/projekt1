@@ -9,20 +9,30 @@ import examples.Graph;
 import examples.GraphExamples;
 import examples.Vertex;
 
-
+/**
+ * This class locares annotated methods in the class GraphExamples
+ * @param <V> Vertex
+ * @param <E> Edge
+ */
 public class AnnotationParser<V, E> {
 
 	private GraphExamples<V,E> graphExamples;
 	private GraphTool<V,E> graphTool;
 	private ArrayList<Method> annotatedMethods;
 	
+	/**
+	 * constructor
+	 * @param ge GraphExamples
+	 * @param gt Graphtool
+	 */
 	public AnnotationParser(GraphExamples<V,E> ge, GraphTool<V,E> gt){
 		this.graphExamples=ge;
 		this.graphTool=gt;
 	}
-
-	/*
+	
+	/**
 	 * returns annotated methods
+	 * @return annotated methods
 	 */
 	public Vector<Method> getAnnotatedMethods(){
 	
@@ -36,24 +46,28 @@ public class AnnotationParser<V, E> {
 		return new Vector<Method>(annotatedMethods);
 	}
 
-	/*
-	 * returns if the method needs a startvertex
+	 /** returns whether the method needs a startvertex
+	 * @param method annotated method
+	 * @return true if the method needs a startvertex
 	 */
 	public boolean isStartvertexNeeded(Method method){
 		return method.getAnnotation(Algorithm.class).vertex();
 	}
 	
-	/*
-	 * returns if the method needs a endvertex
+	/** returns whether the method needs an endvertex
+	 * @param method annotated method
+	 * @return true if the method needs an endvertex
 	 */
 	public boolean isEndvertexNeeded(Method method){
 		return method.getAnnotation(Algorithm.class).vertex2();
 	}
 	
-	/*
+	
+	/**
 	 * Executes an algorithm
-	 * The values of startVertex and endVertex are null,
-	 * if they aren't needed
+	 * @param method selected method
+	 * @param startVertex selected startvertex, null if it isn't needed
+	 * @param endVertex selected endvertex, null if it isn't needed
 	 */
 	public void executeMethod(Method method, Vertex<V> startVertex, Vertex<V> endVertex){
 		Graph<V,E> graph = graphTool.getCurrentGraph();

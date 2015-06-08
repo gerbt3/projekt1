@@ -4,17 +4,27 @@ import java.awt.Point;
 import examples.Decorable;
 import examples.Vertex;
 
+/**
+ * This class controls the events of the GraphView if the edgestate is chosen
+ * @param <V> Vertex
+ * @param <E> Edge
+ */
 public class EdgeState<V, E> extends EditorState {
 
 	private GraphTool<V,E> graphTool;
 	private Vertex<V> startVertex;
 
+	/**
+	 * constructor
+	 * @param g GraphTool
+	 */
 	public EdgeState(GraphTool<V,E> g){
 		this.graphTool=g;
 	}
-
-	/*
-	 * if a Vertex is clicked, the vertex is the startvertex of the new edge
+	
+	/** if a Vertex is clicked, the vertex is the startvertex of the new edge
+	 * @param d hopefully a startvertex
+	 * @param p point where the mouse was clicked
 	 */
 	@Override
 	public void mouseDown(Decorable d, Point p) {
@@ -27,8 +37,10 @@ public class EdgeState<V, E> extends EditorState {
 		}
 	}
 
-	/*
+	/**
 	 * this method calls graphtool to draw an unfinished line
+	 * @param d vertex
+	 * @param p point where the mouse was clicked
 	 */
 	@Override
 	public void mouseDrag(Decorable d, Point p) {
@@ -36,9 +48,11 @@ public class EdgeState<V, E> extends EditorState {
 			graphTool.insertEdge(startVertex, p);
 	}
 
-	/*
+	/**
 	 * if a startvertex is selected and the mouseUp is over a vertex,
 	 * this method calls graphtool to insert a new edge into the graph
+	 * @param d vertex
+	 * @param p point where the mouse was clicked
 	 */
 	@Override
 	public void mouseUp(Decorable d, Point p) {

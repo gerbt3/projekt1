@@ -1,41 +1,32 @@
 package domain;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import domain.EditorHandler.State;
 import examples.Decorable;
 import examples.Edge;
 import examples.Graph;
 import examples.Vertex;
 
-/*
+/**	
  * Constructs the frame with the different menus
  * for drawing a graph or animating an algorithm
  */
@@ -51,12 +42,18 @@ public class GraphFrame<V, E> extends JFrame {
 	private GraphTool graphTool;
 	private String currentGraphName;
 	private ActionListener renameListener;
+	private JMenuItem undo;
+	private JMenuItem redo;
 	JMenu edit;
 	JMenuItem newGraph;
 	JMenuItem save;
 	JMenuItem saveAs;
 	JMenuItem delete;
 
+	/**
+	 * constructor
+	 * @param gt GraphTool
+	 */
 	public GraphFrame(GraphTool<V,E> gt) {
 
 		this.editorHandler=new EditorHandler<V,E>(gt);
@@ -80,7 +77,7 @@ public class GraphFrame<V, E> extends JFrame {
 	// Helper methods for constructing the frame
 	//------------------------------------------------------------------------------------//
 
-	/*
+	/**
 	 * creates the listener to rename a Vertex or an Edge
 	 */
 	private void createRenameListener() {
@@ -122,7 +119,7 @@ public class GraphFrame<V, E> extends JFrame {
 		};
 
 	}
-	/*
+	/**
 	 * Constructs the main menu with options for creating a new graph
 	 * or saving and opening graphs
 	 */
@@ -138,9 +135,9 @@ public class GraphFrame<V, E> extends JFrame {
 		saveAs = new JMenuItem("Save as");
 		JMenuItem open = new JMenuItem("Open");
 		delete = new JMenuItem("Delete");
-		JMenuItem undo = new JMenuItem("Undo");
+		undo = new JMenuItem("Undo");
 		undo.setAccelerator(KeyStroke.getKeyStroke("ctrl Z"));
-		JMenuItem redo = new JMenuItem("Redo");
+		redo = new JMenuItem("Redo");
 		redo.setAccelerator(KeyStroke.getKeyStroke("ctrl Y"));
 		JMenuItem rename = new JMenuItem("Rename...");
 		JCheckBoxMenuItem name = graphView.getNameItem();
@@ -296,7 +293,9 @@ public class GraphFrame<V, E> extends JFrame {
 	}
 
 
-	//Constructs the tabs for either drawing graphs or animating algorithms
+	/**
+	 * Constructs the tabs for either drawing graphs or animating algorithms
+	 */
 	private void constructTabComponents() {
 
 		editorPanel = new EditorView<V, E>(editorHandler);
@@ -322,10 +321,8 @@ public class GraphFrame<V, E> extends JFrame {
 				if(i==0){
 					algoHandler.clearSelected();
 					algoHandler.stopAlgo();
+					algoHandler.clearStartEndVertex();
 					graphView.setHandler(editorHandler);
-					editorHandler.setState(State.SELECT);
-					//Recolors all vertices and edges black
-					graphTool.resetColor();
 					//Reactivates the save and delete option
 					graphView.setRenameVisibility(true);
 					edit.setEnabled(true);
@@ -337,9 +334,7 @@ public class GraphFrame<V, E> extends JFrame {
 				} else {
 
 					graphView.setHandler(algoHandler);
-					editorHandler.setState(State.INACTIVE);
-					//Recolors all vertices and edges black
-					graphTool.resetColor();
+					editorHandler.clearSelected();
 					//Deactivates the save and delete option
 					graphView.setRenameVisibility(false);
 					edit.setEnabled(false);
@@ -359,9 +354,10 @@ public class GraphFrame<V, E> extends JFrame {
 	// Helper method for creating a new graph
 	//------------------------------------------------------------------------------------//
 
-	/*
+	/**
 	 * Creates a new graph
 	 * Gives the choice to create a directed or an undirected graph
+	 * @return true if you choose a directed graph
 	 */
 	public boolean chooseGraphOption(){
 		Object[] options = {"Undirected graph", "Directed graph"};
@@ -395,9 +391,10 @@ public class GraphFrame<V, E> extends JFrame {
 	// Helper methods for saving a graph
 	//------------------------------------------------------------------------------------//
 
-	/*
+	/**
 	 * Prompts for a name to save the graph under
 	 * If the name already exists, prompts for overwriting name or not
+	 * @return the name
 	 */
 	private String askForGraphName() {
 
@@ -437,9 +434,10 @@ public class GraphFrame<V, E> extends JFrame {
 		return name;
 	}
 
-	/*
+	/**
 	 * Gets all files from GraphFiles
 	 * and puts the filenames without endings in an array
+	 * @return all files from GraphFiles
 	 */
 	private String[] getFileNames() {
 
@@ -459,8 +457,9 @@ public class GraphFrame<V, E> extends JFrame {
 		return options;
 	}
 
-	/*
+	/**
 	 * Saves the graph under the given name
+	 * @param name the given name
 	 */
 	private void saveGraph(String name) {
 
@@ -476,14 +475,15 @@ public class GraphFrame<V, E> extends JFrame {
 		}
 	}
 
-	/*
+	/**
 	 * returns the graphview
+	 * @return GraphView
 	 */
 	public GraphView<V, E> getGraphView() {
 		return graphView;
 	}
 
-	/*
+	/**
 	 * Resets the color of the startbutton
 	 * after the animations of algorithms has finished
 	 */
@@ -491,4 +491,21 @@ public class GraphFrame<V, E> extends JFrame {
 		algoPanel.resetStartButton();
 
 	}
+	
+	/**
+	 * sets the redo state enabled or disabled
+	 * @param enabled to enable the redostate it has to be true
+	 */
+	public void setRedoState(boolean enabled) {
+		redo.setEnabled(enabled);
+	}
+	
+	/**
+	 * sets the undo state enabled or disabled
+	 * @param enabled to enable the undostate it has to be true
+	 */
+	public void setUndoState(boolean enabled) {
+		undo.setEnabled(enabled);	
+	}
+	
 }
