@@ -123,9 +123,10 @@ public class EditorHandler<V,E> implements Handler<V, E> {
 	/**
 	 * if the currentState is SelectState,
 	 * the attribut of the selected Decorable will be changed
+	 * @param <V1>
 	 * @param text attribut
 	 */
-	public void changeAttribut(String text) {
+	public <V1> void changeAttribut(V1 text) {
 		if(currentState!=null)
 			currentState.changeAttribut(text);
 	}

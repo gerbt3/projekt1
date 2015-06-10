@@ -1,5 +1,6 @@
 package domain;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.Vector;
 
 import javax.swing.Timer;
+
+
 
 import examples.Decorable;
 import examples.Vertex;
@@ -24,6 +27,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	private Vertex<V> endVertex;
 	private boolean algoStarted=false;
 	private Timer t;
+	private Method currentAlgoMethod;
 	private boolean startVertexSelected=false, endVertexSelected=false;
 
 	/**
@@ -51,7 +55,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	@Override
 	public void mouseDown(Decorable d, Point p) {
 		//Only vertices can be selected
-		if (d instanceof Vertex && !t.isRunning() && !algoStarted) selectState.mouseDown(d, p);
+		if (d instanceof Vertex && !t.isRunning()) selectState.mouseDown(d, p);
 		else selectState.mouseDown(null, null);
 	}
 
@@ -101,6 +105,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 * @param currentAlgoMethod the chosen algorithm
 	 */
 	public void executeMethod(Method currentAlgoMethod){
+		this.currentAlgoMethod=currentAlgoMethod;
 		graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
 		algoStarted=true;
 	}
@@ -182,6 +187,11 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		if (d instanceof Vertex){ 
 			startVertex = (Vertex<V>) d;
 			startVertexSelected=true;
+			if(algoStarted){
+				graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
+			}
+
+
 		}
 		clearSelected();
 	}
@@ -195,11 +205,14 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		if (d instanceof Vertex){
 			endVertex = (Vertex<V>) d;
 			endVertexSelected=true;
+			if(algoStarted){
+				graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
+			}
 		}
 		clearSelected();
 	}
 
-	/*
+	/**
 	 * Deletes the saved start and end vertex
 	 */
 	public void clearStartEndVertex() {
@@ -216,7 +229,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	public boolean isStartVertexSelected(){
 		return startVertexSelected;
 	}
-	
+
 	/**
 	 * returns whether an endvertex is selected
 	 * @return true if an endvertex is selected

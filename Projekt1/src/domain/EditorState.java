@@ -21,8 +21,11 @@ public abstract class EditorState {
 	
 	/**
 	 * only SelectState uses this function
+	 * @param <V1>
 	 */
-	public void changeAttribut(String text){
-		// nothing to implement
+
+	public <V1> void changeAttribut(V1 text) {
+		// TODO Auto-generated method stub
+		
 	}
 }

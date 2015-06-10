@@ -109,6 +109,8 @@ public class GraphTool<V,E> {
 		while(itE.hasNext()){
 			e=itE.next();
 			e.set(Attribut.color, STANDARD);
+			if(!e.has(Attribut.weight))
+				e.set(Attribut.weight, 1.0);
 		}
 	}
 
@@ -264,6 +266,7 @@ public class GraphTool<V,E> {
 		viewHandler.setGraph(currentGraph);
 		graphSerializer.clearEditorGraphs();
 		graphSerializer.serializeEditorGraph(currentGraph);
+		viewHandler.newGraphOpened();
 		return currentGraph;
 	}
 
@@ -329,11 +332,12 @@ public class GraphTool<V,E> {
 
 	/**
 	 * changes an attribut of a decorable
+	 * @param <V1>
 	 * @param d the decorable to change an attribut
 	 * @param attr attribut to change
 	 * @param text new content of the attribut
 	 */
-	public void changeAttribut(Decorable d, Attribut attr, String text){	
+	public <V1> void changeAttribut(Decorable d, Attribut attr, V1 text){	
 		d.set(attr, text);
 		viewHandler.setGraph(currentGraph);
 		serializeEditorGraph();
@@ -357,7 +361,7 @@ public class GraphTool<V,E> {
 	 * @param endVertex endvertex if needed, null otherwise
 	 */
 	public void executeMethod(Method method, Vertex<V> startVertex, Vertex<V> endVertex) {
-
+			graphSerializer.resetColor(currentGraph);
 			parser.executeMethod(method, startVertex, endVertex);
 			graphSerializer.deserializeAlgoGraphs();
 			currentGraph=graphSerializer.deserializeEditorGraph();

@@ -44,6 +44,7 @@ public class GraphFrame<V, E> extends JFrame {
 	private ActionListener renameListener;
 	private JMenuItem undo;
 	private JMenuItem redo;
+	private JTabbedPane tabpane;
 	JMenu edit;
 	JMenuItem newGraph;
 	JMenuItem save;
@@ -100,17 +101,19 @@ public class GraphFrame<V, E> extends JFrame {
 					String usertext=JOptionPane.showInputDialog(text);
 					if(usertext!=null){
 						if(d instanceof Edge){
-							double weight=0;
+							Double weight=new Double(0.0);
 							try {
 								weight = Double.parseDouble(usertext);
 
 							} catch (NumberFormatException ex) {
 								//If the string cannot be parsed, set the weight to 0
-								System.out.println("@GraphExamples: Failed to parse a string to a double");
-								usertext="0";
+								System.out.println("@GraphFrame: Failed to parse a string to a double");
+								weight=(double) 0.0;
 							}
+							editorHandler.changeAttribut(weight);
 						}
-						editorHandler.changeAttribut(usertext);
+						else
+							editorHandler.changeAttribut(usertext);
 					}
 				}
 
@@ -301,7 +304,7 @@ public class GraphFrame<V, E> extends JFrame {
 		editorPanel = new EditorView<V, E>(editorHandler);
 
 		algoPanel = new AlgoView<V, E>(algoHandler);
-		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		ImageIcon graphIcon = new ImageIcon("Images/draw.png");
 		ImageIcon algoIcon = new ImageIcon("Images/anim.png");
@@ -506,6 +509,19 @@ public class GraphFrame<V, E> extends JFrame {
 	 */
 	public void setUndoState(boolean enabled) {
 		undo.setEnabled(enabled);	
+	}
+
+
+	/**
+	 * if a new graph opened and the algotab is shown,
+	 * the algoHandler will be notified
+	 */
+	public void newGraphOpened() {
+		
+		if(tabpane.getSelectedIndex()==1){
+			algoHandler.stopAlgo();
+			algoHandler.clearStartEndVertex();
+		}
 	}
 	
 }

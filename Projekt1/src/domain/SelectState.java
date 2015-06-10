@@ -101,10 +101,11 @@ public class SelectState<V,E> extends EditorState {
 
 	/**
 	 * changes the name of a vertex or the weight of an edge
+	 * @param <V1>
 	 * @param text the nex text
 	 */
 	@Override
-	public void changeAttribut(String text){
+	public <V1> void changeAttribut(V1 text){
 		if(selected instanceof Vertex){
 			graphTool.changeAttribut(selected,Attribut.name, text);
 		}

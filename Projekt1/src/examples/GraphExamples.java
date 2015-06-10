@@ -209,19 +209,7 @@ public class GraphExamples<V,E> {
                 //Whether the graph comes from graphexamples or not it has to be casted differently
                 if (e.has(Attribut.weight)) {
                     
-                    if (e.get(Attribut.weight) instanceof String) {
-                        
-                        try {
-                            weight = Double.parseDouble((String) e.get(Attribut.weight));
-                        } catch (NumberFormatException ex) {
-                            //If the string cannot be parsed, set the weight to 0
-                            System.out.println("@GraphExamples: Failed to parse a string to a double");
-                            weight = 0;
-                        }
-                    }
-                        
-                    //For graphs from graphexamples
-                    else weight = (Double)e.get(Attribut.weight);
+                   weight = (Double)e.get(Attribut.weight);
                 }
 //-----------------------------------------------------------------                
                 Vertex<V> z = g.opposite(e, u);

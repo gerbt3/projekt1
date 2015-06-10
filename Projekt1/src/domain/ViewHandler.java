@@ -81,4 +81,11 @@ public class ViewHandler<V,E> {
 	public void setUndoState(boolean enabled) {
 		frame.setUndoState(enabled);
 	}
+
+	/**
+	 * this metjod is called if a new graph opened
+	 */
+	public void newGraphOpened() {
+		frame.newGraphOpened();
+	}
 }

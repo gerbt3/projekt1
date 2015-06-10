@@ -272,13 +272,32 @@ public class GraphSerializer<V,E> {
 
 			//Clears the list of deserialized graphs
 			algoGraphs.clear();
-			algoIndex = 0;
+			algoIndex = -1;
 			for (int i = 0; i < byteAlgoGraphs.size(); i++) {
 				algoGraphs.add(deserializeGraph(byteAlgoGraphs.get(i)));
 			}
 			//Clears the list of serialized graphs
 			byteAlgoGraphs.clear();
 
+	}
+	
+	/**
+	 * saves the graph at the first position of the algoGraphs list
+	 * @param g first graph
+	 */
+	public void setFirstAlgoGraph(Graph<V,E> g){
+		algoGraphs.set(0, this.deserializeGraph(this.serializeGraph(g)));
+	}
+	
+	/**
+	 * returns the first algoGraph
+	 * @return first algoGraph
+	 */
+	public Graph<V,E> getFirstAlgoGraph(){
+		if(algoGraphs.size()>0)
+			return algoGraphs.get(0);
+		else
+			return null;
 	}
 
 	/**
