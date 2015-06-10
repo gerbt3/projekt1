@@ -1,3 +1,8 @@
+/*
+ * Project GrahTool
+ * Copyright (c) 2015 by Tina Gerber, Daria Schumacher
+ * Berner Fachhochschule, Switzerland
+ */
 package domain;
 
 import java.awt.Color;
@@ -27,7 +32,6 @@ public class GraphSerializer<V,E> {
 	private ArrayList<byte[]> byteAlgoGraphs;
 	ArrayList<Graph<V,E>> algoGraphs;
 	private int algoIndex = -1;
-	private boolean isStart = true;
 
 	/**
 	 * constructor
@@ -37,6 +41,10 @@ public class GraphSerializer<V,E> {
 		byteAlgoGraphs= new ArrayList<byte[]>();
 		algoGraphs = new ArrayList<Graph<V,E>>();
 	}
+	
+	//------------------------------------------------------------------------------------//
+	// Methods for serialize and deserialize graphs
+	//------------------------------------------------------------------------------------//
 	
 	/**
 	 * serialize a graph and returns the serialized graph as a byte array
@@ -89,26 +97,9 @@ public class GraphSerializer<V,E> {
 
 	}
 	
-	/**
-	 * changes the color of all vertices and edges into the standardcolor
-	 * @param graph the graph which should have the standard color
-	 */
-	public void resetColor(Graph<V,E> graph){
-		Iterator<Vertex<V>> vIt = graph.vertices();
-		while (vIt.hasNext()) {
-			vIt.next().set(Attribut.color, GraphTool.STANDARD);
-		}
-
-		Iterator<Edge<E>> eIt = graph.edges();
-		while (eIt.hasNext()) {
-			eIt.next().set(Attribut.color, GraphTool.STANDARD);
-		}
-	}
-	
 	//------------------------------------------------------------------------------------//
 	// Methods for storing graphs permanently
 	//------------------------------------------------------------------------------------//
-
 
 	/**
 	 * Saves a graph permanently as a file by serializing
@@ -132,7 +123,6 @@ public class GraphSerializer<V,E> {
 			oos.close();
 		}
 	}
-
 
 	/**
 	 * Opens a saved graph from a file by deserializing
@@ -158,7 +148,23 @@ public class GraphSerializer<V,E> {
 		}
 		return graph;
 	}
+	
+	/**
+	 * changes the color of all vertices and edges into the standardcolor
+	 * @param graph the graph which should have the standard color
+	 */
+	public void resetColor(Graph<V,E> graph){
+		Iterator<Vertex<V>> vIt = graph.vertices();
+		while (vIt.hasNext()) {
+			vIt.next().set(Attribut.color, GraphTool.STANDARD);
+		}
 
+		Iterator<Edge<E>> eIt = graph.edges();
+		while (eIt.hasNext()) {
+			eIt.next().set(Attribut.color, GraphTool.STANDARD);
+		}
+	}
+	
 	//------------------------------------------------------------------------------------//
 	// Methods for coping graph temporarily in the graph editor
 	//------------------------------------------------------------------------------------//
@@ -257,14 +263,6 @@ public class GraphSerializer<V,E> {
 	}
 
 	/**
-	 * returns whether the animation of an algorithm gets started or gets paused
-	 * @return true if the animation gets started, false if the animation gets paused
-	 */
-	public boolean isStart() {
-		return isStart;
-	}
-
-	/**
 	 * Deserializes all temporary copies of the graphs
 	 * For animating an algorithm in the algorithm editor
 	 */
@@ -279,25 +277,6 @@ public class GraphSerializer<V,E> {
 			//Clears the list of serialized graphs
 			byteAlgoGraphs.clear();
 
-	}
-	
-	/**
-	 * saves the graph at the first position of the algoGraphs list
-	 * @param g first graph
-	 */
-	public void setFirstAlgoGraph(Graph<V,E> g){
-		algoGraphs.set(0, this.deserializeGraph(this.serializeGraph(g)));
-	}
-	
-	/**
-	 * returns the first algoGraph
-	 * @return first algoGraph
-	 */
-	public Graph<V,E> getFirstAlgoGraph(){
-		if(algoGraphs.size()>0)
-			return algoGraphs.get(0);
-		else
-			return null;
 	}
 
 	/**

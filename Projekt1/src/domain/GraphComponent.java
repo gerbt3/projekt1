@@ -1,3 +1,8 @@
+/*
+ * Project GrahTool
+ * Copyright (c) 2015 by Tina Gerber, Daria Schumacher
+ * Berner Fachhochschule, Switzerland
+ */
 package domain;
 
 import java.awt.BasicStroke;

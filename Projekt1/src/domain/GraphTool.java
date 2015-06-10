@@ -1,3 +1,8 @@
+/*
+ * Project GrahTool
+ * Copyright (c) 2015 by Tina Gerber, Daria Schumacher
+ * Berner Fachhochschule, Switzerland
+ */
 package domain;
 
 import java.awt.Point;
@@ -93,7 +98,6 @@ public class GraphTool<V,E> {
 		Iterator<Vertex<V>> it =g.vertices();
 		int i=0;
 		Vertex<V> v;
-
 
 		while(it.hasNext()){
 			v=it.next();
@@ -220,7 +224,6 @@ public class GraphTool<V,E> {
 		viewHandler.setGraph(currentGraph);
 	}
 
-
 	/**
 	 * removes a Vertex from the graph
 	 * @param the vertex to remove
@@ -237,6 +240,19 @@ public class GraphTool<V,E> {
 	 */
 	public void deleteEdge(Edge<E> selected) {
 		currentGraph.removeEdge(selected);
+		viewHandler.setGraph(currentGraph);
+		serializeEditorGraph();
+	}
+
+	/**
+	 * changes an attribut of a decorable
+	 * @param <V1>
+	 * @param d the decorable to change an attribut
+	 * @param attr attribut to change
+	 * @param text new content of the attribut
+	 */
+	public <V1> void changeAttribut(Decorable d, Attribut attr, V1 text){	
+		d.set(attr, text);
 		viewHandler.setGraph(currentGraph);
 		serializeEditorGraph();
 	}
@@ -329,19 +345,6 @@ public class GraphTool<V,E> {
 	//------------------------------------------------------------------------------------//
 	// Helper-methods for executing an animating an algorithm in the algorithm editor
 	//------------------------------------------------------------------------------------//
-
-	/**
-	 * changes an attribut of a decorable
-	 * @param <V1>
-	 * @param d the decorable to change an attribut
-	 * @param attr attribut to change
-	 * @param text new content of the attribut
-	 */
-	public <V1> void changeAttribut(Decorable d, Attribut attr, V1 text){	
-		d.set(attr, text);
-		viewHandler.setGraph(currentGraph);
-		serializeEditorGraph();
-	}
 
 	/**
 	 * returns annotated methods from GraphExamples

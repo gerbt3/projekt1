@@ -1,3 +1,8 @@
+/*
+ * Project GrahTool
+ * Copyright (c) 2015 by Tina Gerber, Daria Schumacher
+ * Berner Fachhochschule, Switzerland
+ */
 package domain;
 
 import java.awt.BorderLayout;
@@ -39,7 +44,7 @@ public class GraphFrame<V, E> extends JFrame {
 	private EditorHandler<V,E> editorHandler;
 	private AlgoView<V,E> algoPanel;
 	private AlgoHandler<V,E> algoHandler;
-	private GraphTool graphTool;
+	private GraphTool<V,E> graphTool;
 	private String currentGraphName;
 	private ActionListener renameListener;
 	private JMenuItem undo;
@@ -514,7 +519,7 @@ public class GraphFrame<V, E> extends JFrame {
 
 	/**
 	 * if a new graph opened and the algotab is shown,
-	 * the algoHandler will be notified
+	 * old data will be removed
 	 */
 	public void newGraphOpened() {
 		
