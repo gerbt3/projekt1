@@ -30,7 +30,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	private SelectState<V,E> selectState;
 	private Vertex<V> startVertex;
 	private Vertex<V> endVertex;
-	private boolean algoStarted=false;
+	private boolean algoExecuted=false;
 	private Timer t;
 	private Method currentAlgoMethod;
 	private boolean startVertexSelected=false, endVertexSelected=false;
@@ -112,7 +112,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	public void executeMethod(Method currentAlgoMethod){
 		this.currentAlgoMethod=currentAlgoMethod;
 		graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
-		algoStarted=true;
+		algoExecuted=true;
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		if (d instanceof Vertex){ 
 			startVertex = (Vertex<V>) d;
 			startVertexSelected=true;
-			if(algoStarted){
+			if(algoExecuted){
 				graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
 			}
 
@@ -210,7 +210,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		if (d instanceof Vertex){
 			endVertex = (Vertex<V>) d;
 			endVertexSelected=true;
-			if(algoStarted){
+			if(algoExecuted){
 				graphTool.executeMethod(currentAlgoMethod, startVertex, endVertex);
 			}
 		}
@@ -225,7 +225,7 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 		startVertexSelected=false;
 		endVertex = null;
 		endVertexSelected=false;
-		algoStarted=false;
+		algoExecuted=false;
 	}
 	/**
 	 * returns if a startvertex is selected
@@ -248,6 +248,6 @@ public class AlgoHandler<V,E> implements Handler<V,E> {
 	 * @return true if the algorithm is executed
 	 */
 	public boolean isMethodExecuted(){
-		return algoStarted;
+		return algoExecuted;
 	}
 }
